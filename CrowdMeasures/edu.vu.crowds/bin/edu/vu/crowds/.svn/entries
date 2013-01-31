@@ -1,0 +1,70 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/src/com/ibm/racr/crowd/analysis
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+AggregateMeasure.java
+file
+
+
+
+add
+
+Cluster.java
+file
+
+
+
+add
+
+Measures
+dir
+
+
+
+add
+
+Pair.java
+file
+
+
+
+add
+
+SentenceFilter.java
+file
+
+
+
+add
+
+SentenceMeasure.java
+file
+
+
+
+add
+

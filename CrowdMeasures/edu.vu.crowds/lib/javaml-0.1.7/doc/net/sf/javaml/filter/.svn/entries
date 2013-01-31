@@ -1,0 +1,161 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/lib/javaml-0.1.7/doc/net/sf/javaml/filter
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+AbstractFilter.html
+file
+
+
+
+add
+
+ClassRemoveFilter.html
+file
+
+
+
+add
+
+ClassReplaceFilter.html
+file
+
+
+
+add
+
+ClassRetainFilter.html
+file
+
+
+
+add
+
+DatasetFilter.html
+file
+
+
+
+add
+
+InstanceFilter.html
+file
+
+
+
+add
+
+MissingClassFilter.html
+file
+
+
+
+add
+
+RemoveAttributes.html
+file
+
+
+
+add
+
+RetainAttributes.html
+file
+
+
+
+add
+
+UnsetClassFilter.html
+file
+
+
+
+add
+
+class-use
+dir
+
+
+
+add
+
+discretize
+dir
+
+
+
+add
+
+instance
+dir
+
+
+
+add
+
+missingvalue
+dir
+
+
+
+add
+
+normalize
+dir
+
+
+
+add
+
+package-frame.html
+file
+
+
+
+add
+
+package-summary.html
+file
+
+
+
+add
+
+package-tree.html
+file
+
+
+
+add
+
+package-use.html
+file
+
+
+
+add
+

@@ -1,0 +1,133 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/lib/javaml-0.1.7/doc/net/sf/javaml/distance/fastdtw/dtw
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+DTW.html
+file
+
+
+
+add
+
+ExpandedResWindow.html
+file
+
+
+
+add
+
+FastDTW.html
+file
+
+
+
+add
+
+FullWindow.html
+file
+
+
+
+add
+
+LinearWindow.html
+file
+
+
+
+add
+
+ParallelogramWindow.html
+file
+
+
+
+add
+
+SearchWindow.html
+file
+
+
+
+add
+
+TimeWarpInfo.html
+file
+
+
+
+add
+
+WarpPath.html
+file
+
+
+
+add
+
+WarpPathWindow.html
+file
+
+
+
+add
+
+class-use
+dir
+
+
+
+add
+
+package-frame.html
+file
+
+
+
+add
+
+package-summary.html
+file
+
+
+
+add
+
+package-tree.html
+file
+
+
+
+add
+
+package-use.html
+file
+
+
+
+add
+

@@ -1,0 +1,91 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/lib/javaml-0.1.7/doc/net/sf/javaml/classification/class-use
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+AbstractClassifier.html
+file
+
+
+
+add
+
+AbstractMeanClassifier.html
+file
+
+
+
+add
+
+Classifier.html
+file
+
+
+
+add
+
+KDtreeKNN.html
+file
+
+
+
+add
+
+KNearestNeighbors.html
+file
+
+
+
+add
+
+MeanFeatureVotingClassifier.html
+file
+
+
+
+add
+
+NearestMeanClassifier.html
+file
+
+
+
+add
+
+SOM.html
+file
+
+
+
+add
+
+ZeroR.html
+file
+
+
+
+add
+

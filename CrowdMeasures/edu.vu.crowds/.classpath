@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="lib/commons-math3-3.0/commons-math3-3.0.jar" sourcepath="lib/commons-math3-3.0/commons-math3-3.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/com.ibm.racr.crowd/lib/commons-math3-3.0/commons-math3-3.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/javaml-0.1.7/javaml-0.1.7.jar" sourcepath="lib/javaml-0.1.7/javaml-0.1.7-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/welty/workspace-racr/com.ibm.racr.crowd/lib/javaml-0.1.7/doc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,63 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/lib/javaml-0.1.7/doc/net/sf/javaml/featureselection/scoring/class-use
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+GainRatio.html
+file
+
+
+
+add
+
+KullbackLeiblerDivergence.html
+file
+
+
+
+add
+
+RELIEF.html
+file
+
+
+
+add
+
+RandomForestAttributeEvaluation.html
+file
+
+
+
+add
+
+SymmetricalUncertainty.html
+file
+
+
+
+add
+

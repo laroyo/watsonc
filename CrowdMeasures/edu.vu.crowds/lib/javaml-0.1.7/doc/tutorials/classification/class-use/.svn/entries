@@ -1,0 +1,98 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/lib/javaml-0.1.7/doc/tutorials/classification/class-use
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+TutorialCVSameFolds.html
+file
+
+
+
+add
+
+TutorialCrossValidation.html
+file
+
+
+
+add
+
+TutorialEvaluateDataset.html
+file
+
+
+
+add
+
+TutorialKDependentBayes.html
+file
+
+
+
+add
+
+TutorialKDtreeKNN.html
+file
+
+
+
+add
+
+TutorialKNN.html
+file
+
+
+
+add
+
+TutorialLibSVM.html
+file
+
+
+
+add
+
+TutorialNaiveBayes.html
+file
+
+
+
+add
+
+TutorialRandomForest.html
+file
+
+
+
+add
+
+TutorialSelfOptimizingLibSVM.html
+file
+
+
+
+add
+

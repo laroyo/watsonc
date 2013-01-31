@@ -1,0 +1,31 @@
+-classpath
+'/home/eran/devel/SVN/commons-math/MATH_3_0_RC3/target/classes'
+-encoding
+'iso-8859-1'
+-protected
+-quiet
+-source
+'1.5'
+-sourcepath
+'/home/eran/devel/SVN/commons-math/MATH_3_0_RC3/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2003-2012 <a href="http://www.apache.org/">The Apache Software Foundation</a>. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'/home/eran/devel/SVN/commons-math/MATH_3_0_RC3/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'Commons Math 3.0 API'
+-link
+'http://download.oracle.com/javase/6/docs/api'
+-link
+'http://download.oracle.com/javaee/6/api'
+-linkoffline
+'http://download.oracle.com/javase/1.5.0/docs/api' '/home/eran/devel/SVN/commons-math/MATH_3_0_RC3/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'Commons Math 3.0 API'

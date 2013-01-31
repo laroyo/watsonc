@@ -1,0 +1,182 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/lib/commons-math3-3.0/docs/apidocs/org/apache/commons/math3/geometry/partitioning
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+AbstractRegion.html
+file
+
+
+
+add
+
+AbstractSubHyperplane.html
+file
+
+
+
+add
+
+BSPTree.LeafMerger.html
+file
+
+
+
+add
+
+BSPTree.html
+file
+
+
+
+add
+
+BSPTreeVisitor.Order.html
+file
+
+
+
+add
+
+BSPTreeVisitor.html
+file
+
+
+
+add
+
+BoundaryAttribute.html
+file
+
+
+
+add
+
+Embedding.html
+file
+
+
+
+add
+
+Hyperplane.html
+file
+
+
+
+add
+
+Region.Location.html
+file
+
+
+
+add
+
+Region.html
+file
+
+
+
+add
+
+RegionFactory.html
+file
+
+
+
+add
+
+Side.html
+file
+
+
+
+add
+
+SubHyperplane.SplitSubHyperplane.html
+file
+
+
+
+add
+
+SubHyperplane.html
+file
+
+
+
+add
+
+Transform.html
+file
+
+
+
+add
+
+class-use
+dir
+
+
+
+add
+
+package-frame.html
+file
+
+
+
+add
+
+package-summary.html
+file
+
+
+
+add
+
+package-tree.html
+file
+
+
+
+add
+
+package-use.html
+file
+
+
+
+add
+
+utilities
+dir
+
+
+
+add
+

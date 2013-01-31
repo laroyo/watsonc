@@ -1,0 +1,105 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/lib/javaml-0.1.7/doc/net/sf/javaml/tools/weka
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+FromWekaUtils.html
+file
+
+
+
+add
+
+ToWekaUtils.html
+file
+
+
+
+add
+
+WekaAttributeSelection.html
+file
+
+
+
+add
+
+WekaClassifier.html
+file
+
+
+
+add
+
+WekaClusterer.html
+file
+
+
+
+add
+
+WekaException.html
+file
+
+
+
+add
+
+class-use
+dir
+
+
+
+add
+
+package-frame.html
+file
+
+
+
+add
+
+package-summary.html
+file
+
+
+
+add
+
+package-tree.html
+file
+
+
+
+add
+
+package-use.html
+file
+
+
+
+add
+

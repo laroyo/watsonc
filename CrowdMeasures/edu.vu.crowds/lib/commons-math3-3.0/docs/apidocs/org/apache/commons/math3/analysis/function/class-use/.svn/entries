@@ -1,0 +1,378 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/lib/commons-math3-3.0/docs/apidocs/org/apache/commons/math3/analysis/function/class-use
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+Abs.html
+file
+
+
+
+add
+
+Acos.html
+file
+
+
+
+add
+
+Acosh.html
+file
+
+
+
+add
+
+Add.html
+file
+
+
+
+add
+
+Asin.html
+file
+
+
+
+add
+
+Asinh.html
+file
+
+
+
+add
+
+Atan.html
+file
+
+
+
+add
+
+Atan2.html
+file
+
+
+
+add
+
+Atanh.html
+file
+
+
+
+add
+
+Cbrt.html
+file
+
+
+
+add
+
+Ceil.html
+file
+
+
+
+add
+
+Constant.html
+file
+
+
+
+add
+
+Cos.html
+file
+
+
+
+add
+
+Cosh.html
+file
+
+
+
+add
+
+Divide.html
+file
+
+
+
+add
+
+Exp.html
+file
+
+
+
+add
+
+Expm1.html
+file
+
+
+
+add
+
+Floor.html
+file
+
+
+
+add
+
+Gaussian.Parametric.html
+file
+
+
+
+add
+
+Gaussian.html
+file
+
+
+
+add
+
+HarmonicOscillator.Parametric.html
+file
+
+
+
+add
+
+HarmonicOscillator.html
+file
+
+
+
+add
+
+Identity.html
+file
+
+
+
+add
+
+Inverse.html
+file
+
+
+
+add
+
+Log.html
+file
+
+
+
+add
+
+Log10.html
+file
+
+
+
+add
+
+Log1p.html
+file
+
+
+
+add
+
+Logistic.Parametric.html
+file
+
+
+
+add
+
+Logistic.html
+file
+
+
+
+add
+
+Logit.Parametric.html
+file
+
+
+
+add
+
+Logit.html
+file
+
+
+
+add
+
+Max.html
+file
+
+
+
+add
+
+Min.html
+file
+
+
+
+add
+
+Minus.html
+file
+
+
+
+add
+
+Multiply.html
+file
+
+
+
+add
+
+Pow.html
+file
+
+
+
+add
+
+Power.html
+file
+
+
+
+add
+
+Rint.html
+file
+
+
+
+add
+
+Sigmoid.Parametric.html
+file
+
+
+
+add
+
+Sigmoid.html
+file
+
+
+
+add
+
+Signum.html
+file
+
+
+
+add
+
+Sin.html
+file
+
+
+
+add
+
+Sinc.html
+file
+
+
+
+add
+
+Sinh.html
+file
+
+
+
+add
+
+Sqrt.html
+file
+
+
+
+add
+
+StepFunction.html
+file
+
+
+
+add
+
+Subtract.html
+file
+
+
+
+add
+
+Tan.html
+file
+
+
+
+add
+
+Tanh.html
+file
+
+
+
+add
+
+Ulp.html
+file
+
+
+
+add
+

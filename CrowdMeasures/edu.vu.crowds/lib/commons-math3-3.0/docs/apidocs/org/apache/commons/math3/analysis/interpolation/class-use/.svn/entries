@@ -1,0 +1,147 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/lib/commons-math3-3.0/docs/apidocs/org/apache/commons/math3/analysis/interpolation/class-use
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+BicubicSplineInterpolatingFunction.html
+file
+
+
+
+add
+
+BicubicSplineInterpolator.html
+file
+
+
+
+add
+
+BivariateGridInterpolator.html
+file
+
+
+
+add
+
+DividedDifferenceInterpolator.html
+file
+
+
+
+add
+
+LinearInterpolator.html
+file
+
+
+
+add
+
+LoessInterpolator.html
+file
+
+
+
+add
+
+MicrosphereInterpolatingFunction.html
+file
+
+
+
+add
+
+MicrosphereInterpolator.html
+file
+
+
+
+add
+
+MultivariateInterpolator.html
+file
+
+
+
+add
+
+NevilleInterpolator.html
+file
+
+
+
+add
+
+SmoothingPolynomialBicubicSplineInterpolator.html
+file
+
+
+
+add
+
+SplineInterpolator.html
+file
+
+
+
+add
+
+TricubicSplineInterpolatingFunction.html
+file
+
+
+
+add
+
+TricubicSplineInterpolator.html
+file
+
+
+
+add
+
+TrivariateGridInterpolator.html
+file
+
+
+
+add
+
+UnivariateInterpolator.html
+file
+
+
+
+add
+
+UnivariatePeriodicInterpolator.html
+file
+
+
+
+add
+

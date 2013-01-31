@@ -1,0 +1,217 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/lib/javaml-0.1.7/doc/net/sf/javaml/distance/class-use
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+AbstractCorrelation.html
+file
+
+
+
+add
+
+AbstractDistance.html
+file
+
+
+
+add
+
+AbstractSimilarity.html
+file
+
+
+
+add
+
+AngularDistance.html
+file
+
+
+
+add
+
+CachedDistance.html
+file
+
+
+
+add
+
+ChebychevDistance.html
+file
+
+
+
+add
+
+ConsistencyIndex.html
+file
+
+
+
+add
+
+CosineDistance.html
+file
+
+
+
+add
+
+CosineSimilarity.html
+file
+
+
+
+add
+
+DistanceMeasure.html
+file
+
+
+
+add
+
+EuclideanDistance.html
+file
+
+
+
+add
+
+JaccardIndexDistance.html
+file
+
+
+
+add
+
+JaccardIndexSimilarity.html
+file
+
+
+
+add
+
+LinearKernel.html
+file
+
+
+
+add
+
+MahalanobisDistance.html
+file
+
+
+
+add
+
+ManhattanDistance.html
+file
+
+
+
+add
+
+MaxProductSimilarity.html
+file
+
+
+
+add
+
+MinkowskiDistance.html
+file
+
+
+
+add
+
+NormDistance.html
+file
+
+
+
+add
+
+NormalizedEuclideanDistance.html
+file
+
+
+
+add
+
+NormalizedEuclideanSimilarity.html
+file
+
+
+
+add
+
+PearsonCorrelationCoefficient.html
+file
+
+
+
+add
+
+PolynomialKernel.html
+file
+
+
+
+add
+
+RBFKernel.html
+file
+
+
+
+add
+
+RBFKernelDistance.html
+file
+
+
+
+add
+
+SpearmanFootruleDistance.html
+file
+
+
+
+add
+
+SpearmanRankCorrelation.html
+file
+
+
+
+add
+

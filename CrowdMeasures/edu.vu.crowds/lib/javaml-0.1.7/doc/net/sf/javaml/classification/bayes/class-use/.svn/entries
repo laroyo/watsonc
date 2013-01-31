@@ -1,0 +1,70 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/lib/javaml-0.1.7/doc/net/sf/javaml/classification/bayes/class-use
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+AbstractBayesianClassifier.html
+file
+
+
+
+add
+
+AbstractBayesianClassifier_compact.html
+file
+
+
+
+add
+
+ClassCounter.html
+file
+
+
+
+add
+
+ClassCounter_compact.html
+file
+
+
+
+add
+
+KDependentBayesClassifier.html
+file
+
+
+
+add
+
+NaiveBayesClassifier.html
+file
+
+
+
+add
+

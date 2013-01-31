@@ -1,0 +1,71 @@
+9
+
+dir
+2004
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd
+svn://mu.lti.cs.cmu.edu/racr
+
+
+
+2012-12-17T14:53:14.144900Z
+2004
+welty
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+
+
+
+
+
+
+immediates
+
+.classpath
+file
+0
+
+
+add
+
+.project
+file
+0
+
+
+add
+
+.settings
+dir
+
+
+
+add
+
+lib
+dir
+
+
+
+add
+
+src
+dir
+
+
+
+add
+

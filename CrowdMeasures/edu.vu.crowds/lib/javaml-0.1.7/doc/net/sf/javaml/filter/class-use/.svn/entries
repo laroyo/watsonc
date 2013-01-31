@@ -1,0 +1,98 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/lib/javaml-0.1.7/doc/net/sf/javaml/filter/class-use
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+AbstractFilter.html
+file
+
+
+
+add
+
+ClassRemoveFilter.html
+file
+
+
+
+add
+
+ClassReplaceFilter.html
+file
+
+
+
+add
+
+ClassRetainFilter.html
+file
+
+
+
+add
+
+DatasetFilter.html
+file
+
+
+
+add
+
+InstanceFilter.html
+file
+
+
+
+add
+
+MissingClassFilter.html
+file
+
+
+
+add
+
+RemoveAttributes.html
+file
+
+
+
+add
+
+RetainAttributes.html
+file
+
+
+
+add
+
+UnsetClassFilter.html
+file
+
+
+
+add
+

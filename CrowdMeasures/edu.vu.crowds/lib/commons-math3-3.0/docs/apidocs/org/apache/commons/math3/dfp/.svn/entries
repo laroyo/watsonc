@@ -1,0 +1,112 @@
+9
+
+dir
+0
+svn://mu.lti.cs.cmu.edu/racr/trunk/com.ibm.racr.crowd/lib/commons-math3-3.0/docs/apidocs/org/apache/commons/math3/dfp
+svn://mu.lti.cs.cmu.edu/racr
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d65e9a7e-d25f-4271-b7d7-1a5c0e352e55
+
+BracketingNthOrderBrentSolverDFP.html
+file
+
+
+
+add
+
+Dfp.html
+file
+
+
+
+add
+
+DfpDec.html
+file
+
+
+
+add
+
+DfpField.RoundingMode.html
+file
+
+
+
+add
+
+DfpField.html
+file
+
+
+
+add
+
+DfpMath.html
+file
+
+
+
+add
+
+UnivariateDfpFunction.html
+file
+
+
+
+add
+
+class-use
+dir
+
+
+
+add
+
+package-frame.html
+file
+
+
+
+add
+
+package-summary.html
+file
+
+
+
+add
+
+package-tree.html
+file
+
+
+
+add
+
+package-use.html
+file
+
+
+
+add
+
