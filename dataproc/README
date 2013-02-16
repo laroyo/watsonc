@@ -1,5 +1,8 @@
-
-
+* filter_data.R	
+  - R script that applies filters to a sentence dataset. 
+  - To execute it from R-shell:
+    	    $> source('filter_data.R')  
+  - Reads data from csv file (90-sents-all-batches-GS-sentsv3.csv), applies the filter and creates variables in the R user space containing the filtered (filtered1,..filterd4) and discarded (disc1,..,disc4)rows from the dataset. 						
 * "Library" (simplify.R)
 
 Contains functions for doing preprocess on the raw data (in Excel or csv format), to work with it. 
@@ -18,6 +21,7 @@ Functions:
 	       - It will take all the options of the pivoted field (ex: relation) and create a contingency table for those. 
 	       - NOTE: Field decomposition: for columns with multiple values (ex: relations assigned by workers), decomposes the column into single value columns. 
 	       	        - Multiple value column label format:  "<value1>\n<value2>...\n<valueN>"
+
 
 
 Usual course of action: 
