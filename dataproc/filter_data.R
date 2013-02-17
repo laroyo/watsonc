@@ -3,65 +3,78 @@
 
 source('measures.R')
 source('filters.R')
-
-abcol2 <- function(key){
-  k <- list('causes'='c','symptom'='s','location'='l','prevents'='p','diagnosed_by_test_or_drug'='d','manifestation'='m','associated_with'='aw','part_of'='po','other'='oth','treats'='t','none'='none','is_a'='ia','side_effect'='se',
-      'contraindicates'='ci')
-  
-  return(k[as.character(key)][[1]])
-}
+source('simplify.R')
 
 raw_data <- read.csv('90-sents-all-batches-GS-sentsv3.csv',header=TRUE)
 
-
-#Discard the rows and columns that do not contain useful data. 
+#As the format is not the same as the CFlower csv output files, it requires some preprocessing (1 & 2)
+#1. Discard the rows and columns that do not contain useful data. 
 data <- raw_data[1:90,]
-d <- data[,1:15]
+df <- data[,1:15]
 
-#Abbreviate the field names (use initials instead of full names)
-colnames(d) <- unlist(lapply(colnames(d),abcol2))
-colnames(d) <- c('unit_id',colnames(d)[1:14])
+#2. Use the first column as row names
+rownames(df) <- df[,1]
+df <- df[,2:15] 
 
-#Order the columns (put 'oth' and 'none' at the end. 
-d <- d[,c('unit_id','c','s','l','d','p','t','m','aw','po','ia','se','ci','oth','none')]
+#Label the columns (abbr. version and missing columns)
+df <- labeldf(df)
 
-#Transform data into numeric values (instead of factors). 
-d <- data.frame(lapply(lapply(d,as.character),as.numeric))
+#Calculate the measures to apply the filters.
+filters <- list('SQRT','NormSQRT','NormR','NormRAll')
+mdf <- calc_measures(df,filters)
 
-#Use the first column as row names
-rownames(d) <- d[,1]
-d <- d[,2:15] 
+discarded <- list()
+filtered <- list()
+
+for (f in filters){
+  #Apply the filters: each one returns the discarded rows (those below the threshold)
+  discarded[[f]] <- belowDiff(mdf,f)
+  #The 'filtered' 
+  filtered[[f]] <- setdiff(rownames(df),discarded[[f]])
+}
+
+###################################################
+# Access the results for ONE FILTER in particular.
+###################################################
+
+#Ex: get the rows that were discarded by filter NormSQRT
+
+discDf <- df[discarded[['NormSQRT']],]
+
+#Ex: get the rows that were filtered by filter NormSQRT
+
+filtDf <- df[filtered[['NormSQRT']],]
+
+#Check the values of the discarded rows: 
+mdf[rownames(discDf),]
 
 
-#Create a separated data frame for measures (makes visualization in R-shell simpler)
-mdf <- data.frame(names=rownames(d))
-rownames(mdf) <- rownames(d)
+###################################################
+# Access the results for a COMBINATION of filters
+###################################################
 
-#Calculate the measures to apply the filters
-mdf <- calc_measures(d,list('SQRT','NormSQRT','NormR','NormAllR'))
+# Similar to the previous one, but combining the rows of discarded elements for the differente filters.
 
-#Calculate the factor for the filters
-STDEVal<- mean(mdf$SQRT) - sd(mdf$SQRT)
-STDEVNorm <- mean(mdf$NormSQRT) - sd(mdf$NormSQRT)
-STDEVNormR<- mean(mdf$NormR) - sd(mdf$NormR)
-STDEVNormAllR <- mean(mdf$NormAllR) - sd(mdf$NormAllR)
+disc <- union(discarded[['NormSQRT']],discarded[['NormRAll']])
 
-#Apply the filters: each one returns the discarded rows (those below the threshold)
-disc1 <- belowDiff(mdf,'SQRT',STDEVal)
-disc2 <- belowDiff(mdf,'NormSQRT',STDEVNorm)
-disc3 <- belowDiff(mdf,'NormR',STDEVNormR)
-disc4 <- belowDiff(mdf,'NormAllR',STDEVNormAllR)
+#Select the discarded rows
+drows <- df[disc,]
 
+#Select the filtered rows. 
+frows <- df[!(rowname(df) %in% disc),]
 
-#Obtain the filtered rows (== exclude the discarded rows)
-filtered1 <- d[! rownames(d) %in% rownames(filt1),]
-filtered2 <- d[! rownames(d) %in% rownames(filt2),]
-filtered3 <- d[! rownames(d) %in% rownames(filt3),]
-filtered4 <- d[! rownames(d) %in% rownames(filt4),]
+###################################################
+# Access the result for ALL filters
+###################################################
 
-# TO DO: store/keep record of the filtered rows (contained in filtered{1..4})
+# Transform into a vector the list of all discarded rows
+disc <- unique(as.vector(unlist(discarded)))
 
-# TO DO: store/keep record the discarded rows (contained in the variable filt{1..4})
+#Select the discarded rows
+drows <- df[disc,]
+
+#Select the filtered rows. 
+frows <- df[!(rowname(df) %in% disc),]
 
 
 

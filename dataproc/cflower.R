@@ -1,59 +1,54 @@
 #!/usr/bin/Rscript
 
+#Parse a results file from Crowdflower, and generates contingency tables for relations/workers and sentences as an output. 
+
 library(XLConnect)
+source('simplify.R')
+source('measures.R')
 
 args <- commandArgs(trailingOnly = TRUE)
 
+#The script acepts parameters. If none passed, the following will be used as an examaple. 
 if(length(args) == 0){
   inputfile <- "results.csv"
-  outputfile  <- "output-results-csv.xlsx"
+  outputfile  <- "output-results-cflower.xlsx"
 } else {
   inputfile <- args[1]
   outputfile  <- args[2]
 }
 
-data <- read.csv(inputfile)
-names(data)[names(data)=="step_1_select_the_valid_relations"] <- "relation"
-names(data)[names(data)=="step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"] <- "selected_words"
-names(data)[names(data)=="step_2b_if_you_selected_none_in_step_1_explain_why"] <- "explanation"
+raw_data <- read.csv(inputfile)
 
-field = 'unit_id'
-pField = 'relation'
+#Shorten the names of some fields. 
+names(raw_data)[names(raw_data)=="step_1_select_the_valid_relations"] <- "relation"
+names(raw_data)[names(raw_data)=="step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"] <- "selected_words"
+names(raw_data)[names(raw_data)=="step_2b_if_you_selected_none_in_step_1_explain_why"] <- "explanation"
 
-source('simplify.R')
+sentenceTable <- pivot(raw_data,'unit_id','relation')
 
-d <- colselect(data,field,pField)
-res <- simplify(d,pField)
+sentenceDf <- as.data.frame(rbind(sentenceTable))
+#Label the columns (abbr. version and missing columns)
+sentenceDf <- labeldf(sentenceDf)
 
-dfres <- as.data.frame(rbind(res))
-#Replace the names of the columns by its abbreviated key. 
-colnames(dfres) <- unlist(lapply(colnames(dfres),abcol))
+measuresDf <- calc_measures(sentenceDf,list('SumSQ','SQRT','Difference','NormSQRT','SumSQRel','SQRTRel','DiffRel'))
 
-rels <- c('D','S','CA','M','L','AW','P','SE','IA','PO','T','CI')
-othernone <- c('NONE')
-#othernone <- c('OTHER','NONE')
-all <- c(rels,othernone)
-
-dfres$SumSQ <- rowSums(dfres[,all]^2)
-dfres$SQRT <- sqrt(dfres$SumSQ)
-dfres$Difference <- dfres$SQRT - apply(dfres[,all],1,max)
-dfres$NormalizedSQRT <- dfres$SQRT/ rowSums(dfres[,all])
-dfres$SumSQRels <- rowSums(dfres[,rels]^2)
-dfres$SQTRels <- sqrt(dfres$SumSQRels)
-dfres$DiffRel <- dfres$SQTRels - apply(dfres[,rels],1,max)
+#Merge the data and the measures data frames into a single df, to export it. 
+combinedDf <- merge(sentenceDf,measuresDf,by=0)
 
 wb.new <- loadWorkbook(outputfile, create = TRUE)
+
 createSheet(wb.new, name = "pivot-sentence")
-writeWorksheet(wb.new,data=dfres,sheet=1,startRow=1,startCol=1,rownames='UID')
+writeWorksheet(wb.new,data=combinedDf,sheet=1,startRow=1,startCol=1,rownames=NULL)
 
-field = 'worker_id'
-pField = 'relation'
-d <- colselect(data,field,pField)
-res <- simplify(d,pField)
 
-#Replace the names of the columns by its abbreviated key. 
-colnames(res) <- unlist(lapply(colnames(res),abcol))
+workerTable <- pivot(raw_data,'worker_id','relation')
+workerDf <- as.data.frame(rbind(sentenceTable))
+workerDf <- labeldf(workerDf)
+
+wmeasuresDf <- calc_measures(workerDf,list('RelCount'))
+combinedWorkersDf <- merge(workerDf,wmeasuresDf,by=0)
 
 createSheet(wb.new, name = "pivot-worker")
-writeWorksheet(wb.new,data=rbind(res),sheet=2,startRow=1,startCol=1,rownames='WID')
+writeWorksheet(wb.new,data=combinedWorkersDf,sheet=2,startRow=1,startCol=1,rownames=NULL)
+
 saveWorkbook(wb.new)

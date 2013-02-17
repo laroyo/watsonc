@@ -1,80 +1,55 @@
 #!/usr/bin/Rscript
 
+#Parse a results Excel file (raw data), and generates contingency tables for relations/workers and sentences as an output.
+
 library(XLConnect)
-#data <- readWorksheet(loadWorkbook("smetrics.xlsx"),sheet=1)
+source('simplify.R')
+source('measures.R')
 
 args <- commandArgs(trailingOnly = TRUE)
 
 if(length(args) == 0){
   ## Default options
   inputfile <- "90-sents-WebSci13-all-batches-with-manual-annotations.xlsx"
-  outputfile  <- "output.xlsx"
+  outputfile  <- "output-excel.xlsx"
 } else {
   inputfile <- args[1]
   outputfile  <- args[2]
 }
 
-
-
-data <- readWorksheet(loadWorkbook(inputfile),sheet=1)
+raw_data <- readWorksheet(loadWorkbook(inputfile),sheet=1)
 
 #For excel spreadsheets, discard empty columns
-nullCols <- colSums(is.na(data))
-data = data[,nullCols!=dim(data)[1]]
+nullCols <- colSums(is.na(raw_data))
+raw_data = raw_data[,nullCols!=dim(raw_data)[1]]
 
-names(data)[names(data)=="STEP1..Chosen.relation"] <- "relation"
-names(data)[names(data)=="STEP2A..Words.from.the.sentence"] <- "selected_words"
-names(data)[names(data)=="STEP2B..Explain.why"] <- "explanation"
+names(raw_data)[names(raw_data)=="STEP1..Chosen.relation"] <- "relation"
+names(raw_data)[names(raw_data)=="STEP2A..Words.from.the.sentence"] <- "selected_words"
+names(raw_data)[names(raw_data)=="STEP2B..Explain.why"] <- "explanation"
 
-field = 'UID'
-pField = 'relation'
+sentenceTable <- pivot(raw_data,'UID','relation')
+#Transform the contingency table into a data frame. 
+sentenceDf <- getDf(sentenceTable)
 
-source('simplify.R')
+measuresDf <- calc_measures(sentenceDf,list('SumSQ','SQRT','Difference','NormSQRT','SumSQRel','SQRTRel','DiffRel'))
 
-d <- colselect(data,field,pField)
-res <- simplify(d,pField)
-#Replace the names of the columns by its abbreviated key. 
-colnames(res) <- unlist(lapply(colnames(res),abcol))
-dfres <- as.data.frame(rbind(res))
 
-rels <- c('D','S','CA','M','L','AW','P','SE','IA','PO','T','CI')
-othernone <- c('NONE')
-#othernone <- c('OTHER','NONE')
-all <- c(rels,othernone)
-
-dfres$SumSQ <- rowSums(dfres[,all]^2)
-dfres$SQRT <- sqrt(dfres$SumSQ)
-dfres$Difference <- dfres$SQRT - apply(dfres[,all],1,max)
-dfres$NormalizedSQRT <- dfres$SQRT/ rowSums(dfres[,all])
-dfres$SumSQRels <- rowSums(dfres[,rels]^2)
-dfres$SQTRels <- sqrt(dfres$SumSQRels)
-dfres$DiffRel <- dfres$SQTRels - apply(dfres[,rels],1,max)
-
+#Merge the data and the measures data frames into a single df, to export it. 
+combinedDf <- merge(sentenceDf,measuresDf,by=0)
 
 wb.new <- loadWorkbook(outputfile, create = TRUE)
 createSheet(wb.new, name = "pivot-sentence")
-writeWorksheet(wb.new,data=dfres,sheet=1,startRow=1,startCol=1,rownames='UID')
+writeWorksheet(wb.new,data=combinedDf,sheet=1,startRow=1,startCol=1,rownames=NULL)
 
-field = 'WID'
-pField = 'relation'
-d <- colselect(data,field,pField)
-res <- simplify(d,pField)
 
-rels <- c('D','S','CA','M','L','AW','P','SE','IA','PO','T','CI')
-othernone <- c('NONE')
-#othernone <- c('OTHER','NONE')
-all <- c(rels,othernone)
+workerTable <- pivot(raw_data,'WID','relation')
+workerDf <- getDf(workerTable)
 
-dfres$SumSQ <- rowSums(dfres[,all]^2)
-dfres$SQRT <- sqrt(dfres$SumSQ)
-dfres$Difference <- dfres$SQRT - apply(dfres[,all],1,max)
-dfres$NormalizedSQRT <- dfres$SQRT/ rowSums(dfres[,all])
-dfres$SumSQRels <- rowSums(dfres[,rels]^2)
-dfres$SQTRels <- sqrt(dfres$SumSQRels)
-dfres$DiffRel <- dfres$SQTRels - apply(dfres[,rels],1,max)
+wmeasuresDf <- calc_measures(workerDf,list('RelCount'))
+combinedWorkersDf <- merge(workerDf,wmeasuresDf,by=0)
 
 createSheet(wb.new, name = "pivot-worker")
-writeWorksheet(wb.new,data=rbind(res),sheet=2,startRow=1,startCol=1,rownames='WID')
+writeWorksheet(wb.new,data=combinedWorkersDf,sheet=2,startRow=1,startCol=1,rownames=NULL)
 saveWorkbook(wb.new)
 
 

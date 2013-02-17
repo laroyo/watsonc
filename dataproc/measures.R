@@ -7,45 +7,48 @@ calc_measures <- function(dframe,measures,add=FALSE){
   if(add){
     return(dframe)
   } else{
-    return (dframe[,unlist(measures)])
+    return (dframe[,unlist(measures),drop=FALSE])
   }
 }
 
-
-rels <- c('D','S','CA','M','L','AW','P','SE','IA','PO','T','CI')
-#othernone <- c('NONE')
-othernone <- c('OTH','NONE')
-all <- c(rels,othernone)
+RelCount <- function(dframe){
+  return(rowSums(dframe[,all]))
+}
 
 SumSQ <- function(dframe){
-  return(rowSums(dframe^2))
+    return(rowSums(dframe[,all]^2))
 }
 
+SumSQRel <- function(dframe){
+    return(rowSums(dframe[,rels]^2))
+}
 
 SQRT <- function(dframe){
-  return(sqrt(rowSums(dframe^2)))
+  return(sqrt(rowSums(dframe[,all]^2)))
 }
 
+SQRTRel <- function(dframe){
+  return(sqrt(rowSums(dframe[,rels]^2)))
+}
+
+#Difference between the SQRT and the max element of the row.
 Difference <- function(dframe){
-  return(sqrt(rowSums(dframe^2)) - apply(dframe,1,max))
+  return(sqrt(rowSums(dframe[,all]^2)) - apply(dframe[,all],1,max))
+}
+
+DiffRel <- function(dframe){
+  return(sqrt(rowSums(dframe[,rels]^2)) - apply(dframe[,rels],1,max))
 }
 
 NormSQRT <- function(dframe){
-  rels <- c('c','s','l','d','p','t','m','aw','po','ia','se','ci')
-  all <- c(rels,c('oth','none'))
   return(sqrt(rowSums(dframe[,all]^2)) / rowSums(dframe[,all]))
 }
 
 NormR <- function(dframe){
-  #FIXME: rewrite to avoid using the list of relations as a fixed constant
-  rels <- c('c','s','l','d','p','t','m','aw','po','ia','se','ci')
-  return(sqrt(rowSums(dframe[,rels]^2)) / rowSums(dframe[,rels]))  
+    return(sqrt(rowSums(dframe[,rels]^2)) / rowSums(dframe[,rels]))
 }
 
-NormAllR <- function(dframe){
-  #FIXME: rewrite to avoid using the list of relations as a fixed constant
-  rels <- c('c','s','l','d','p','t','m','aw','po','ia','se','ci')
-  all <- c(rels,c('oth','none'))
+NormRAll <- function(dframe){
   return(sqrt(rowSums(dframe[,rels]^2)) / rowSums(dframe[,all]))    
 }
 
