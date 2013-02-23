@@ -39,7 +39,7 @@ function extractChoice($input) {
 /* see the channels that are used */
 $channels_query = "curl  \"https://api.crowdflower.com/v1/jobs/$job_id/channels?key=$api_key\"";
 $result = exec($channels_query);
-//print_r($result);
+print_r($result);
 // enabled_channels":["amt","crowdguru","mob"] 
 
 
