@@ -47,7 +47,7 @@ labeldf <- function(dframe){
      #add missing (empty) columns
     for (col in all[!(all %in% names(dframe))]){
       dframe[[col]] <- c(0)
-      print(paste('Warn: column ',col,' not found, will be considered empty. Dataset may be incomplete'))
+      #print(paste('Warn: column ',col,' not found, will be considered empty. Dataset may be incomplete'))
     }
   }
   #Order the columns (OTH and NONE at the end)
@@ -71,44 +71,65 @@ abcol <- function(key){
   }
 }
 
-simplify <- function(data,mField) {
-  
-  allOptions <- unique(data[[mField]])
+simplify <- function(data,field,mField) {
 
+  allOptions <- unique(data[[mField]])
+    
   mulOptions <- grep("\n",allOptions)
   simpOptions <- setdiff(c(1:length(unique(data[[mField]]))),mulOptions)
 
-  #df with the values for simpleOptions
-  sr <- table(data)[,allOptions[simpOptions]]
 
   #df with the values for multOptions
-  #To be decomposed and the sum to sr. 
+  #To be decomposed and the sum to sr.
   mr <- data[data[[mField]] %in% allOptions[mulOptions],]
 
   #Express the mr dframe as a contingency table.
-
-  mult <- as.table(matrix(0,length(rownames(sr)),length(colnames(sr))))
-  rownames(mult) <- rownames(sr)
-  colnames(mult) <- colnames(sr)
-
-  
+ 
   mrdf <- as.data.frame(table(mr))
   mrdf <- mrdf[mrdf$Freq > 0,]
 
-  rels <- unique(mrdf$relation)
+  mulrels <- unique(mrdf$relation)
 
-  splitlabels <- strsplit(as.character(rels),'\n')
-    
-  for (i in 1:length(rels)){
-    rowset <- mrdf[mrdf$relation==rels[i],]
-    for(j in 1:dim(rowset)[1]){
-      row = rowset[j,];
+  splitlabels <- strsplit(as.character(mulrels),'\n')
+
+  srels <- unique(union(allOptions[simpOptions],unlist(splitlabels)))
+
+  #df with the values for simpleOptions
+  sr <- table(data)[,srels,drop=FALSE]
+
+  mm <- matrix(0,length(rownames(sr)),length(srels))
+  mult <- as.table(mm)
+  rownames(mult) <- rownames(sr)
+  colnames(mult) <- srels
+  
+  #rels <- unique(merge(unlist(splitlabels))
+  if(length(mulrels) > 0){
+    for (i in 1:length(mulrels)){
+      
+      rowset <- mrdf[mrdf$relation==mulrels[i],]
+      for(j in 1:dim(rowset)[1]){
+
+        row = rowset[j,];
         
-      for(l in splitlabels[i][[1]]){
-        mult[as.character(row$unit_id),l] <- mult[as.character(row$unit_id),l] + row$Freq;          
+        for(l in splitlabels[i][[1]]){
+          tryCatch({
+            mult[as.character(row[[field]]),l] <- mult[as.character(row[[field]]),l] + row$Freq
+          }, error = function(e){
+            print('error aquí')          
+            ## print(row[[field]])
+            ## print(l)
+            ## print(colnames(mult))
+            ##res <- mult[as.character(row[[field]]),l]
+            ##print(rownames(mult))
+            ##print(res)
+            ## print(row)
+            ## print(l)
+          });           
+        }
       }
     }
   }
+  #print(mult)
   return (sr + mult)
 }
 
@@ -116,7 +137,46 @@ simplify <- function(data,mField) {
 #pfield: pivot field (worker_id, unit_id).
 #field: the other field in the contingency table (for the moment, only 'relation')
 pivot <-function(data,pfield,field){
-  data <- colselect(raw_data,pfield,field)
-  return(simplify(data,field))
+  data <- colselect(data,pfield,field)
+  return(simplify(data,pfield,field))
 }
+
+
+getSentenceVector <- function(raw_data,unit_id,worker_id=NULL){
+  if(is.null(worker_id)){
+    annotations <- raw_data[raw_data$unit_id == unit_id,]
+  } else {
+    annotations <- raw_data[raw_data$worker_id == worker_id & raw_data$unit_id == unit_id,]
+  }
+
+  sentTable <- pivot(annotations,'unit_id','relation')
+  return(getDf(sentTable))      
+}
+
+#Matrix (dataframe) with the annotations of a worker
+getSentenceMatrix <- function(raw_data,worker_id){
+  annotations <- raw_data[raw_data$worker_id == worker_id,]
+  sentTable <- pivot(annotations,'unit_id','relation')
+  return(getDf(sentTable))      
+}
+
+#Vector with the annotators of a sentences
+getAnnotators <- function(data,unit_id){
+  return(raw_data[raw_data$unit_id == unit_id,]$worker_id)
+}
+
+sentMat <- function(raw_data, coworkers) {
+  sentMat <- list()
+  for (worker_id in coworkers){
+    sentMat[[as.character(worker_id)]] <- getSentenceMatrix(raw_data, 216)
+  }
+}
+
+
+
+## for (worker_id in annotators){
+##   sv <- getSentenceVector(raw_data,unit_id,worker_id);
+##   print(worker_id)
+##   print(sv)  
+## }
 

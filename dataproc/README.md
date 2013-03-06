@@ -27,10 +27,19 @@ To identify possible spammers, a set of metrics (average agreement, annotations/
 
 ## Overview
 
+* Pre-requisites: 
+  * R environment installed (How to install it: Linux apt-get or package manager of your choice, Windows: [See here](http://cran.r-project.org/bin/windows/base/)). 
+  * Install the XLConnect library for R (wrapper for R/W operations in Excel files). 
+    * To install it: open R shell and type install.packages('XLConnect')     
+    * On certain environments it might be necessary to update the XLConnectJars library to a newer version. To do so, type install.packages('XLConnectJars')             
+  * Install the lsa library for R (Weka library for working with vectors (cosine) ). 
+    * Possible dependencies: RWeka
+
 * Library files: 
-  * [simplify.R](https://github.com/laroyo/watsonc/blob/master/dataproc/simplify.R) : preprocess raw data and create analysis structures. Also contains environmental variables. 
-  * [measures.R](https://github.com/laroyo/watsonc/blob/master/dataproc/measures.R) : functions for calculating pre-difined measures over the data. 
-  * [filters.R](https://github.com/laroyo/watsonc/blob/master/dataproc/filters.R) : functions to filter and discard items based on certain criteria/values. 
+  * [simplify.R](https://github.com/laroyo/watsonc/blob/master/dataproc/lib/simplify.R) : preprocess raw data and create analysis structures. Also contains environmental variables. 
+  * [measures.R](https://github.com/laroyo/watsonc/blob/master/dataproc/lib/measures.R) : functions for calculating pre-difined measures over the data. 
+  * [filters.R](https://github.com/laroyo/watsonc/blob/master/dataproc/lib/filters.R) : functions to filter and discard items based on certain criteria/values. 
+  * [output.R](https://github.com/laroyo/watsonc/blob/master/dataproc/lib/output.R) : auxiliary functions to generate output files (only excel, so far)
 
 * Examples: 
   *  [cflower.R](https://github.com/laroyo/watsonc/blob/master/dataproc/cflower.R):  read a result file from Crowdflower (containing the results of a job on CSV file), and generate contingency tables for (sentence,relation) and (workers,relation). See [Example 1](https://github.com/laroyo/watsonc/wiki/Example-1:-Transform-raw-data-and-apply-basic-measures)

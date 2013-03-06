@@ -3,14 +3,14 @@
 #Parse a results file from Crowdflower, and generates contingency tables for relations/workers and sentences as an output. 
 
 library(XLConnect)
-source('simplify.R')
-source('measures.R')
+source('lib/simplify.R')
+source('lib/measures.R')
 
 args <- commandArgs(trailingOnly = TRUE)
 
 #The script acepts parameters. If none passed, the following will be used as an examaple. 
 if(length(args) == 0){
-  inputfile <- "results.csv"
+  inputfile <- 'example_data/rf145547.csv'
   outputfile  <- "output-results-cflower.xlsx"
 } else {
   inputfile <- args[1]
@@ -25,10 +25,7 @@ names(raw_data)[names(raw_data)=="step_2a_copy__paste_only_the_words_from_the_se
 names(raw_data)[names(raw_data)=="step_2b_if_you_selected_none_in_step_1_explain_why"] <- "explanation"
 
 sentenceTable <- pivot(raw_data,'unit_id','relation')
-
-sentenceDf <- as.data.frame(rbind(sentenceTable))
-#Label the columns (abbr. version and missing columns)
-sentenceDf <- labeldf(sentenceDf)
+sentenceDf <- getDf(sentenceTable)
 
 measuresDf <- calc_measures(sentenceDf,list('SumSQ','SQRT','Difference','NormSQRT','SumSQRel','SQRTRel','DiffRel'))
 
