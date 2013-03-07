@@ -1,9 +1,9 @@
 ## Read file 90-sents-all-batches-GS-sentsv3.csv and applies the filters. 
 ## The filter output is the same as 90-sents-all-batches-CS-sentsv3.csv (Dropbox/data/CF-Results-processed/)
 
-source('measures.R')
-source('filters.R')
-source('simplify.R')
+source('lib/measures.R')
+source('lib/filters.R')
+source('lib/simplify.R')
 
 raw_data <- read.csv('90-sents-all-batches-GS-sentsv3.csv',header=TRUE)
 
@@ -53,7 +53,7 @@ mdf[rownames(discDf),]
 # Access the results for a COMBINATION of filters
 ###################################################
 
-# Similar to the previous one, but combining the rows of discarded elements for the differente filters.
+# Similar to the previous one, but combining the rows of discarded elements for the different filters.
 
 disc <- union(discarded[['NormSQRT']],discarded[['NormRAll']])
 
@@ -61,7 +61,7 @@ disc <- union(discarded[['NormSQRT']],discarded[['NormRAll']])
 drows <- df[disc,]
 
 #Select the filtered rows. 
-frows <- df[!(rowname(df) %in% disc),]
+frows <- df[!(rownames(df) %in% disc),]
 
 ###################################################
 # Access the result for ALL filters
@@ -74,7 +74,7 @@ disc <- unique(as.vector(unlist(discarded)))
 drows <- df[disc,]
 
 #Select the filtered rows. 
-frows <- df[!(rowname(df) %in% disc),]
+frows <- df[!(rownames(df) %in% disc),]
 
 
 
