@@ -1,0 +1,1 @@
+This folder contains GUI which combines exsiting components.
