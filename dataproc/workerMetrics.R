@@ -35,6 +35,8 @@ sentenceDf <- getDf(sentenceTable)
 
 #Calculate the measures to apply the filters.
 filters <- list('SQRT','NormSQRT')
+
+#Calculate the measures to apply the filters.filters <- list('SQRT','NormSQRT')
 mdf <- calc_measures(sentenceDf,filters)
 
 discarded <- list()
@@ -56,6 +58,7 @@ discarded[['NULL']] <- NULL
 worker_ids <- unique(raw_data$worker_id)
 
 out <- NULL
+spamCandidates <- list()
 
 for (f in filters){
   print(paste('computing metrics for filter ',f))
@@ -82,13 +85,49 @@ for (f in filters){
   filtrows <- data.frame(row.names=missingworkers,numSents=emptyCol,cos=emptyCol,agr=emptyCol,annotSentence=emptyCol)
   df <- rbind(df, filtrows)
   df <- df[order(as.numeric(row.names(df))),]
-    
+
+  #Empty dataframe
+  spamFilters <- data.frame(row.names=worker_ids,cos=rep(0,length(worker_ids)),annotSentence=rep(0,length(worker_ids)),agr=rep(0,length(worker_ids)))
+
+  candidateRows <- belowDiff(df,'cos')
+   if(length(candidateRows) > 0){
+     spamFilters[rownames(spamFilters) %in% candidateRows,]$cos = 1
+   }
+
+  candidateRows <- belowDiff(df,'annotSentence')
+  if(length(candidateRows) > 0){
+    spamFilters[rownames(spamFilters) %in% candidateRows,]$annotSentence = 1
+  }
+
+  candidateRows <- overDiff(df,'agr')
+  if(length(candidateRows) > 0){
+    spamFilters[rownames(spamFilters) %in% candidateRows,]$agr = 1
+  }
+
+  spamCandidates[[f]] <- spamFilters
+
+  #Calculate the singletones: workers that have labeled only 1 or 2 sentences.
+  if(f == 'NULL'){  
+    singletones <- belowFactor(df,'numSents',3)
+  }
+  
   if(is.null(out)){
     out <- df
   } else {
     out <- cbind(out, df)
   }
 }
+
+spamFilterOutput <- data.frame(row.names=worker_ids,
+                               filter1=rowSums(spamCandidates[['NULL']]),
+                               filter2=rowSums(spamCandidates[['SQRT']]),
+                               filter3=rowSums(spamCandidates[['NormSQRT']])
+                               )
+
+sf <- as.data.frame(rowSums(spamFilterOutput > 0) > 1)
+colnames(sf) = 'label'
+spamLabels <- rownames(sf[sf$label==TRUE,,drop=FALSE])
+
 
 wb.new <- loadWorkbook(outputfile, create = TRUE)
 
@@ -98,18 +137,29 @@ writeOutputHeaders(wb.new,"pivot-worker")
 
 writeWorksheet(wb.new,data=out,sheet=1,startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
 
-createSheet(wb.new, name = "filtered-out")
-writeFilteredOutHeaders(wb.new,"filtered-out")
+createSheet(wb.new, name = "singleton-workers-removed")
+
+writeOutputHeaders(wb.new,"singleton-workers-removed")
+writeWorksheet(wb.new,data=out[rownames(out) %in% setdiff(rownames(out),singletones),],sheet="singleton-workers-removed",startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
+
+createSheet(wb.new, name = "filtered-out-sentences")
+writeFilteredOutHeaders(wb.new,"filtered-out-sentences")
 
 currentCol <- 1
 for (f in filters){
   if(f != 'NULL'){
-    writeWorksheet(wb.new,data=discarded[[f]],sheet='filtered-out',startRow=2,startCol=currentCol,header=FALSE)
+    writeWorksheet(wb.new,data=discarded[[f]],sheet='filtered-out-sentences',startRow=2,startCol=currentCol,header=FALSE)
     currentCol <- currentCol + 2
   }
 }
 
 saveWorkbook(wb.new)
+
+
+cat(format(length(discarded[[f]])))
+cat(' $$ ')
+cat(spamLabels)
+
 
 
 
