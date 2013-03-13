@@ -1,0 +1,44 @@
+.columnline {
+	color : red;
+}
+
+.rowline {
+	color : white;
+}
+
+.labelfield {
+	padding-left: 20px;
+	float: left;
+	width: 400px;
+}
+
+.inputfield {
+	
+
+}
+
+.textboxInput{
+	margin: 2px;
+	width: 375px;
+}
+
+.commentboxInput{
+	margin: 2px; 
+	width: 375px; 
+	height: 84px;
+}
+
+.borderframe {
+	border:2px double white;
+	padding: 10px;
+}
+
+a[href].tdlinks {
+	color: red;
+	font: bold;	
+	}
+	
+textarea:focus, input:focus
+{
+background-color: #cbdfeb;   // #97bfd9
+}

@@ -1,0 +1,23 @@
+.columnline {
+	color : red;
+}
+
+.rowline {
+	color : white;
+}
+
+.labelfield {
+	padding-left: 20px;
+	float: left;
+	width: 400px;
+}
+
+.inputfield {
+	width: 100px;
+	float: left;
+}
+
+.borderframe {
+	border:2px double white;
+	padding: 10px;
+}

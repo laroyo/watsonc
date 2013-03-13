@@ -1,0 +1,14 @@
+
+- Filter_data.R 
+  - Is a very basic example of filters application, but, for the moment, it's useful only to work on R shell
+    - Modified it so it can be used as an script, creating an Excel spreadsheet as the output. 
+    - Implement a way to store discarded rows as a "collateral output". 
+  - The filter usage can be simplified a lot, it should be more concise. 
+
+- Use the filters to build the workers/sentence matrix (as in 90-sents-WebSci13-3metrics-workersv8.xls)
+- Add metrics (Cos, avg agreement,annot/sent) to the workers/sentence matrix. 
+
+***
+* Prioritary: 
+* DOCUMENT the process, explain it, give overview. 
+***

@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;hui/css/blgmain.css&apos; to &apos;huimain.css&apos;" description="Rename resource &apos;blgmain.css&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="css/blgmain.css" name="huimain.css" stamp="1362068024453" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;hui/js/blgmain.js&apos; to &apos;huimain.js&apos;" description="Rename resource &apos;blgmain.js&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="js/blgmain.js" name="huimain.js" stamp="1362068033031" updateReferences="true"/>
+</session>
