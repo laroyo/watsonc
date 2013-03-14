@@ -1,0 +1,1 @@
+watsoncs.sql needs to import to USBWebserver 8.5 phpMyAdmin in order to run PHP scripts
