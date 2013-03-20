@@ -2,7 +2,16 @@
 
 include('dataproc.inc');
 
-$dp  = new DataProc(); 
+if(isset($argv[1])){
+  $job_id = $argv[1];  
+}
+
+if(isset($job_id)){
+  print("processing data for job: $job_id\n"); 
+} 
+
+
+$dp  = new DataProc($job_id); 
 
 print('Number of filteredJudgments: ' . $dp->getFilteredJudgements() . "\n");
 
