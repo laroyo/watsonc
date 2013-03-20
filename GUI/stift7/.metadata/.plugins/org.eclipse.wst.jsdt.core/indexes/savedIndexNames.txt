@@ -1,5 +1,0 @@
-INDEX VERSION 1.122+C:\Users\IBM_ADMIN\Desktop\IBM\stift7\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
-2939679671.index
-3182637346.index
-3695247563.index
-3462426585.index
