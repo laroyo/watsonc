@@ -20,7 +20,7 @@ class DataProc {
     $userinfo = posix_getpwuid($user);
 
     //FIXME: define directory structure for storing data of experiments. 
-    $res = exec('Rscript workerMetrics.R '. $job_id . ' ' . $userinfo['dir'] . '/results.csv '. $userinfo['dir'] . '/workerMetrics.xlsx'); 
+    $res = exec('Rscript workerMetrics.R '. $job_id . ' ' . $userinfo['dir'] . '/file_results.csv /home/crowd-watson/www/data/'); 
     $output = explode('$$',$res);    
 
     $this->filteredJudgements = (int)trim($output[0]); 

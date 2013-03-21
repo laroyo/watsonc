@@ -15,13 +15,13 @@ args <- commandArgs(trailingOnly = TRUE)
 
 #The script acepts parameters. If none passed, the following will be used as an examaple. 
 if(length(args) == 0){
-  job_id <- 1234
-  inputfile <- "example_data/rf145547.csv"
-  outputfile  <- "workerMetrics.xlsx"
+  job_id <- 178569
+  inputfile <- "/var/www/file_results.csv"
+  outputdirectory  <- "./"
 } else {
   job_id <- args[1]
   inputfile <- args[2]
-  outputfile  <- args[3]
+  outputdirectory  <- args[3]
 }
 
 raw_data <- read.csv(inputfile)
@@ -131,7 +131,7 @@ colnames(sf) = 'label'
 spamLabels <- rownames(sf[sf$label==TRUE,,drop=FALSE])
 
 
-wb.new <- loadWorkbook(outputfile, create = TRUE)
+wb.new <- loadWorkbook(paste(outputdirectory,job_id,'workerMetrics.xlsx'), create = TRUE)
 
 createSheet(wb.new, name = "pivot-worker")
 writeOutputHeaders(wb.new,"pivot-worker")
@@ -151,7 +151,7 @@ for (f in filters){
   if(f != 'NULL'){
     writeWorksheet(wb.new,data=discarded[[f]],sheet='filtered-out-sentences',startRow=2,startCol=currentCol,header=FALSE)
     currentCol <- currentCol + 2
-    write.csv(discarded[[f]], paste('/home/crowd-watson/data/',job_id,'filtered-out-sentences',f,'.csv',sep="_"),row.names=FALSE)                            
+    write.csv(discarded[[f]], paste(outputdirectory,paste(job_id,'filtered-out-sentences',f,'.csv',sep="_"),sep=""),row.names=FALSE)           
   }
 }
 
