@@ -134,9 +134,6 @@ workerCosine <- function(worker_id, dframe){
   
     restVector <- (sentVector - workerSV)
 
-    ## theta <- acos( sum(workerSV*restVector) / ( sqrt(sum(workerSV * workerSV)) * sqrt(sum(restVector * restVector)) ) )
-    
-    ## sumCos <- sumCos + cos(theta)
     sumCos <- sumCos + cosine( as.vector(t(restVector)), as.vector(t(workerSV)))
   }
 

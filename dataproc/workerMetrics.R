@@ -36,7 +36,7 @@ sentenceTable <- pivot(raw_data,'unit_id','relation')
 sentenceDf <- getDf(sentenceTable)
 
 #Calculate the measures to apply the filters.
-filters <- list('SQRT','NormSQRT')
+filters <- list('SQRT','NormSQRT','NormR')
 
 #Calculate the measures to apply the filters.filters <- list('SQRT','NormSQRT')
 mdf <- calc_measures(sentenceDf,filters)
@@ -57,7 +57,15 @@ filtered[['NULL']] <- rownames(sentenceDf)
 discarded[['NULL']] <- NULL
 
 
-worker_ids <- unique(raw_data$worker_id)
+worker_ids <- sort(unique(raw_data$worker_id))
+
+numSent <- numSentences(raw_data)
+
+#Singletons: workers with less than 3 judgments (not sufficient to classify them as spammers). 
+singletons <- belowFactor(data.frame(row.names = worker_ids, numSents=numSent), 'numSents',3)
+
+#Remove singletons
+raw_data <- raw_data[!(raw_data$worker_id %in% singletons),]
 
 out <- NULL
 spamCandidates <- list()
@@ -67,7 +75,7 @@ for (f in filters){
   
   filt <- raw_data[raw_data$unit_id %in% filtered[[f]],]
 
-  filtWorkers <- unique(filt$worker_id)
+  filtWorkers <- sort(unique(filt$worker_id))
   
   numSent <- numSentences(filt)
   numAnnot <- numAnnotations(filt)
@@ -81,37 +89,32 @@ for (f in filters){
 
 
   # Add empty values for filtered out workers
-  missingworkers <- setdiff(worker_ids,filtWorkers)
-  emptyCol <-  rep(0,length(missingworkers))
+  ## missingworkers <- setdiff(worker_ids,filtWorkers)
+  ## emptyCol <-  rep(0,length(missingworkers))
   
-  filtrows <- data.frame(row.names=missingworkers,numSents=emptyCol,cos=emptyCol,agr=emptyCol,annotSentence=emptyCol)
-  df <- rbind(df, filtrows)
-  df <- df[order(as.numeric(row.names(df))),]
+  ## filtrows <- data.frame(row.names=missingworkers,numSents=emptyCol,cos=emptyCol,agr=emptyCol,annotSentence=emptyCol)
+  ## df <- rbind(df, filtrows)
+  ## df <- df[order(as.numeric(row.names(df))),]
 
   #Empty dataframe
   spamFilters <- data.frame(row.names=worker_ids,cos=rep(0,length(worker_ids)),annotSentence=rep(0,length(worker_ids)),agr=rep(0,length(worker_ids)))
 
-  candidateRows <- belowDiff(df,'cos')
+  candidateRows <- overDiff(df,'cos')
    if(length(candidateRows) > 0){
      spamFilters[rownames(spamFilters) %in% candidateRows,]$cos = 1
    }
 
-  candidateRows <- belowDiff(df,'annotSentence')
+  candidateRows <- overDiff(df,'annotSentence')
   if(length(candidateRows) > 0){
     spamFilters[rownames(spamFilters) %in% candidateRows,]$annotSentence = 1
   }
 
-  candidateRows <- overDiff(df,'agr')
+  candidateRows <- belowDiff(df,'agr')
   if(length(candidateRows) > 0){
     spamFilters[rownames(spamFilters) %in% candidateRows,]$agr = 1
   }
 
   spamCandidates[[f]] <- spamFilters
-
-  #Calculate the singletones: workers that have labeled only 1 or 2 sentences.
-  if(f == 'NULL'){  
-    singletones <- belowFactor(df,'numSents',3)
-  }
   
   if(is.null(out)){
     out <- df
@@ -131,17 +134,18 @@ colnames(sf) = 'label'
 spamLabels <- rownames(sf[sf$label==TRUE,,drop=FALSE])
 
 
-wb.new <- loadWorkbook(paste(outputdirectory,job_id,'workerMetrics.xlsx'), create = TRUE)
-
-createSheet(wb.new, name = "pivot-worker")
-writeOutputHeaders(wb.new,"pivot-worker")
-
-writeWorksheet(wb.new,data=out,sheet=1,startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
+wb.new <- loadWorkbook(paste(outputdirectory,job_id,'workerMetrics.xlsx',sep=""), create = TRUE)
 
 createSheet(wb.new, name = "singleton-workers-removed")
-
 writeOutputHeaders(wb.new,"singleton-workers-removed")
-writeWorksheet(wb.new,data=out[rownames(out) %in% setdiff(rownames(out),singletones),],sheet="singleton-workers-removed",startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
+
+
+writeWorksheet(wb.new,data=cbind(out,spamFilterOutput[rownames(out),],spam=sf[rownames(out),]),sheet=1,startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
+
+## createSheet(wb.new, name = "singleton-workers-removed")
+
+## writeOutputHeaders(wb.new,"singleton-workers-removed")
+## writeWorksheet(wb.new,data=out[rownames(out) %in% setdiff(rownames(out),singletones),],sheet="singleton-workers-removed",startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
 
 createSheet(wb.new, name = "filtered-out-sentences")
 writeFilteredOutHeaders(wb.new,"filtered-out-sentences")
@@ -154,6 +158,9 @@ for (f in filters){
     write.csv(discarded[[f]], paste(outputdirectory,paste(job_id,'filtered-out-sentences',f,'.csv',sep="_"),sep=""),row.names=FALSE)           
   }
 }
+
+createSheet(wb.new, name = "spammer-labels")
+writeWorksheet(wb.new,data=spamLabels,sheet='spammer-labels',startRow=1,startCol=1,header=FALSE)
 
 saveWorkbook(wb.new)
 
