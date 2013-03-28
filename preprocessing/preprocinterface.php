@@ -48,7 +48,7 @@ function checkForFilters3() {
 </head>
 <body>
 
-<form enctype="multipart/form-data" action="indexpreprocessing.php" method="POST" id="form" name="form">
+<form enctype="multipart/form-data" action="/wcs/preprocessing/indexpreprocessing.php" method="POST" id="form" name="form">
 	Choose the text files for processing: <input type="file" multiple name="uploadedfile[]" webkitdirectory="" id="uploadedfile" /> <br /><br />
 	Choose the filters that should be applied on the uploaded data: <br />
 	

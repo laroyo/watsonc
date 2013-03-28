@@ -1,4 +1,7 @@
 <?php
+include_once '../includes/dbinfo.php';
+include_once '../includes/functions.php';
+$jardir = "/var/www/html/wcs/preprocessing/";
 
 function moveFiles($source, $destination) {
 	if ($handle = opendir($source)) {
@@ -10,7 +13,7 @@ function moveFiles($source, $destination) {
     		closedir($handle);
 	}
 }
-
+//error_log("OK1");
 if($_FILES['uploadedfile']) {  
 	foreach($_FILES['uploadedfile']['name'] as $key => $info) {  
 		$uploads[$key]->name=$_FILES['uploadedfile']['name'][$key];  
@@ -20,46 +23,47 @@ if($_FILES['uploadedfile']) {
 	}
 }  
 
-
-if (!is_dir('/tmp/PreProcessing/TextFiles')) {
-    	if (!mkdir('/tmp/PreProcessing/TextFiles', 0777, true)) {
+//error_log("OK2");
+if (!is_dir($filesdir.'TextFiles')) {
+    	if (!mkdir($filesdir.'TextFiles', 0777, true)) {
+		 die('Failed to create folder...');
+	}
+} 
+//error_log("OK3");
+if (!is_dir($filesdir.'CSVFiles')) {
+    	if (!mkdir($filesdir.'CSVFiles', 0777, true)) {
 		 die('Failed to create folder...');
 	}
 } 
 
-if (!is_dir('/tmp/PreProcessing/CSVFiles')) {
-    	if (!mkdir('/tmp/PreProcessing/CSVFiles', 0777, true)) {
+if (!is_dir($filesdir.'AppliedFilters')) {
+    	if (!mkdir($filesdir.'AppliedFilters', 0777, true)) {
 		 die('Failed to create folder...');
 	}
 } 
 
-if (!is_dir('/tmp/PreProcessing/AppliedFilters')) {
-    	if (!mkdir('/tmp/PreProcessing/AppliedFilters', 0777, true)) {
-		 die('Failed to create folder...');
-	}
-} 
-
-if (!is_dir('/tmp/PreProcessing/Filters')) {
-    	if (!mkdir('/tmp/PreProcessing/Filters', 0777, true)) {
+if (!is_dir($filesdir.'Filters')) {
+    	if (!mkdir($filesdir.'Filters', 0777, true)) {
 		 die('Failed to create folder...');
 	}
 }
 
-if (!is_dir('/tmp/PreProcessing/Experiments')) {
-    	if (!mkdir('/tmp/PreProcessing/Experiments', 0777, true)) {
+if (!is_dir($filesdir.'Experiments')) {
+    	if (!mkdir($filesdir.'Experiments', 0777, true)) {
 		 die('Failed to create folder...');
 	}
 } 
-
-$directoriesTextFiles = glob('/tmp/PreProcessing/TextFiles/*' , GLOB_ONLYDIR);
+//error_log("OK4");
+$directoriesTextFiles = glob($filesdir.'TextFiles/*' , GLOB_ONLYDIR);
 $noFiles = 0;
 $textFilesAddr = "";
-print_r($directoriesTextFiles);
+//print_r($directoriesTextFiles);
 foreach ($directoriesTextFiles as $key => $value) {
 	foreach($_FILES['uploadedfile']['name'] as $file => $info) {
 		if (file_exists($value."/".$_FILES['uploadedfile']['name'][$file])) {
 			$noFiles ++;
 		}
+//		error_log("OK5");
 	}
 	$dir_path = $value."/";
 	$count = count(glob($dir_path . "*"));
@@ -71,48 +75,54 @@ foreach ($directoriesTextFiles as $key => $value) {
 }
 
 date_default_timezone_set('UTC');
-
+//error_log("OK6");
 if ($textFilesAddr == "") {
 	$currentDate = date('dFY');
 	$currentTime = date('H:i:s');
 	$timestamp = $currentDate."-".$currentTime;
-	$textFilesAddr = "/tmp/PreProcessing/TextFiles/".$timestamp;
+	$textFilesAddr = $filesdir."TextFiles/".$timestamp;
 	mkdir($textFilesAddr, 0777, true);
-
+//	error_log("OK7");
 	foreach($_FILES['uploadedfile']['name'] as $key => $info) {  
 		move_uploaded_file($_FILES['uploadedfile']['tmp_name'][$key], $textFilesAddr."/".$_FILES['uploadedfile']['name'][$key]."");  
 	}  
 
-	mkdir('/tmp/PreProcessing/csvFiles', 0777, true);
-	mkdir('/tmp/PreProcessing/allCsvFiles', 0777, true);
+	mkdir($filesdir.'csvFiles', 0777, true);
+	mkdir($filesdir.'allCsvFiles', 0777, true);
 		 
-	$resp = shell_exec("/home/oana/Downloads/jdk1.7.0_13/bin/java -jar /tmp/PreProcessing/CreateCSVFile.jar ".$textFilesAddr." /tmp/PreProcessing/csvFiles");
-	$resp = shell_exec("/home/oana/Downloads/jdk1.7.0_13/bin/java -jar /tmp/PreProcessing/FormatInputFile.jar /tmp/PreProcessing/csvFiles /tmp/PreProcessing/allCsvFiles");
+//	error_log("/usr/bin/java -jar ".$jardir."CreateCSVFile.jar ".$textFilesAddr." ".$filesdir."csvFiles");
+//	error_log("/usr/bin/java -jar ".$jardir."FormatInputFile.jar ".$filesdir."csvFiles ".$filesdir."allCsvFiles");
 
-	mkdir('/tmp/PreProcessing/CSVFiles/'.$timestamp, 0777, true);
-	mkdir('/tmp/PreProcessing/AppliedFilters/'.$timestamp, 0777, true);
-	moveFiles("/tmp/PreProcessing/allCsvFiles", "/tmp/PreProcessing/CSVFiles/".$timestamp);
+	$resp = shell_exec("/usr/bin/java -jar ".$jardir."CreateCSVFile.jar ".$textFilesAddr." ".$filesdir."csvFiles");
+//	echo "here1";
+//	echo $resp;
+	$resp = shell_exec("/usr/bin/java -jar ".$jardir."FormatInputFile.jar ".$filesdir."csvFiles ".$filesdir."allCsvFiles");
+//	echo $resp;
+//	echo "here2";
+	mkdir($filesdir.'CSVFiles/'.$timestamp, 0777, true);
+	mkdir($filesdir.'AppliedFilters/'.$timestamp, 0777, true);
+	moveFiles($filesdir."allCsvFiles", $filesdir."CSVFiles/".$timestamp);
 
-	mkdir('/tmp/PreProcessing/Filters/'.$timestamp, 0777, true);
-	mkdir('/tmp/PreProcessing/Filters/'.$timestamp."/noSemicolon", 0777, true);
-	mkdir('/tmp/PreProcessing/Filters/'.$timestamp."/withSemicolon", 0777, true);
-	mkdir('/tmp/PreProcessing/Filters/'.$timestamp."/noTermBetweenBr", 0777, true);
-	mkdir('/tmp/PreProcessing/Filters/'.$timestamp."/withTermBetweenBr", 0777, true);
-	mkdir('/tmp/PreProcessing/Filters/'.$timestamp."/noSpecialCase", 0777, true);
-	mkdir('/tmp/PreProcessing/Filters/'.$timestamp."/noRelation", 0777, true);
-	mkdir('/tmp/PreProcessing/Filters/'.$timestamp."/withRelationsBetween", 0777, true);
-	mkdir('/tmp/PreProcessing/Filters/'.$timestamp."/withRelationsOutside", 0777, true);
-	mkdir('/tmp/PreProcessing/Filters/'.$timestamp."/long", 0777, true);
-	mkdir('/tmp/PreProcessing/Filters/'.$timestamp."/shortAndAverage", 0777, true);
+	mkdir($filesdir.'Filters/'.$timestamp, 0777, true);
+	mkdir($filesdir.'Filters/'.$timestamp."/noSemicolon", 0777, true);
+	mkdir($filesdir.'Filters/'.$timestamp."/withSemicolon", 0777, true);
+	mkdir($filesdir.'Filters/'.$timestamp."/noTermBetweenBr", 0777, true);
+	mkdir($filesdir.'Filters/'.$timestamp."/withTermBetweenBr", 0777, true);
+	mkdir($filesdir.'Filters/'.$timestamp."/noSpecialCase", 0777, true);
+	mkdir($filesdir.'Filters/'.$timestamp."/noRelation", 0777, true);
+	mkdir($filesdir.'Filters/'.$timestamp."/withRelationsBetween", 0777, true);
+	mkdir($filesdir.'Filters/'.$timestamp."/withRelationsOutside", 0777, true);
+	mkdir($filesdir.'Filters/'.$timestamp."/long", 0777, true);
+	mkdir($filesdir.'Filters/'.$timestamp."/shortAndAverage", 0777, true);
+//	error_log("OK8");
+	$resp = shell_exec("/usr/bin/java -jar ".$jardir."SpecialChars.jar ".$filesdir."CSVFiles/".$timestamp." ".$filesdir."Filters/".$timestamp);
+	$resp = shell_exec("/usr/bin/java -jar ".$jardir."ClusterOnRelation.jar ".$filesdir."CSVFiles/".$timestamp." ".$filesdir."Filters/".$timestamp);
+	$resp = shell_exec("/usr/bin/java -jar ".$jardir."LengthSelection.jar ".$filesdir."CSVFiles/".$timestamp." ".$filesdir."Filters/".$timestamp);
 
-	$resp = shell_exec("/home/oana/Downloads/jdk1.7.0_13/bin/java -jar /tmp/PreProcessing/SpecialChars.jar /tmp/PreProcessing/CSVFiles/".$timestamp." /tmp/PreProcessing/Filters/".$timestamp);
-	$resp = shell_exec("/home/oana/Downloads/jdk1.7.0_13/bin/java -jar /tmp/PreProcessing/ClusterOnRelation.jar /tmp/PreProcessing/CSVFiles/".$timestamp." /tmp/PreProcessing/Filters/".$timestamp);
-	$resp = shell_exec("/home/oana/Downloads/jdk1.7.0_13/bin/java -jar /tmp/PreProcessing/LengthSelection.jar /tmp/PreProcessing/CSVFiles/".$timestamp." /tmp/PreProcessing/Filters/".$timestamp);
-
-	shell_exec("rm -rf /tmp/PreProcessing/csvFiles");
-	shell_exec("rm -rf /tmp/PreProcessing/allCsvFiles");
+	shell_exec("rm -rf ".$filesdir."csvFiles");
+	shell_exec("rm -rf ".$filesdir."allCsvFiles");
 }
-
+//error_log("OK9");
 	// extract the timestamp of the text files
 	$explode = explode("/", $textFilesAddr);
 	$timestamp = $explode[count($explode) - 1];
@@ -158,60 +168,60 @@ if ($textFilesAddr == "") {
 if ($appliedFilter[strlen($appliedFilter) - 1] == "-")
 	$appliedFilter = substr($appliedFilter, 0, -1);
 
-if (!is_dir("/tmp/PreProcessing/AppliedFilters/".$timestamp."/".$appliedFilter)) {
-	mkdir("/tmp/PreProcessing/AppliedFilters/".$timestamp."/".$appliedFilter, 0777, true);
+if (!is_dir($filesdir."AppliedFilters/".$timestamp."/".$appliedFilter)) {
+	mkdir($filesdir."AppliedFilters/".$timestamp."/".$appliedFilter, 0777, true);
 	if ($filter1 != "") {
 		if ($filter2 != "") {
-			mkdir('/tmp/PreProcessing/AppliedFilters/helper1', 0777, true);
-			mkdir('/tmp/PreProcessing/AppliedFilters/helper1/noRelation', 0777, true);
-			mkdir('/tmp/PreProcessing/AppliedFilters/helper1/withRelationsOutside', 0777, true);
-			mkdir('/tmp/PreProcessing/AppliedFilters/helper1/withRelationsBetween', 0777, true);
-			shell_exec("/home/oana/Downloads/jdk1.7.0_13/bin/java -jar /tmp/PreProcessing/ClusterOnRelation.jar /tmp/PreProcessing/Filters/".$timestamp."/".$filter1." /tmp/PreProcessing/AppliedFilters/helper1");
+			mkdir($filesdir.'AppliedFilters/helper1', 0777, true);
+			mkdir($filesdir.'AppliedFilters/helper1/noRelation', 0777, true);
+			mkdir($filesdir.'AppliedFilters/helper1/withRelationsOutside', 0777, true);
+			mkdir($filesdir.'AppliedFilters/helper1/withRelationsBetween', 0777, true);
+			shell_exec("java -jar ".$jardir."ClusterOnRelation.jar ".$filesdir."Filters/".$timestamp."/".$filter1." ".$filesdir."AppliedFilters/helper1");
 			if ($filter3 != "") {
-				mkdir('/tmp/PreProcessing/AppliedFilters/helper2', 0777, true);
-				mkdir('/tmp/PreProcessing/AppliedFilters/helper2/long', 0777, true);
-				mkdir('/tmp/PreProcessing/AppliedFilters/helper2/shortAndAverage', 0777, true);
-				shell_exec("/home/oana/Downloads/jdk1.7.0_13/bin/java -jar /tmp/PreProcessing/LengthSelection.jar /tmp/PreProcessing/AppliedFilters/helper1/".$filter2." /tmp/PreProcessing/AppliedFilters/helper2");
-				moveFiles("/tmp/PreProcessing/AppliedFilters/helper2/".$filter3, "/tmp/PreProcessing/AppliedFilters/".$timestamp."/".$appliedFilter);
-				shell_exec("rm -rf /tmp/PreProcessing/AppliedFilters/helper2");
-				shell_exec("rm -rf /tmp/PreProcessing/AppliedFilters/helper1");
+				mkdir($filesdir.'AppliedFilters/helper2', 0777, true);
+				mkdir($filesdir.'AppliedFilters/helper2/long', 0777, true);
+				mkdir($filesdir.'AppliedFilters/helper2/shortAndAverage', 0777, true);
+				shell_exec("java -jar ".$jardir."LengthSelection.jar ".$filesdir."AppliedFilters/helper1/".$filter2." ".$filesdir."AppliedFilters/helper2");
+				moveFiles($filesdir."AppliedFilters/helper2/".$filter3, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
+				shell_exec("rm -rf ".$filesdir."AppliedFilters/helper2");
+				shell_exec("rm -rf ".$filesdir."AppliedFilters/helper1");
 			}
 			else {
-				moveFiles("/tmp/PreProcessing/AppliedFilters/helper1/".$filter2, "/tmp/PreProcessing/AppliedFilters/".$timestamp."/".$appliedFilter);
-				shell_exec("rm -rf /tmp/PreProcessing/AppliedFilters/helper1");
+				moveFiles($filesdir."AppliedFilters/helper1/".$filter2, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
+				shell_exec("rm -rf ".$filesdir."AppliedFilters/helper1");
 			}
 		}
 		else {
 			if ($filter3 != "") {
-				mkdir('/tmp/PreProcessing/AppliedFilters/helper1', 0777, true);
-				mkdir('/tmp/PreProcessing/AppliedFilters/helper1/long', 0777, true);
-				mkdir('/tmp/PreProcessing/AppliedFilters/helper1/shortAndAverage', 0777, true);
-				shell_exec("/home/oana/Downloads/jdk1.7.0_13/bin/java -jar /tmp/PreProcessing/LengthSelection.jar /tmp/PreProcessing/Filters/".$timestamp."/".$filter1." /tmp/PreProcessing/AppliedFilters/helper1");
-				moveFiles("/tmp/PreProcessing/AppliedFilters/helper1/".$filter3, "/tmp/PreProcessing/AppliedFilters/".$timestamp."/".$appliedFilter);
-				shell_exec("rm -rf /tmp/PreProcessing/AppliedFilters/helper1");
+				mkdir($filesdir.'AppliedFilters/helper1', 0777, true);
+				mkdir($filesdir.'AppliedFilters/helper1/long', 0777, true);
+				mkdir($filesdir.'AppliedFilters/helper1/shortAndAverage', 0777, true);
+				shell_exec("java -jar ".$jardir."LengthSelection.jar ".$filesdir."Filters/".$timestamp."/".$filter1." ".$filesdir."AppliedFilters/helper1");
+				moveFiles($filesdir."AppliedFilters/helper1/".$filter3, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
+				shell_exec("rm -rf ".$filesdir."AppliedFilters/helper1");
 			}
 			else {
-				moveFiles("/tmp/PreProcessing/Filters/".$timestamp."/".$filter1, "/tmp/PreProcessing/AppliedFilters/".$timestamp."/".$appliedFilter);
+				moveFiles($filesdir."Filters/".$timestamp."/".$filter1, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
 			}
 		}
 	}
 	else {
 		if ($filter2 != "") {
 			if ($filter3 != "") {
-				mkdir('/tmp/PreProcessing/AppliedFilters/helper1', 0777, true);
-				mkdir('/tmp/PreProcessing/AppliedFilters/helper1/long', 0777, true);
-				mkdir('/tmp/PreProcessing/AppliedFilters/helper1/shortAndAverage', 0777, true);
-				shell_exec("/home/oana/Downloads/jdk1.7.0_13/bin/java -jar /tmp/PreProcessing/LengthSelection.jar /tmp/PreProcessing/Filters/".$timestamp."/".$filter2." /tmp/PreProcessing/AppliedFilters/helper1");
-				moveFiles("/tmp/PreProcessing/AppliedFilters/helper1/".$filter3, "/tmp/PreProcessing/AppliedFilters/".$timestamp."/".$appliedFilter);
-				shell_exec("rm -rf /tmp/PreProcessing/AppliedFilters/helper1");
+				mkdir($filesdir.'AppliedFilters/helper1', 0777, true);
+				mkdir($filesdir.'AppliedFilters/helper1/long', 0777, true);
+				mkdir($filesdir.'AppliedFilters/helper1/shortAndAverage', 0777, true);
+				shell_exec("java -jar ".$jardir."LengthSelection.jar ".$filesdir."Filters/".$timestamp."/".$filter2." ".$filesdir."AppliedFilters/helper1");
+				moveFiles($filesdir."AppliedFilters/helper1/".$filter3, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
+				shell_exec("rm -rf ".$filesdir."AppliedFilters/helper1");
 			}
 			else {
-				moveFiles("/tmp/PreProcessing/Filters/".$timestamp."/".$filter2, "/tmp/PreProcessing/AppliedFilters/".$timestamp."/".$appliedFilter);
+				moveFiles($filesdir."Filters/".$timestamp."/".$filter2, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
 			}
 		}
 		else {
 			if ($filter3 != "") {
-				moveFiles("/tmp/PreProcessing/Filters/".$timestamp."/".$filter3, "/tmp/PreProcessing/AppliedFilters/".$timestamp."/".$appliedFilter);
+				moveFiles($filesdir."Filters/".$timestamp."/".$filter3, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
 			}
 			else {
 			}
@@ -222,14 +232,14 @@ if (!is_dir("/tmp/PreProcessing/AppliedFilters/".$timestamp."/".$appliedFilter))
 // create the job files
 $noSentences = $_POST["nosentences"];
 
-if (!is_dir('/tmp/PreProcessing/Experiments/'.$timestamp)) {
-    	if (!mkdir('/tmp/PreProcessing/Experiments/'.$timestamp, 0777, true)) {
+if (!is_dir($filesdir.'Experiments/'.$timestamp)) {
+    	if (!mkdir($filesdir.'Experiments/'.$timestamp, 0777, true)) {
 		 die('Failed to create folder...');
 	}
 } 
 
-if (!is_dir('/tmp/PreProcessing/Experiments/'.$timestamp."/".$appliedFilter)) {
-    	if (!mkdir('/tmp/PreProcessing/Experiments/'.$timestamp."/".$appliedFilter, 0777, true)) {
+if (!is_dir($filesdir.'Experiments/'.$timestamp."/".$appliedFilter)) {
+    	if (!mkdir($filesdir.'Experiments/'.$timestamp."/".$appliedFilter, 0777, true)) {
 		 die('Failed to create folder...');
 	}
 } 
@@ -240,7 +250,7 @@ $timestampJob = $jobDate."-".$jobTime;
 $index = 0;
 
 // extract the batch number
-foreach (glob("/tmp/PreProcessing/Experiments/".$timestamp."/".$appliedFilter."/*.csv") as $filename) {
+foreach (glob($filesdir."Experiments/".$timestamp."/".$appliedFilter."/*.csv") as $filename) {
     $index ++;
 }
 
@@ -248,9 +258,9 @@ $batchIndex = $index + 1;
 $fileName = $timestampJob."_".$timestamp."_".$appliedFilter."_batch".$batchIndex.".csv";
 
 
-shell_exec("/home/oana/Downloads/jdk1.7.0_13/bin/java -jar /tmp/PreProcessing/JobFileCreation.jar ".$noSentences." /tmp/PreProcessing/AppliedFilters/".$timestamp."/".$appliedFilter." /tmp/PreProcessing/Experiments/".$timestamp."/".$appliedFilter."/".$fileName);
+shell_exec("java -jar ".$jardir."JobFileCreation.jar ".$noSentences." ".$filesdir."AppliedFilters/".$timestamp."/".$appliedFilter." ".$filesdir."Experiments/".$timestamp."/".$appliedFilter."/".$fileName);
 
-$file = "/tmp/PreProcessing/Experiments/".$timestamp."/".$appliedFilter."/".$fileName;
+$file = $filesdir."Experiments/".$timestamp."/".$appliedFilter."/".$fileName;
 
 if (file_exists($file)) {
     header('Content-Description: File Transfer');
@@ -267,5 +277,6 @@ if (file_exists($file)) {
     exit;
 } 
 
-header("Location: preprocinterface.php");
+//header("Location: preprocinterface.php");
+//header("Location: ../index.php");
 ?>
