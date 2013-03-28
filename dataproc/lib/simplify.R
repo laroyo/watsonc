@@ -56,9 +56,9 @@ labeldf <- function(dframe){
 
 abcol <- function(key){
   
-  k1 <- list('[CAUSES]'='C','[SYMPTOM]'='S','[LOCATION]'='L','[PREVENTS]'='P','[DIAGNOSED_BY_TEST_OR_DRUG]'='D','[MANIFESTATION]'='M',
+  k1 <- list('[CAUSES]'='C','[SYMPTOM]'='S','[LOCATION]'='L','[PREVENTS]'='P','[DIAGNOSE_BY_TEST_OR_DRUG]'='D','[MANIFESTATION]'='M',
              '[ASSOCIATED_WITH]'='AW','[PART_OF]'='PO','[OTHER]'='OTH','[TREATS]'='T','[NONE]'='NONE','[IS_A]'='IA','[SIDE_EFFECT]'='SE',
-             '[CONTRAINDICATES]'='CI')
+             '[CONTRAINDICATES]'='CI','[DIAGNOSED_BY_TEST_OR_DRUG]'='D')
   k2 <- list('causes'='C','symptom'='S','location'='L','prevents'='P','diagnosed_by_test_or_drug'='D','manifestation'='M','associated_with'='AW','part_of'='PO','other'='OTH','treats'='T','none'='NONE','is_a'='IA','side_effect'='SE',
              'contraindicates'='CI')
 
