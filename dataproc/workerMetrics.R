@@ -2,14 +2,15 @@
 ## Read file 90-sents-all-batches-GS-sentsv3.csv and applies the filters. 
 ## The filter output is the same as 90-sents-all-batches-CS-sentsv3.csv (Dropbox/data/CF-Results-processed/)
 
-library(XLConnect)
-source('lib/measures.R',chdir=TRUE)
-source('lib/filters.R',chdir=TRUE)
-source('lib/simplify.R',chdir=TRUE)
-source('lib/output.R',chdir=TRUE)
+#library(XLConnect)
+#FIXME: use environment variables, and base routes on those. 
+source('/var/www/html/wcs/dataproc/lib/measures.R',chdir=TRUE)
+source('/var/www/html/wcs/dataproc/lib/filters.R',chdir=TRUE)
+source('/var/www/html/wcs/dataproc/lib/simplify.R',chdir=TRUE)
+source('/var/www/html/wcs/dataproc/lib/output.R',chdir=TRUE)
 
 #For calculating the cosine. 
-library(lsa)
+#library(lsa)
 
 args <- commandArgs(trailingOnly = TRUE)
 
@@ -83,26 +84,27 @@ for (f in filters){
   #sentMat <- list()
   
   agrValues <- agreement(filt)
-  cosValues <- cosMeasure(filt)
+  #  cosValues <- cosMeasure(filt)
 
-  df <- data.frame(row.names=filtWorkers,numSents=numSent, cos=cosValues, agr=agrValues, annotSentence=(numAnnot/numSent))
+  #  df <- data.frame(row.names=filtWorkers,numSents=numSent, cos=cosValues, agr=agrValues, annotSentence=(numAnnot/numSent))
+  df <- data.frame(row.names=filtWorkers,numSents=numSent, agr=agrValues, annotSentence=(numAnnot/numSent))
 
 
   # Add empty values for filtered out workers
-  ## missingworkers <- setdiff(worker_ids,filtWorkers)
-  ## emptyCol <-  rep(0,length(missingworkers))
+  # missingworkers <- setdiff(worker_ids,filtWorkers)
+  # emptyCol <-  rep(0,length(missingworkers))
   
-  ## filtrows <- data.frame(row.names=missingworkers,numSents=emptyCol,cos=emptyCol,agr=emptyCol,annotSentence=emptyCol)
-  ## df <- rbind(df, filtrows)
-  ## df <- df[order(as.numeric(row.names(df))),]
+  # filtrows <- data.frame(row.names=missingworkers,numSents=emptyCol,cos=emptyCol,agr=emptyCol,annotSentence=emptyCol)
+  # df <- rbind(df, filtrows)
+  # df <- df[order(as.numeric(row.names(df))),]
 
   #Empty dataframe
   spamFilters <- data.frame(row.names=worker_ids,cos=rep(0,length(worker_ids)),annotSentence=rep(0,length(worker_ids)),agr=rep(0,length(worker_ids)))
 
-  candidateRows <- overDiff(df,'cos')
-   if(length(candidateRows) > 0){
-     spamFilters[rownames(spamFilters) %in% candidateRows,]$cos = 1
-   }
+  #candidateRows <- overDiff(df,'cos')
+  # if(length(candidateRows) > 0){
+  #   spamFilters[rownames(spamFilters) %in% candidateRows,]$cos = 1
+  # }
 
   candidateRows <- overDiff(df,'annotSentence')
   if(length(candidateRows) > 0){
@@ -134,35 +136,34 @@ colnames(sf) = 'label'
 spamLabels <- rownames(sf[sf$label==TRUE,,drop=FALSE])
 
 
-wb.new <- loadWorkbook(paste(outputdirectory,job_id,'workerMetrics.xlsx',sep=""), create = TRUE)
+#wb.new <- loadWorkbook(paste(outputdirectory,job_id,'workerMetrics.xlsx',sep=""), create = TRUE)
 
-createSheet(wb.new, name = "singleton-workers-removed")
-writeOutputHeaders(wb.new,"singleton-workers-removed")
+# createSheet(wb.new, name = "pivot-worker")
+# writeOutputHeaders(wb.new,"pivot-worker")
 
+# writeWorksheet(wb.new,data=cbind(out,spamFilterOutput[rownames(out),],spam=sf[rownames(out),]),sheet=1,startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
 
-writeWorksheet(wb.new,data=cbind(out,spamFilterOutput[rownames(out),],spam=sf[rownames(out),]),sheet=1,startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
+# createSheet(wb.new, name = "singleton-workers-removed")
 
-## createSheet(wb.new, name = "singleton-workers-removed")
+# writeOutputHeaders(wb.new,"singleton-workers-removed")
+# writeWorksheet(wb.new,data=out[rownames(out) %in% setdiff(rownames(out),singletones),],sheet="singleton-workers-removed",startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
 
-## writeOutputHeaders(wb.new,"singleton-workers-removed")
-## writeWorksheet(wb.new,data=out[rownames(out) %in% setdiff(rownames(out),singletones),],sheet="singleton-workers-removed",startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
+# createSheet(wb.new, name = "filtered-out-sentences")
+# writeFilteredOutHeaders(wb.new,"filtered-out-sentences")
 
-createSheet(wb.new, name = "filtered-out-sentences")
-writeFilteredOutHeaders(wb.new,"filtered-out-sentences")
+# currentCol <- 1
+# for (f in filters){
+#   if(f != 'NULL'){
+#      writeWorksheet(wb.new,data=discarded[[f]],sheet='filtered-out-sentences',startRow=2,startCol=currentCol,header=FALSE)
+#     currentCol <- currentCol + 2
+#     #write.csv(discarded[[f]], paste(outputdirectory,paste(job_id,'filtered-out-sentences',f,'.csv',sep="_"),sep=""),row.names=FALSE)           
+#   }
+# }
 
-currentCol <- 1
-for (f in filters){
-  if(f != 'NULL'){
-    writeWorksheet(wb.new,data=discarded[[f]],sheet='filtered-out-sentences',startRow=2,startCol=currentCol,header=FALSE)
-    currentCol <- currentCol + 2
-    write.csv(discarded[[f]], paste(outputdirectory,paste(job_id,'filtered-out-sentences',f,'.csv',sep="_"),sep=""),row.names=FALSE)           
-  }
-}
+# createSheet(wb.new, name = "spammer-labels")
+# writeWorksheet(wb.new,data=spamLabels,sheet='spammer-labels',startRow=1,startCol=1,header=FALSE)
 
-createSheet(wb.new, name = "spammer-labels")
-writeWorksheet(wb.new,data=spamLabels,sheet='spammer-labels',startRow=1,startCol=1,header=FALSE)
-
-saveWorkbook(wb.new)
+# saveWorkbook(wb.new)
 
 
 cat(format(length(discarded[[f]])))
