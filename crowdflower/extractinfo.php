@@ -31,8 +31,8 @@ function extractChoice($input) {
 
 
 function getResults($job_id) {
-	//$api_key = "b5e3b32b4d29d45c16dc09274e099f731237e35f";
-	$api_key = "c6b735ba497e64428c6c61b488759583298c2cf3";
+	$api_key = "b5e3b32b4d29d45c16dc09274e099f731237e35f";
+	//$api_key = "c6b735ba497e64428c6c61b488759583298c2cf3";
 
 	/* get all the units from a job */
 	$units_list_query = "curl \"https://api.crowdflower.com/v1/jobs/$job_id/units.json?key=$api_key\"";
@@ -45,9 +45,14 @@ function getResults($job_id) {
 
 		$user = posix_getuid();
 		$userinfo = posix_getpwuid($user);
+		$t = time();
+		
+		if (!is_dir("/var/www/files/". date('Y/m/d',$t))) {
+		  mkdir("/var/www/files/". date('Y/m/d',$t));
+		}
 
-		$fp_results = fopen($userinfo["dir"]."/file_results.csv", 'w');
-		$fp_overview = fopen($userinfo["dir"]."/overview.csv", 'w');
+                $fp_results = fopen("/var/www/files/". date('Y/m/d',$t) ."/". $job_id ."_file_results.csv",'w');
+                $fp_overview = fopen("/var/www/files/". date('Y/m/d',$t) ."/".$job_id ."_overview.csv",'w');
 
 
 	$table_header_results = array('unit_id', 'worker_id', 'worker_trust', 'external_type', 'step_1_select_the_valid_relations',  'step_2b_if_you_selected_none_in_step_1_explain_why',  'step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1', 'started_at', 'created_at', 'term1', 'term2', 'sentence');
