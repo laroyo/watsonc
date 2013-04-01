@@ -1,6 +1,6 @@
 <?php
 
-include("connectDb.php");
+include_once 'includes/dbinfo.php';
 include("extractinfo.php");
 
 function objectToArray($obj) {
@@ -24,6 +24,13 @@ function getSignal() {
 		//update the job with the following id (increment by 1 the number of judgments made and then recompute the job completion percentage):
 		$array = objectToArray(json_decode($payload));
 		$job_id = $array[0]["job_id"];
+		
+		$updateJudgements = mysql_query("Update cfinput Set job_judgements_made = job_judgements_made + 1 Where job_id = '$job_id' ") or die(mysql_error());
+		$getData =  mysql_query("select judgements_per_job, job_judgements_made from cfinput where job_id = '$job_id' ") or die(mysql_error());	
+		list($judgements_per_job, $job_judgements_made) = mysql_fetch_row($getData);
+		$job_completion = $job_judgements_made / $judgements_per_job;
+		$updateCompletion = mysql_query("Update cfinput Set job_completion = $job_completion Where job_id = '$job_id' ") or die(mysql_error());
+		 
 	}
 
 	if($signal == "job_complete") {
