@@ -26,6 +26,9 @@ function getFolder() {
 	}
 	return $filesdir.$checkyear."/".$checkmonth."/".$checkday."/";
 }
+/**
+ * Store a file received by POST (on the variable $_FILES)
+ **/
 function storeFile($filefieldname) {
 	$storage_path = getFolder().uniqid()."_".basename( $_FILES[$filefieldname]['name']);
 	$original_name = $_FILES[$filefieldname]['name'];
@@ -40,6 +43,51 @@ function storeFile($filefieldname) {
 		return null;
 	}
 }
+
+/**
+ * Store a file, passing the content as a parameter. 
+ **/
+function storeContentInFile($file_info, $content,$createdby) {
+	$storage_path = getFolder().uniqid()."_".basename($file_info['name']);
+	$original_name = $file_info['name'];
+	$mime_type = $file_info['type'];
+
+	switch($mime_type){
+	case "text/csv": 
+	  $filesize = 0; 
+	  $fp_csv = fopen($storage_path, 'w');
+	  foreach($content as $row){
+	    $filesize += fputcsv($fp_csv, $row); 
+	  }	  
+	  fclose($fp_csv); 
+	  break; 
+	}
+
+	if($filesize > 0){       
+	  $query="INSERT INTO `file_storage`(`original_name`, `storage_path`, `mime_type`, `filesize`, `createdby`) 
+		VALUES ('".$original_name."','".$storage_path."','".$mime_type."',".$filesize.",'".$createdby."')";
+	  mysql_query($query) or dieError("function: storeContentInFile<br/>".$query."<br/>".mysql_error());
+	  return mysql_insert_id();
+	} else{
+		return null;
+	}
+}
+
+/**
+ * Returns a file's storage path. To be used by scripts to directly access the file. 
+ **/
+function getFileStoragePath($file_type, $search_criteria){     
+  //FIXME: First version, to be improved (almost a mock up). 
+  //It should use both the file_type (i.e. 'ResultsFile'), and the defined attributes for that type of files to univocally retrieve the file path. 
+  // So far, it uses only the original name to retrieve the file. (The user has to take care of naming appropriately). 
+
+  $query = "SELECT storage_path FROM file_storage where `original_name` = '" . $search_criteria['original_name'] . "'";  
+  $res = mysql_query($query) or dieError("function: storeFile<br/>".$query."<br/>".mysql_error());
+  if($res){
+    return mysql_fetch_field($res);    
+  }
+}
+
 function getOneFieldFromQuery($query,$field) {
 	
 	$data = mysql_query($query) or dieError("getOneFieldFromQuery<br/>".$query."<br/>".mysql_error());

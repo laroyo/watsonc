@@ -1,5 +1,7 @@
 <?php
 
+include('includes/functions.php'); 
+
 function objectToArray($obj) {
 	if (is_object($obj)) {
 		$obj = get_object_vars($obj);
@@ -43,23 +45,11 @@ function getResults($job_id) {
 
 	/* print results into files */
 
-		$user = posix_getuid();
-		$userinfo = posix_getpwuid($user);
-		$t = time();
-		
-		if (!is_dir("/var/www/files/". date('Y/m/d',$t))) {
-		  mkdir("/var/www/files/". date('Y/m/d',$t));
-		}
-
-                $fp_results = fopen("/var/www/files/". date('Y/m/d',$t) ."/". $job_id ."_file_results.csv",'w');
-                $fp_overview = fopen("/var/www/files/". date('Y/m/d',$t) ."/".$job_id ."_overview.csv",'w');
-
-
 	$table_header_results = array('unit_id', 'worker_id', 'worker_trust', 'external_type', 'step_1_select_the_valid_relations',  'step_2b_if_you_selected_none_in_step_1_explain_why',  'step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1', 'started_at', 'created_at', 'term1', 'term2', 'sentence');
 	$table_header_overview = array('job_id', 'unit_id', 'created_at', 'updated_at', 'agreement', 'term1', 'term2', 'sentence');
-
-	fputcsv($fp_results, $table_header_results);
-	fputcsv($fp_overview, $table_header_overview);
+	
+	$results_content = array($table_header_results);
+	$overview_content = array($table_header_overview); 
 
 	/* get all the information about an unit */
 	for ($i = 0; $i < count($units_id); $i ++) {
@@ -70,7 +60,8 @@ function getResults($job_id) {
 		$judgments = $results["judgments"];
 		$row_overview = array($result["job_id"], $result["id"], formatDateAndTime($result["created_at"]), formatDateAndTime($result["updated_at"]), $result["agreement"], $result["data"]["term1"], $result["data"]["term2"], $result["data"]["sentence"]);
 
-		fputcsv($fp_overview, $row_overview);
+		//fputcsv($fp_overview, $row_overview);
+		array_push($overview_content,$row_overview); 
 
 		for ($j = 0; $j < count($judgments); $j ++) {
 			$row_result = array($judgments[$j]["unit_id"], $judgments[$j]["worker_id"], $judgments[$j]["worker_trust"], $judgments[$j]["external_type"]);
@@ -88,10 +79,23 @@ function getResults($job_id) {
 			
 				$choices = substr($choices, 0, -1);
 				array_push($row_result, $choices, $judgments[$j]["data"]["step_2b_if_you_selected_none_in_step_1_explain_why"], $judgments[$j]["data"]["step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"], formatDateAndTime($judgments[$j]["started_at"]), formatDateAndTime($judgments[$j]["created_at"]), $judgments[$j]["unit_data"]["term1"], $judgments[$j]["unit_data"]["term2"], $judgments[$j]["unit_data"]["sentence"]);
-			fputcsv($fp_results, $row_result);
+			//fputcsv($fp_results, $row_result);
+			array_push($results_content, $row_result); 
 		}
 	}
-	fclose($fp_results);
-	fclose($fp_overview);
+	$result_file_info = array(
+	    'name' : $job_id. '_file_results.csv',
+	    'type' : 'text/csv'
+        );
+	$overview_file_info = array(
+	    'name' : $job_id. '_file_results.csv',
+	    'type' : 'text/csv'
+	); 
+	
+	//FIXME: Specify a correct user as creator of the files (instead of 'script')
+	storeContentInFile($results_file_info,$results_content,'script'); 
+	storeContentInFile($overview_file_info,$results_content,'script'); 
+	/* fclose($fp_results); */
+	/* fclose($fp_overview); */
 }
 ?>
