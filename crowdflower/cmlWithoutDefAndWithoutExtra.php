@@ -6,7 +6,7 @@ echo urlencode("<p>In the sentence:&#160;<strong><em>\"</em></strong>
 {{term1}}<strong>&#160;</strong>&#160;<em><strong>----</strong>related-to<strong>----&#160;</strong></em>&#160;
 {{term2}}?</p>
 <p><strong></strong></p>
-<cml:checkboxes label=\"Select the valid RELATION(s)\" class=\"\" instructions=\"It is important that you understand what the different relation types mean. Definitions and examples are given in each choice\" validates=\"required\" aggregation=\"avg\">
+<cml:checkboxes label=\"Select the valid RELATION(s)\" class=\"\" instructions=\"It is important that you understand what the different relation types mean. Hoover over each relation name to see the definition and an example.\" validates=\"required\" aggregation=\"avg\">
 <cml:checkbox label=\"[TREATS]\" value=\"[TREATS]\" title=\"TREATS: Therapeutic use of an ingredient or a drug, e.g. penicillin cures infection, etc.\"/> 
 <cml:checkbox label=\"[PREVENTS]\" value=\"[PREVENTS]\" title=\"PREVENTS: Preventative use of an ingredient or a drug, e.g. vitamin C reduces the risk of influenza, etc.\"/> 
 <cml:checkbox label=\"[DIAGNOSED_BY_TEST_OR_DRUG]\" value=\"[DIAGNOSE_BY_TEST_OR_DRUG]\" title=\"DIAGNOSE_BY_TEST_OR_DRUG: Diagnostic use of an ingredient, test or a drug, e.g.  RINNE test is used for determining hearing loss, etc.\"/>

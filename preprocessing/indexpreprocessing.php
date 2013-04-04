@@ -2,6 +2,7 @@
 include_once '../includes/dbinfo.php';
 include_once '../includes/functions.php';
 $jardir = "/var/www/html/wcs/preprocessing/";
+//$relation_name = array("cause", "treat", "contra", "diagnose", "location", "symptom", "prevent");
 
 function moveFiles($source, $destination) {
 	if ($handle = opendir($source)) {
@@ -13,23 +14,82 @@ function moveFiles($source, $destination) {
     		closedir($handle);
 	}
 }
-//error_log("OK1");
-if($_FILES['uploadedfile']) {  
-	foreach($_FILES['uploadedfile']['name'] as $key => $info) {  
-		$uploads[$key]->name=$_FILES['uploadedfile']['name'][$key];  
-		$uploads[$key]->type=$_FILES['uploadedfile']['type'][$key];  
-		$uploads[$key]->tmp_name=$_FILES['uploadedfile']['tmp_name'][$key];  
-		$uploads[$key]->error=$_FILES['uploadedfile']['error'][$key];  
-	}
-}  
 
-//error_log("OK2");
+function storePreprocessedFile($filefieldname, $key, $storageFolder) {
+        $storage_path = $storageFolder.basename( $_FILES[$filefieldname]['name'][$key]);
+        $original_name = $_FILES[$filefieldname]['name'][$key];
+        $mime_type = $_FILES[$filefieldname]['type'][$key];
+        $filesize = $_FILES[$filefieldname]['size'][$key];
+        $query="INSERT INTO `file_storage`(`original_name`, `storage_path`, `mime_type`, `filesize`, `createdby`) 
+	        VALUES ('".$original_name."','".$storage_path."','".$mime_type."',".$filesize.",'".$_SERVER['REMOTE_USER']."')";
+                mysql_query($query) or dieError("function: storeFile<br/>".$query."<br/>".mysql_error());
+        return mysql_insert_id();
+}
+
+function storeCSVFile($filefieldname, $storageFolder) {
+        $storage_path = $storageFolder."/".$filefieldname;
+        $original_name = $filefieldname;
+        $mime_type = mime_content_type($storageFolder."/".$filefieldname);
+        $filesize = filesize($storageFolder."/".$filefieldname);
+        $query="INSERT INTO `file_storage`(`original_name`, `storage_path`, `mime_type`, `filesize`, `createdby`) 
+                VALUES ('".$original_name."','".$storage_path."','".$mime_type."',".$filesize.",'".$_SERVER['REMOTE_USER']."')";
+                mysql_query($query) or dieError("function: storeFile<br/>".$query."<br/>".mysql_error());
+        return mysql_insert_id();
+}
+
+function getFileRelation($fileName) {
+	$relation_name = array("cause", "treat", "contra", "diagnose", "location", "symptom", "prevent");
+	foreach($relation_name as $relation) {
+		if(strpos($fileName, $relation) !== false) {
+			return $relation;
+		}
+	}
+	return "none";
+}
+
+function getAllFilesFromDirectory($dirName) {
+	$files = array();
+	if ($handle = opendir($dirName)) {
+		while (false !== ($entry = readdir($handle))) {
+        		if ($entry != "." && $entry != "..") {
+            		//	echo "$entry\n";
+			array_push($files, $entry);
+        		}
+    		}
+    		closedir($handle);
+	}
+	return $files;
+} 
+
+function addAppliedFiltersFiles($timestamp, $appliedFilter, $filter1, $filter2, $filter3) {
+	$storageCSV = "/var/www/files/AppliedFilters/".$timestamp."/".$appliedFilter;
+        $csvfiles = getAllFilesFromDirectory($storageCSV);
+        foreach($csvfiles as $name) {
+        	$fileid = storeCSVFile($name, $storageCSV);
+                $storage_path = "/var/www/files/CSVFiles/".$timestamp."/".substr($name, 0, strpos($name, 'all'))."all.csv";
+		$queryId="SELECT `id` FROM `file_storage` WHERE `storage_path` = '".$storage_path."'";
+                $textFileId = getOneFieldFromQuery($queryId, 'id');
+                $queryId="SELECT `id` FROM `processing_file` WHERE `fileid` = ".$textFileId;
+                $csvFileId = getOneFieldFromQuery($queryId, 'id');
+                $sentence_length = $filter3;
+		$relation_location = $filter2;
+                $special_cases = $filter1;
+                $comment = $_POST["files_comment"];
+                $query="INSERT INTO `filtered_file` (`file_id`, `processing_file_id`, `sentence_length`, `relation_location`, 
+                       `special_cases`, `comment`, `created_by`) 
+                       VALUES ('".$fileid."','".$csvFileId."','".$sentence_length."','".$relation_location."',
+                       '".$special_cases."','".$comment."','".$_SERVER['REMOTE_USER']."')";
+                mysql_query($query) or dieError("function: filtered_file<br/>".$query."<br/>".mysql_error());
+	}
+}
+
+
 if (!is_dir($filesdir.'TextFiles')) {
     	if (!mkdir($filesdir.'TextFiles', 0777, true)) {
 		 die('Failed to create folder...');
 	}
 } 
-//error_log("OK3");
+
 if (!is_dir($filesdir.'CSVFiles')) {
     	if (!mkdir($filesdir.'CSVFiles', 0777, true)) {
 		 die('Failed to create folder...');
@@ -53,17 +113,16 @@ if (!is_dir($filesdir.'Experiments')) {
 		 die('Failed to create folder...');
 	}
 } 
-//error_log("OK4");
+
 $directoriesTextFiles = glob($filesdir.'TextFiles/*' , GLOB_ONLYDIR);
 $noFiles = 0;
 $textFilesAddr = "";
-//print_r($directoriesTextFiles);
+
 foreach ($directoriesTextFiles as $key => $value) {
 	foreach($_FILES['uploadedfile']['name'] as $file => $info) {
 		if (file_exists($value."/".$_FILES['uploadedfile']['name'][$file])) {
 			$noFiles ++;
 		}
-//		error_log("OK5");
 	}
 	$dir_path = $value."/";
 	$count = count(glob($dir_path . "*"));
@@ -75,33 +134,49 @@ foreach ($directoriesTextFiles as $key => $value) {
 }
 
 date_default_timezone_set('UTC');
-//error_log("OK6");
+
 if ($textFilesAddr == "") {
 	$currentDate = date('dFY');
 	$currentTime = date('H:i:s');
 	$timestamp = $currentDate."-".$currentTime;
 	$textFilesAddr = $filesdir."TextFiles/".$timestamp;
 	mkdir($textFilesAddr, 0777, true);
-//	error_log("OK7");
-	foreach($_FILES['uploadedfile']['name'] as $key => $info) {  
-		move_uploaded_file($_FILES['uploadedfile']['tmp_name'][$key], $textFilesAddr."/".$_FILES['uploadedfile']['name'][$key]."");  
+
+	foreach($_FILES['uploadedfile']['name'] as $key => $info) {
+		$storageFolder = $textFilesAddr."/";  
+		move_uploaded_file($_FILES['uploadedfile']['tmp_name'][$key], $storageFolder.$_FILES['uploadedfile']['name'][$key]."");
+		$fileid = storePreprocessedFile('uploadedfile', $key, $storageFolder);
+		$lines = getLines($fileid) - 1;
+		$title = $_FILES['uploadedfile']['name'][$key];
+		$comment = $_POST['files_comment'];
+		$fileRelation = getFileRelation($_FILES['uploadedfile']['name'][$key]);
+
+		$query="INSERT INTO `raw_file`(`seedrelationname`, `fileid`, `lines`, `comment`, `createdby`) 
+	                VALUES ('".$fileRelation."','".$fileid."','".$lines."','".$comment."','".$_SERVER['REMOTE_USER']."')";
+        	        mysql_query($query) or dieError("function: raw_file<br/>".$query."<br/>".mysql_error());		  
 	}  
 
 	mkdir($filesdir.'csvFiles', 0777, true);
 	mkdir($filesdir.'allCsvFiles', 0777, true);
 		 
-//	error_log("/usr/bin/java -jar ".$jardir."CreateCSVFile.jar ".$textFilesAddr." ".$filesdir."csvFiles");
-//	error_log("/usr/bin/java -jar ".$jardir."FormatInputFile.jar ".$filesdir."csvFiles ".$filesdir."allCsvFiles");
-
 	$resp = shell_exec("/usr/bin/java -jar ".$jardir."CreateCSVFile.jar ".$textFilesAddr." ".$filesdir."csvFiles");
-//	echo "here1";
-//	echo $resp;
 	$resp = shell_exec("/usr/bin/java -jar ".$jardir."FormatInputFile.jar ".$filesdir."csvFiles ".$filesdir."allCsvFiles");
-//	echo $resp;
-//	echo "here2";
+
 	mkdir($filesdir.'CSVFiles/'.$timestamp, 0777, true);
 	mkdir($filesdir.'AppliedFilters/'.$timestamp, 0777, true);
-	moveFiles($filesdir."allCsvFiles", $filesdir."CSVFiles/".$timestamp);
+
+	$storageCSV = $filesdir."CSVFiles/".$timestamp;
+	moveFiles($filesdir."allCsvFiles", $storageCSV);
+
+	$csvfiles = getAllFilesFromDirectory($storageCSV);
+	foreach($csvfiles as $name) {
+		$fileid = storeCSVFile($name, $storageCSV);
+		$lines = getLines($fileid) - 1;
+		$comment = $_POST["files_comment"];
+		$query="INSERT INTO `processing_file`(`fileid`, `lines`, `comment`, `createdby`) 
+                        VALUES ('".$fileid."','".$lines."','".$comment."','".$_SERVER['REMOTE_USER']."')";
+                        mysql_query($query) or dieError("function: processing_file<br/>".$query."<br/>".mysql_error());
+	}
 
 	mkdir($filesdir.'Filters/'.$timestamp, 0777, true);
 	mkdir($filesdir.'Filters/'.$timestamp."/noSemicolon", 0777, true);
@@ -122,46 +197,69 @@ if ($textFilesAddr == "") {
 	shell_exec("rm -rf ".$filesdir."csvFiles");
 	shell_exec("rm -rf ".$filesdir."allCsvFiles");
 }
-//error_log("OK9");
+
 	// extract the timestamp of the text files
 	$explode = explode("/", $textFilesAddr);
 	$timestamp = $explode[count($explode) - 1];
 
 	$appliedFilter = "";
-	$filter1 = ""; 
+	$filter1 = "";
+	$filter1Caps = ""; 
 	$filter2 = "";
+	$filter2Caps = "";
 	$filter3 = "";
+	$filter3Caps = "";
 	$arr = $_POST["filters"];
 	foreach($arr as $item)
    	{
         	if($item == "specialcases") {
 			$filter1 = $_POST["specialcases"];
-			if ($filter1 == "withSemicolon") 
+			if ($filter1 == "withSemicolon") { 
 				$appliedFilter.="SC-";
-			if ($filter1 == "withTermBetweenBr") 
+				$filter1Caps = "SC";
+			}
+			if ($filter1 == "withTermBetweenBr") { 
 				$appliedFilter.="ABB-";
-			if ($filter1 == "noSemicolon") 
+				$filter1Caps = "ABB";
+			}
+			if ($filter1 == "noSemicolon") { 
 				$appliedFilter.="NOSC-";
-			if ($filter1 == "noTermBetweenBr") 
+				$filter1Caps = "NOSC";
+			}
+			if ($filter1 == "noTermBetweenBr") { 
 				$appliedFilter.="NOABB-";
-			if ($filter1 == "noSpecialCase") 
+				$filter1Caps = "NOABB";	
+			}
+			if ($filter1 == "noSpecialCase") { 
 				$appliedFilter.="NOSPC-";
+				$filter1Caps = "NOSPC";
+			}
 		} 
 		if($item == "relations") {
 			$filter2 = $_POST["relation"];
-			if ($filter2 == "withRelationsBetween") 
+			if ($filter2 == "withRelationsBetween") { 
 				$appliedFilter.="RBA-";
-			if ($filter2 == "withRelationsOutside") 
+				$filter2Caps = "RBA";
+			}
+			if ($filter2 == "withRelationsOutside") { 
 				$appliedFilter.="ROA-";
-			if ($filter2 == "noRelation")
+				$filter2Caps = "ROA";
+			}
+			if ($filter2 == "noRelation") {
 				$appliedFilter.="NOR-";
+				$filter2Caps = "NOR";
+			}
 		} 
 		if($item == "length") {
 			$filter3 = $_POST["length"];
-			if ($filter3 == "long") 
+			if ($filter3 == "long") { 
 				$appliedFilter.="L";
-			if ($filter3 == "shortAndAverage")
+				$filter3Caps = "long";
+			}	
+			if ($filter3 == "shortAndAverage") {
 				$appliedFilter.="S";
+				$filter3Caps = "short";
+			}
 		} 
    	}
 
@@ -176,18 +274,21 @@ if (!is_dir($filesdir."AppliedFilters/".$timestamp."/".$appliedFilter)) {
 			mkdir($filesdir.'AppliedFilters/helper1/noRelation', 0777, true);
 			mkdir($filesdir.'AppliedFilters/helper1/withRelationsOutside', 0777, true);
 			mkdir($filesdir.'AppliedFilters/helper1/withRelationsBetween', 0777, true);
-			shell_exec("java -jar ".$jardir."ClusterOnRelation.jar ".$filesdir."Filters/".$timestamp."/".$filter1." ".$filesdir."AppliedFilters/helper1");
+			shell_exec("/usr/bin/java -jar ".$jardir."ClusterOnRelation.jar ".$filesdir."Filters/".$timestamp."/".$filter1." ".$filesdir."AppliedFilters/helper1");
 			if ($filter3 != "") {
 				mkdir($filesdir.'AppliedFilters/helper2', 0777, true);
 				mkdir($filesdir.'AppliedFilters/helper2/long', 0777, true);
 				mkdir($filesdir.'AppliedFilters/helper2/shortAndAverage', 0777, true);
-				shell_exec("java -jar ".$jardir."LengthSelection.jar ".$filesdir."AppliedFilters/helper1/".$filter2." ".$filesdir."AppliedFilters/helper2");
+				shell_exec("/usr/bin/java -jar ".$jardir."LengthSelection.jar ".$filesdir."AppliedFilters/helper1/".$filter2." ".$filesdir."AppliedFilters/helper2");
 				moveFiles($filesdir."AppliedFilters/helper2/".$filter3, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
+				addAppliedFiltersFiles($timestamp, $appliedFilter, $filter1Caps, $filter2Caps, $filter3Caps);
+
 				shell_exec("rm -rf ".$filesdir."AppliedFilters/helper2");
 				shell_exec("rm -rf ".$filesdir."AppliedFilters/helper1");
 			}
 			else {
 				moveFiles($filesdir."AppliedFilters/helper1/".$filter2, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
+				addAppliedFiltersFiles($timestamp, $appliedFilter, $filter1, $filter2, $filter3);
 				shell_exec("rm -rf ".$filesdir."AppliedFilters/helper1");
 			}
 		}
@@ -196,12 +297,14 @@ if (!is_dir($filesdir."AppliedFilters/".$timestamp."/".$appliedFilter)) {
 				mkdir($filesdir.'AppliedFilters/helper1', 0777, true);
 				mkdir($filesdir.'AppliedFilters/helper1/long', 0777, true);
 				mkdir($filesdir.'AppliedFilters/helper1/shortAndAverage', 0777, true);
-				shell_exec("java -jar ".$jardir."LengthSelection.jar ".$filesdir."Filters/".$timestamp."/".$filter1." ".$filesdir."AppliedFilters/helper1");
+				shell_exec("/usr/bin/java -jar ".$jardir."LengthSelection.jar ".$filesdir."Filters/".$timestamp."/".$filter1." ".$filesdir."AppliedFilters/helper1");
 				moveFiles($filesdir."AppliedFilters/helper1/".$filter3, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
+				addAppliedFiltersFiles($timestamp, $appliedFilter, $filter1, $filter2, $filter3);
 				shell_exec("rm -rf ".$filesdir."AppliedFilters/helper1");
 			}
 			else {
 				moveFiles($filesdir."Filters/".$timestamp."/".$filter1, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
+				addAppliedFiltersFiles($timestamp, $appliedFilter, $filter1, $filter2, $filter3);
 			}
 		}
 	}
@@ -211,17 +314,20 @@ if (!is_dir($filesdir."AppliedFilters/".$timestamp."/".$appliedFilter)) {
 				mkdir($filesdir.'AppliedFilters/helper1', 0777, true);
 				mkdir($filesdir.'AppliedFilters/helper1/long', 0777, true);
 				mkdir($filesdir.'AppliedFilters/helper1/shortAndAverage', 0777, true);
-				shell_exec("java -jar ".$jardir."LengthSelection.jar ".$filesdir."Filters/".$timestamp."/".$filter2." ".$filesdir."AppliedFilters/helper1");
+				shell_exec("/usr/bin/java -jar ".$jardir."LengthSelection.jar ".$filesdir."Filters/".$timestamp."/".$filter2." ".$filesdir."AppliedFilters/helper1");
 				moveFiles($filesdir."AppliedFilters/helper1/".$filter3, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
+				addAppliedFiltersFiles($timestamp, $appliedFilter, $filter1, $filter2, $filter3);
 				shell_exec("rm -rf ".$filesdir."AppliedFilters/helper1");
 			}
 			else {
 				moveFiles($filesdir."Filters/".$timestamp."/".$filter2, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
+				addAppliedFiltersFiles($timestamp, $appliedFilter, $filter1, $filter2, $filter3);
 			}
 		}
 		else {
 			if ($filter3 != "") {
 				moveFiles($filesdir."Filters/".$timestamp."/".$filter3, $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter);
+				addAppliedFiltersFiles($timestamp, $appliedFilter, $filter1, $filter2, $filter3);
 			}
 			else {
 			}
@@ -259,6 +365,15 @@ $fileName = $timestampJob."_".$timestamp."_".$appliedFilter."_batch".$batchIndex
 
 
 shell_exec("java -jar ".$jardir."JobFileCreation.jar ".$noSentences." ".$filesdir."AppliedFilters/".$timestamp."/".$appliedFilter." ".$filesdir."Experiments/".$timestamp."/".$appliedFilter."/".$fileName);
+
+$storageCSV = $filesdir."Experiments/".$timestamp."/".$appliedFilter;
+$fileid = storeCSVFile($fileName, $storageCSV);
+$batch_size = getLines($fileid) - 2;
+$filters = str_replace("-", ", ", $appliedFilter); 
+$comment = $_POST["files_comment"];
+$query="INSERT INTO `batches_for_cf` (`file_id`, `filter_named`, `batch_size`, `comment`, `created_by`) 
+        VALUES ('".$fileid."','".$filters."','".$batch_size."','".$comment."','".$_SERVER['REMOTE_USER']."')";
+mysql_query($query) or dieError("function: batches_for_cf<br/>".$query."<br/>".mysql_error());
 
 $file = $filesdir."Experiments/".$timestamp."/".$appliedFilter."/".$fileName;
 

@@ -1,53 +1,130 @@
-function populateFiles(data) {
+
+ function populateFiles(data) {
   for (var i = 0; i < data.length; i++) {
-  //	var aa = data[i].filename;
+
   	$("#filearea").append("<div class='fileline'>"+data[i].filename+"</div>")
   }
   $( "#tabs" ).tabs();
 }
 
 $(document).ready(function() {
-	//alert("hello hui");
-//	$.getJSON('services/getFiles.php',populateFiles)
-	$("#filearea").load("dataproc/testRIntegration.php");
+	$("#statisticsarea").load("/wcs/dataproc/genAnalysisFiles.php");
+	$("#preprocessarea").load("/wcs/preprocessing/preprocinterface.php");
 	$( "#tabs" ).tabs();	
-})
-
-
-$(document).ready(function() {
-  $("#jobarea").load("crowdflower/index.php");
 });
 
 
 
-/*function csvInput(data) {
-	$("#historyarea").append("<div class='columnline'>"+"File ID" + "  " 
-			+"Created Date" + "  "
-			+"File ID" + "  "
-			+"File Name" + "  "
-			+"Job title" + "  "
-			+"Judgement Per Unit" + "  "
-			+"Max Judgement Per Worker" + "  "
-			+"Units Per Assignment" + "  "                     
-            + "</div>")
-	  for (var i = 0; i < data.length; i++) {
-	  	$("#historyarea").append("<div class='rowline'>"+data[i].file_id + "  " 
-	  			+data[i].created_date + "  " 
-	  			+data[i].file_name + "  " 
-	  			+data[i].job_title + "  " 
-	  			+data[i].judgement_per_unit + "  " 
-	  			+data[i].max_judgement_per_worker + "  " 
-	  			+data[i].units_per_assignment + "  "                              	  		                           	  			                            	  			                             
-	  			+ "</div>")
-	  }
-	  $( "#tabs" ).tabs();
-	}
 
-	$(document).ready(function() {
-		$.getJSON('historyOld.php', csvInput)		
-	})
-*/
+
+$(document).ready(function() {
 	
+    $(".changeStatus").change(function(){ 
+    	
+    alert($("option:selected", this).text() +" "+$(".changeStatus").index(this) + " " + $(this).closest('tr').children().slice(0,1).text());
+    $(this).parent().children("dir.cStatus").text($("option:selected", this).val());   
+    var selectedstatus = $("option:selected", this).text();
+    if(selectedstatus == "Pause")
+    	{
+    var xmlRequest = $.ajax({
+    	type: 'POST',
+        data: ({status : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(0,1).text()}),
+        url: '/wcs/statuschange/pause_job.php'
+    	});
+    	 
+    	xmlRequest.done(alert("CrowdFlower Status Changed and Database Updated!"));
+    	}
+    else if(selectedstatus == "Resume")
+    	{
+    	 var xmlRequest = $.ajax({
+    	    	type: 'POST',
+    	        data: ({status : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(0,1).text()}),
+    	        url: '/wcs/statuschange/resume_job.php'
+    	    	});
+    	    	 
+    	 xmlRequest.done(alert("CrowdFlower Status Changed and Database Updated!"));
+    	}
+    else if(selectedstatus == "Cancel")
+	{
+    	 var xmlRequest = $.ajax({
+    	    	type: 'POST',
+    	        data: ({status : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(0,1).text()}),
+    	        url: '/wcs/statuschange/cancel_job.php'
+    	    	});
+    	    	 
+    	 xmlRequest.done(alert("CrowdFlower Status Changed and Database Updated!"));
+	}
+    else if(selectedstatus == "Delete")
+	{
+    	 var xmlRequest = $.ajax({
+    	    	type: 'POST',
+    	        data: ({status : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(0,1).text()}),
+    	        url: '/wcs/statuschange/delete_job.php'
+    	    	});
+    	    	 
+    	 xmlRequest.done(alert("CrowdFlower Status Changed and Database Updated!"));
+	}
+    
+    });
+    $( "#tabs" ).tabs();	
+});
+
+
+$(document).ready(function() {
+    $(".takeAction").change(function(){ 
+    	
+    alert($("option:selected", this).text() +" "+$(".takeAction").index(this) + " " + $(this).closest('tr').children().slice(0,1).text());
+    if( $("option:selected", this).val() == "Extract" )
+	 {
+    	var xmlRequest = $.ajax({
+        	type: 'POST',
+            data: ({actions : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(0,1).text()}),
+            url: '/wcs/crowdflower/reachextractinfo.php'
+        	});
+        	 
+        	xmlRequest.done(window.location="/wcs/index.php");
+	 }
+    else if( $("option:selected", this).val() == "Analyze" )
+    {
+    	var xmlRequest = $.ajax({
+        	type: 'POST',
+            data: ({actions : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(0,1).text()}),
+            url: '/wcs/dataproc/genAnalysisFiles.php'
+        	});
+        	 
+        	xmlRequest.done(window.location="/wcs/index.php");
+    }
+    });
+    $( "#tabs" ).tabs();	
+});
+
+
+	
+$(function() {
+	 $( "#dialog-confirm" ).dialog({
+		  autoOpen: false,
+	      resizable: true,
+	      height:600,
+	      width:1000,
+	      modal: true,
+	      buttons: {
+	        "Confirm": function() {
+	          $( this ).dialog( "close" );
+	          alert($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(4,5).text() + ' is selected!');
+	          $( "#sentences" ).text($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(4,5).text());
+	        },
+	        Cancel: function() {
+	          $( this ).dialog( "close" );
+	        }
+	      }
+	    });
+    $( "#uploadedfile" ).click(function() {
+      $( "#dialog-confirm" ).dialog( "open" );
+    });
+  });
+
+
+
 $(function() {
 
 	  // call the tablesorter plugin
@@ -134,3 +211,7 @@ $(function() {
 	  });
 
 	});
+
+
+
+
