@@ -2,7 +2,10 @@
 
 // Script to interactively extract the results.csv file for a certain task. 
 // FIXME: For testing, when the admin is finished, delete this file. 
+include_once '../includes/functions.php';
 include("extractinfo.php");
+
+include("../file_storage.inc"); 
 
 date_default_timezone_set("Europe/Amsterdam"); 
 
@@ -13,6 +16,8 @@ if(isset($_GET["job_id"])){
 }
 if($job_id > 1 ){
   getResults($job_id);
+  $filefieldname = array("name" => $job_id . "_file_results.csv", "type" => "text/csv", "size" => 5); 
+  storeFile($filefieldname); 
 } else {
   print('Error: you must provide a valid job_id'); 
 }

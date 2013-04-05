@@ -9,7 +9,6 @@ if (window.File && window.FileReader && window.FileList && window.Blob) {
 }
 
 function handleFileSelect(evt) {
-
 	var files = evt.target.files; // FileList object
     	var reader = new FileReader();
 	reader.onload = function(theFile) {    
@@ -52,6 +51,12 @@ function computeTime() {
 	seconds_per_assignment.value = parseInt(seconds_per_unit) * parseInt(units_per_assignment);
 }
 
+function computePaymentPerHour() {
+	var seconds_per_assignment = document.getElementById("seconds_per_assignment").value;
+	var payment_per_assignment = document.getElementById("payment").value;
+	var payment_per_hour = document.getElementById("payment_per_hour");
+	payment_per_hour.value = ((60 * 60) / parseInt(seconds_per_assignment)) * (parseInt(payment_per_assignment) / 100);
+}
 </script>
 </head>
 <body>
@@ -74,7 +79,8 @@ function computeTime() {
 
 Payment per sentence (dollar): <input type="text" name="payment_per_sentence" id="payment_per_sentence"> <br />
 Payment per job (dollar): <input type="text" name="payment_per_job" id="payment_per_job"> <br />
-Seconds per assignment: <input type="text" name="seconds_per_assignment" id="seconds_per_assignment"> <br />
+Seconds per assignment: <input type="text" name="seconds_per_assignment" id="seconds_per_assignment" onchange="computePaymentPerHour()"> <br />
+Payment per hour: <input type="text" name="payment_per_hour" id="payment_per_hour"> <br />
 
 </form> <br />
 

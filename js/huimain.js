@@ -1,4 +1,3 @@
-
  function populateFiles(data) {
   for (var i = 0; i < data.length; i++) {
 
@@ -18,6 +17,7 @@ $(document).ready(function() {
 
 
 $(document).ready(function() {
+	
     $(".changeStatus").change(function(){ 
     	
     alert($("option:selected", this).text() +" "+$(".changeStatus").index(this) + " " + $(this).closest('tr').children().slice(0,1).text());
@@ -99,6 +99,31 @@ $(document).ready(function() {
 
 
 	
+$(function() {
+	 $( "#dialog-confirm" ).dialog({
+		  autoOpen: false,
+	      resizable: true,
+	      height:600,
+	      width:1000,
+	      modal: true,
+	      buttons: {
+	        "Confirm": function() {
+	          $( this ).dialog( "close" );
+	          alert($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(4,5).text() + ' is selected!');
+	          $( "#sentences" ).text($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(4,5).text());
+	        },
+	        Cancel: function() {
+	          $( this ).dialog( "close" );
+	        }
+	      }
+	    });
+    $( "#uploadedfile" ).click(function() {
+      $( "#dialog-confirm" ).dialog( "open" );
+    });
+  });
+
+
+
 $(function() {
 
 	  // call the tablesorter plugin
@@ -185,7 +210,6 @@ $(function() {
 	  });
 
 	});
-
 
 
 
