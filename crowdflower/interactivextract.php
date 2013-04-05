@@ -15,9 +15,8 @@ if(isset($_GET["job_id"])){
   $job_id = $argv[1]; 
 }
 if($job_id > 1 ){
-  getResults($job_id);
-  $filefieldname = array("name" => $job_id . "_file_results.csv", "type" => "text/csv", "size" => 5); 
-  storeFile($filefieldname); 
+  getResults($job_id); 
+  print("OK");
 } else {
   print('Error: you must provide a valid job_id'); 
 }
