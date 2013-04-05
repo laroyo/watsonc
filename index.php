@@ -21,19 +21,20 @@ include_once 'includes/functions.php';
 <script language="javascript">
 
 if (window.File && window.FileReader && window.FileList && window.Blob) {
-	//alert("this works");
+	
 } else {
   alert('The File APIs are not fully supported in this browser.');
 }
 
 function handleFileSelect(evt) {
-	//alert("event ok");
+	
 	var files = evt.target.files; // FileList object
-    	var reader = new FileReader();
+	var reader = new FileReader();
 	reader.onload = function(theFile) {    
         	str = theFile.target.result;            // load file values
         	var lines = str.split(/[\r\n|\n]+/);    // split data by line
 		document.getElementById('sentences').value = lines.length - 2;
+	//	document.getElementById('sentences').value = 100;
 	}
 	reader.onerror = function() { console.log('Error reading file');}       // error message    
         reader.readAsText(files[0]);
@@ -41,7 +42,7 @@ function handleFileSelect(evt) {
 window.addEventListener('DOMContentLoaded', pageCompleteListener, false);
 
 function pageCompleteListener(event) {
-	//alert("ok2");
+
 	document.getElementById('uploadedfile').addEventListener('change', handleFileSelect, false);
 }
 
@@ -144,16 +145,21 @@ function computePaymentPerHour() {
 				<div id="dialog-confirm" title="Select a file from the server">
   <?php
 
-$result = mysql_query("SELECT * FROM  `cfinput` LIMIT 0 , 30");
+$result = mysql_query("SELECT b.*, s.original_name, s.storage_path 
+FROM  batches_for_cf  b
+LEFT JOIN file_storage as s on b.file_id = s.id
+ORDER BY  b.created DESC");
 
 echo "<table id='historytable' class='tablesorter'>";
 echo "<thead>"; //thead tag is required for using tablesorter
 echo "<tr>";
-echo "<th title = 'Link to CrowdFlower'>Job ID</th>";
-echo "<th>Job Title</th>";
-echo "<th>Created Date</th>";
+echo "<th>File ID</th>";
+echo "<th>Filter Applied</th>";
 echo "<th>Created By</th>";
+echo "<th>Created Date</th>";
 echo "<th>File Name</th>";
+echo "<th>Storage Path</th>";
+echo "<th>Comments</th>";
 
 echo "</tr>";
 echo "</thead>";
@@ -166,12 +172,13 @@ while($row = mysql_fetch_array($result)){
 	    extract ( $row );
 	    
         echo "<tr>";
-     // echo "<td><a href = 'index.php#tabs-4' class = 'tdlinks' >$job_id</a></td>";
-        echo "<td><input type='radio' id='radiofile' name ='radiofile'/><label for='radiofile'><a href = 'https://crowdflower.com/jobs' target='_blank' class = 'tdlinks' >$job_id</a></label></td>";
-        echo "<td>$job_title</td>";
-        echo "<td>$created_date</td>";
+        echo "<td><input type='radio' id='radiofile' name ='radiofile'/><label for='radiofile'><a href = 'https://crowdflower.com/jobs' target='_blank' class = 'tdlinks' >$file_id</a></label></td>";
+        echo "<td>$filter_named</td>";
         echo "<td>$created_by</td>";
-        echo "<td>$file_name</td>";
+        echo "<td>$created</td>";
+        echo "<td>$original_name</td>";
+        echo "<td>$storage_path</td>";
+        echo "<td>$comment</td>";
        
     
      echo "</tr>";
@@ -186,8 +193,10 @@ echo "</table>";
 id="form">
 <div class="borderframe"  > 
 	<div class="labelfield">Choose a file to upload:</div>
-	<div class="inputfield"><input name="uploadedfile" type="file" id="uploadedfile" value = "Upload File"  />
-	<input type="hidden" name="sentences" id="sentences" /></div>
+	<div class="inputfield"><input name="uploadedfile" type="file" id="uploadedfile" value = "Upload File" />
+	
+	<input type="hidden" name="sentences" id="sentences" />
+</div>
 	<div class="labelfield">Job title:</div> <div class="inputfield"><input type="text" 
 
 name="title"> <br /></div>
@@ -208,7 +217,7 @@ id="units_per_assignment"> <br /></div>
 
 	<div class="labelfield">Payment per assignment (CF: Payment per page) (cents):</div><div 
 
-class="inputfield"> <input type="text" name="payment" oninput="computePayment();" id="payment"> <br 
+class="inputfield"> <input type="text" name="payment" oninput="computePayment()" id="payment"> <br 
 
 /></div>
 
@@ -294,9 +303,17 @@ name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
 	           $date1 = $item["created_date"];
 	           $ts1 = strtotime($date1);
 	           $ts2 = strtotime($date2);
-	
-	           $date_diff = ($ts2 - $ts1)/86400;   //24*60*60
-	           $updateRuntime = mysql_query("Update cfinput Set run_time = '$date_diff' Where job_id = '{$item["job_id"]}' ");
+	           
+	           $diff = $ts2 - $ts1;
+	           $days = floor($diff/86400);   //24*60*60
+	           $hours = round(($diff-$days*60*60*24)/(60*60));
+	           if($hours == 24)
+	           {
+	              $days += 1;
+	              $hours = 0;	           
+	           }
+	           $run_time = $days." days ".$hours." hours";
+	           $updateRuntime = mysql_query("Update cfinput Set run_time = '$run_time' Where job_id = '{$item["job_id"]}' ");
               	           	 	           
               }
              ?>
@@ -317,27 +334,26 @@ echo "<th>Job Title</th>";
 echo "<th>Created Date</th>";
 echo "<th>Created By</th>";
 echo "<th>File Name</th>";
+echo "<th>Number of Sentences</th>";
 echo "<th>Type of Units</th>";
 echo "<th>Template</th>";
-echo "<th>Max Judgement Per Worker</th>";
-echo "<th>Max Judgement Per Ip</th>";
+echo "<th>Max Judgment Per Worker</th>";
+echo "<th>Max Judgment Per Ip</th>";
 echo "<th>Units Per Assignment</th>";
-//echo "<th>Assignments Per Job</th>"; 
 echo "<th>Units Per Job</th>";
-echo "<th>Judgements Per Unit</th>";
-echo "<th title = 'Judgements Per Unit * Units Per Assignment'>Judgements Per Assignment</th>";	
-echo "<th title = 'Judgements Per Unit * Units Per Job'>Judgements Per Job</th>";
+echo "<th>Judgments Per Unit</th>";
+echo "<th title = 'Judgments Per Unit * Units Per Job'>Judgments Per Job</th>";
+echo "<th>Seconds Per Unit</th>";
+echo "<th>Seconds Per Assignment</th>";
 echo "<th>Payment Per Unit</th>";
 echo "<th title = 'Payment Per Unit * Units Per Assignment'>Payment Per Assignment</th>";
-//echo "<th title = 'Payment Per Unit * Units Per Job'>Payment Per Job</th>";
 echo "<th title = 'Payment Per Unit * Judgements Per Unit'>Total Payment Per Unit</th>";
-//echo "<th title = 'Total Payment Per Unit * Units Per Assignment'>Total Payment Per Assignment</th>";
 echo "<th title = 'Total Payment Per Unit * Units Per Job'>Total Payment Per Job</th>";
 echo "<th>Payment Per Hour</th>";
 echo "<th>Channel Used</th>";
 echo "<th>Comments</th>";
-echo "<th>Job Judgements Made</th>";
-echo "<th title = 'Job Judgements Made / Judgements Per Job'>Job Completion</th>";
+echo "<th>Job Judgments Made</th>";
+echo "<th title = 'Job Judgments Made / Judgments Per Job'>Job Completion</th>";
 echo "<th title = 'Days'>Run Time</th>";
 echo "<th>Status</th>";
 echo "<th>Actions</th>";
@@ -358,26 +374,25 @@ while($row = mysql_fetch_array($result)){
         echo "<td>$created_date</td>";
         echo "<td>$created_by</td>";
         echo "<td>$file_name</td>";
+        echo "<td>$nr_sentences_file</td>";
         echo "<td>$type_of_units</td>";
         echo "<td>$template</td>";
-        echo "<td>$max_judgements_per_worker</td>";
-        echo "<td>$max_judgements_per_ip</td>";
+        echo "<td>$max_judgments_per_worker</td>";
+        echo "<td>$max_judgments_per_ip</td>";
         echo "<td>$units_per_assignment</td>";
-  //      echo "<td>$assignments_per_job</td>";
         echo "<td>$units_per_job</td>";
-        echo "<td>$judgements_per_unit</td>";
-        echo "<td>$judgements_per_assignment</td>";
-        echo "<td>$judgements_per_job</td>";
+        echo "<td>$judgments_per_unit</td>";
+        echo "<td>$judgments_per_job</td>";
+        echo "<td>$seconds_per_unit</td>";
+        echo "<td>$seconds_per_assignment</td>";
         echo "<td>$payment_per_unit</td>";
         echo "<td>$payment_per_assignment</td>";
-   //     echo "<td>$payment_per_job</td>";
         echo "<td>$total_payment_per_unit</td>";
-  //      echo "<td>$total_payment_per_assignment</td>";
         echo "<td>$total_payment_per_job</td>";
         echo "<td>$$payment_per_hour</td>";
         echo "<td>$channels_used</td>";
         echo "<td>$job_comments</td>";
-        echo "<td>$job_judgements_made</td>";
+        echo "<td>$job_judgments_made</td>";
         echo "<td>$job_completion</td>";
         echo "<td>$run_time</td>";
         echo "<td title='$job_id'>
