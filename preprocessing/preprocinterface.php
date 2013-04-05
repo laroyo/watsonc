@@ -50,6 +50,8 @@ function checkForFilters3() {
 
 <form enctype="multipart/form-data" action="/wcs/preprocessing/indexpreprocessing.php" method="POST" id="form" name="form">
 	Choose the text files for processing: <input type="file" multiple name="uploadedfile[]" webkitdirectory="" id="uploadedfile" /> <br /><br />
+	Comments: <br /> <textarea name="files_comment" id="files_comment" rows="4" cols="60"/> <br />
+
 	Choose the filters that should be applied on the uploaded data: <br />
 	
 	<input type="checkbox" name="filters[]" id="filters1" value="specialcases" checked onchange="checkForFilters1()"> Special cases <br />
