@@ -94,8 +94,9 @@ function getOneFieldFromQuery($query,$field) {
 	$row = mysql_fetch_assoc($data);
 	return $row[$field];
 }
+
 function getLines($id) {
-	$query="SELECT `storage_path` FROM `file_storage` WHERE `id` = ".$id;
+	$query="SELECT storage_path FROM file_storage WHERE id = '$id'";
 	$filename = getOneFieldFromQuery($query, 'storage_path');
 	$linecount = 0;
 	$handle = fopen($filename, "r");

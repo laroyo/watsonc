@@ -1,3 +1,4 @@
+
  function populateFiles(data) {
   for (var i = 0; i < data.length; i++) {
 
@@ -6,13 +7,13 @@
   $( "#tabs" ).tabs();
 }
 
+ 
+ 
 $(document).ready(function() {
 	$("#statisticsarea").load("/wcs/dataproc/genAnalysisFiles.php");
 	$("#preprocessarea").load("/wcs/preprocessing/preprocinterface.php");
 	$( "#tabs" ).tabs();	
 });
-
-
 
 
 
@@ -72,7 +73,7 @@ $(document).ready(function() {
 $(document).ready(function() {
     $(".takeAction").change(function(){ 
     	
-    alert($("option:selected", this).text() +" "+$(".takeAction").index(this) + " " + $(this).closest('tr').children().slice(0,1).text());
+    alert($("option:selected", this).text() +"  " + $(this).closest('tr').children().slice(0,1).text());
     if( $("option:selected", this).val() == "Extract" )
 	 {
     	var xmlRequest = $.ajax({
@@ -107,11 +108,13 @@ $(function() {
 	      width:1000,
 	      modal: true,
 	      buttons: {
-	        "Confirm": function() {
+	          "Confirm": function() {
 	          $( this ).dialog( "close" );
-	          alert($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(4,5).text() + ' is selected!');
-	          $( "#sentences" ).text($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(4,5).text());
-	        },
+	          alert($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(1, 2).text() + ' is selected!');	
+	          $( "#fileid" ).val($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(0, 1).text());
+	          $("#sentences" ).val($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(3, 4).text());
+	          $("label[for='uploadedfile']").text($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(1, 2).text());  
+	          },
 	        Cancel: function() {
 	          $( this ).dialog( "close" );
 	        }
@@ -210,6 +213,7 @@ $(function() {
 	  });
 
 	});
+
 
 
 
