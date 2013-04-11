@@ -39,6 +39,15 @@ a[href].tdlinks {
 	font: bold;	
 	}
 	
+	a[href].filelinks {
+	color: blue;
+	font: bold;	
+	}
+	
+	table#resultstable {
+	width: 60%;
+	
+	}
 textarea:focus, input:focus
 {
 background-color: #cbdfeb;   // #97bfd9

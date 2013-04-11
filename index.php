@@ -14,11 +14,13 @@ include_once 'includes/functions.php';
 <link href="plugins/jquery-ui/css/dark-hive/jquery-ui-1.10.1.custom.css"
 	rel="stylesheet">
 <link href="plugins/tablesorter/css/theme.default.css" rel="stylesheet" type="text/css" />	
+
 <!-- js libraries  -->
 <script src="plugins/jquery-ui/js/jquery-1.9.1.js"></script>
 <script src="plugins/jquery-ui/js/jquery-ui-1.10.1.custom.js"></script>
 <script src="plugins/tablesorter/js/jquery.tablesorter.min.js" type="text/javascript"></script>
 <script src="plugins/tablesorter/js/jquery.tablesorter.widgets.min.js" type="text/javascript"></script>
+<script src="plugins/jquery-multi-open-accordion/jquery-multi-open-accordion/jquery.multi-accordion-1.5.3.js" type="text/javascript"></script>
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
@@ -72,22 +74,22 @@ function computePaymentPerHour() {
 		<div id="tabs">
 			<ul>
 				<li><a href="#tabs-1" >Home</a></li>
-			    <li><a href="#tabs-Raw">Upload Raw</a></li>
+			    <li><a href="#tabs-upload">Upload Raw</a></li>
 			    <li><a href="#tabs-ProcessInput">Process Input</a></li>
 				<li><a href="#tabs-2" >Jobs</a></li>
 				<li><a href="#tabs-3" >History</a></li>
-				<li><a href="#tabs-4" >Statistics</a></li>
+				<li><a href="#tabs-4" >Results</a></li>
 			</ul>
 			<div id="tabs-1" >
 				<h1>Crowd Watson</h1>
 				<br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing"><img
 					src="graphs/crowdsourcing.jpg" alt="No show" title = "What is the Crowdsourcing?" /></a>
 			</div>
-			<div id="tabs-Raw">
-			
-				<h3>Upload Raw Files</h3>
-				<br />
-				<form enctype="multipart/form-data" action="services/uploadRaw.php" method="POST">
+			<div id="tabs-upload">
+				<div id="accordion">
+  <h5>CrowdFlower</h5>
+  <div id="tabs-Raw">	
+			<form enctype="multipart/form-data" action="services/uploadRaw.php" method="POST">
 				<div class="borderframe"  >
 					<div class="labelfield">Choose a RAW file to upload:</div>
 					<div class="inputfield">
@@ -106,7 +108,14 @@ function computePaymentPerHour() {
 					</div>
 					</div>
 				</form>
+				</div>
+  <h5>Games</h5>
+  <div>
+    <p>Pending</p>
+  </div>
+</div>
 			</div>
+			
 			
 			<div id="tabs-ProcessInput">
 			
@@ -129,7 +138,7 @@ FROM  batches_for_cf  b
 INNER JOIN file_storage as s on b.file_id = s.id
 ORDER BY  b.created DESC");
 
-echo "<table id='historytable' class='tablesorter'>";
+echo "<table id='selectfile' class='tablesorter'>";
 echo "<thead>"; //thead tag is required for using tablesorter
 echo "<tr>";
 echo "<th>File ID</th>";
@@ -148,7 +157,7 @@ echo "<tbody>"; //tbody tag is required for using tablesorter
 while($row = mysql_fetch_array($result)){
 
 	    extract ( $row );
-	    
+
         echo "<tr>";
         echo "<td><input type='radio' id='radiofile' name ='radiofile'/>$file_id</label></td>";
         echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$file_id' class = 'tdlinks' >$original_name</a></td>";
@@ -169,7 +178,7 @@ echo "</table>";
 id="form">
 <div class="borderframe"  > 
 	<div class="labelfield">Choose a file to upload:</div>
-	<div class="inputfield"><input name="uploadedfile" type="button" id="uploadedfile" value = "Upload File" />
+	<div class="inputfield"><input name="uploadedfile" type="button" id="uploadedfile" value = "Choose Server File" />
     <input type="hidden" name="fileid" id="fileid" />
 	<input type="hidden" name="sentences" id="sentences" />
 	<label for="uploadedfile" style ="font-size: 80%" >No File Chosen</label> 
@@ -262,8 +271,8 @@ name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
 				<br>
 				<?php 	
 
-				$result = mysql_query("SELECT * FROM `cfinput` WHERE 1");
-				
+				$result = mysql_query("SELECT * FROM `history_table` WHERE 1");
+
 				/* Update run_time in the database */
 				while($item = mysql_fetch_array($result))
               {
@@ -273,7 +282,7 @@ name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
 	           $date1 = $item["created_date"];
 	           $ts1 = strtotime($date1);
 	           $ts2 = strtotime($date2);
-	           
+
 	           $diff = $ts2 - $ts1;
 	           $days = floor($diff/86400);   //24*60*60
 	           $hours = round(($diff-$days*60*60*24)/(60*60));
@@ -283,7 +292,7 @@ name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
 	              $hours = 0;	           
 	           }
 	           $run_time = $days." days ".$hours." hours";
-	           $updateRuntime = mysql_query("Update cfinput Set run_time = '$run_time' Where job_id = '{$item["job_id"]}' ");
+	           $updateRuntime = mysql_query("Update history_table Set run_time = '$run_time' Where job_id = '{$item["job_id"]}' ");
               	           	 	           
               }
              ?>
@@ -294,7 +303,7 @@ name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
   <br>
 <?php
 
-$result = mysql_query("SELECT * FROM  `cfinput` ORDER BY created_date DESC");
+$history = mysql_query("SELECT * FROM  `history_table` ORDER BY created_date DESC");
 
 echo "<table id='historytable' class='tablesorter'>";
 echo "<thead>"; //thead tag is required for using tablesorter
@@ -326,27 +335,27 @@ echo "<th>Job Judgments Made</th>";
 echo "<th title = 'Job Judgments Made / Judgments Per Job'>Job Completion</th>";
 echo "<th title = 'Days'>Run Time</th>";
 echo "<th>Status</th>";
-echo "<th>Actions</th>";
+echo "<th>Link</th>";
 echo "</tr>";
 echo "</thead>";
 echo "<tbody>"; //tbody tag is required for using tablesorter
 
 
 
-while($row = mysql_fetch_array($result)){
+while($row = mysql_fetch_array($history)){
 
 	    extract ( $row );
-	    
+
         echo "<tr>";
      // echo "<td><a href = 'index.php#tabs-4' class = 'tdlinks' >$job_id</a></td>";
         echo "<td><a href = 'https://crowdflower.com/jobs' target='_blank' class = 'tdlinks' >$job_id</a></td>";
         echo "<td>$job_title</td>";
         echo "<td>$created_date</td>";
         echo "<td>$created_by</td>";
-        echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'tdlinks' >$file_name</a></td>";
+        echo "<td style ='font-size: 80%' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$file_name</a></td>";
         echo "<td>$nr_sentences_file</td>";
         echo "<td>$type_of_units</td>";
-        echo "<td>$template</td>";
+        echo "<td style ='font-size: 80%' >$template</td>";
         echo "<td>$max_judgments_per_worker</td>";
         echo "<td>$max_judgments_per_ip</td>";
         echo "<td>$units_per_assignment</td>";
@@ -366,26 +375,18 @@ while($row = mysql_fetch_array($result)){
         echo "<td>$job_completion</td>";
         echo "<td>$run_time</td>";
         echo "<td title='$job_id'>
-  <select class= 'changeStatus'>
-  <option value='ChangeStatus'>--Change Status--</option>
-  <option value='Paused'>Pause</option>
-  <option value='Running'>Resume</option>
-  <option value='Canceled'>Cancel</option>
-  <option value='Deleted'>Delete</option></select>
-  <dir class = 'cStatus'>$status</dir>
-  </td>";
-     echo "<td title='$job_id'>   
-  <select class= 'takeAction'>
-  <option value='0'>--Take Action--</option>
-  <option value='Extract'>Extract</option>
-  <option value='Analyze'>Analyze</option> 
-  </select> 
-   <select class= 'extractedFiles'>
-  <option value='0'>--Extracted Files--</option>
-  </select>
-   <select class= 'analyzedFiles'>
-  <option value='0'>--Analyzed Files--</option>
-  </select>
+        <select class= 'changeStatus'>
+        <option value='ChangeStatus'>--Change--</option>
+        <option value='Paused'>Pause</option>
+        <option value='Running'>Resume</option>
+        <option value='Canceled'>Cancel</option>
+        <option value='Deleted'>Delete</option></select>
+        <dir class = 'cStatus'>$status</dir>
+        </td>";
+        echo "<td title='$job_id'>
+        <a href = 'https://crowdflower.com/jobs' target='_blank' class = 'tdlinks' >
+ Link to Results Table
+ </a>
   </td>";
     
      echo "</tr>";
@@ -396,11 +397,62 @@ echo "</table>";
 ?>
 			</div>
 				<div id="tabs-4">
-				<p>Get Files. It may take some time to show the results. Just wait for a while</p>
+				<h3>This page is to show results data and to link to various results files</h3>
+				</br>
+<?php
+
+$results = mysql_query("SELECT * FROM  `results_table` ORDER BY created_date DESC");
+
+echo "<table id='resultstable' class='tablesorter' >";
+echo "<thead>"; //thead tag is required for using tablesorter
+echo "<tr>";
+echo "<th title = 'Link to the Origin'>Job ID</th>";
+echo "<th title = 'CrowdFlower/Games'>Origin</th>";
+echo "<th>Channel (Percentage)</th>";
+echo "<th>Average Time</th>";
+echo "<th>Actual Time Spent</th>";
+echo "<th>Maximum Time</th>";
+echo "<th title = 'Click to open the file'>Origin Generated File</th>";
+echo "<th># Filtered Sentences</th>";
+echo "<th># Filtered Workers</th>";
+echo "<th>Statistics Images</th>";
+echo "<th>Link</th>";
+echo "</tr>";
+echo "</thead>";
+echo "<tbody>"; //tbody tag is required for using tablesorter
+
+while($row = mysql_fetch_array($results)){
+
+	extract ( $row );
+
+	echo "<tr>";
+	echo "<td><a href = 'https://crowdflower.com/jobs' target='_blank' class = 'tdlinks' >$job_id</a></td>";
+	echo "<td>$origin</td>";
+	echo "<td>$channel_percentage</td>";
+	echo "<td>$avg_time</td>";
+	echo "<td>$actual_time_spent</td>";
+	echo "<td>$max_time</td>";
+	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$origin_file_id' class = 'filelinks' >$origin_file_name</a></td>";
+	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$filtered_sentences_file_id' class = 'filelinks' >$number_filtered_sentences</a></td>";
+	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$filtered_workers_file_id' class = 'filelinks' >$number_filtered_workers</a></td>";
+	echo "<td>See Image</td>";
+	echo "<td title='$job_id'>
+	<a href = 'https://crowdflower.com/jobs' target='_blank' class = 'tdlinks' >
+	Link to History Table
+	</a>
+	</td>";
+
+	echo "</tr>";
+
+	}
+
+	echo "</tbody>";
+	echo "</table>";
+?>
+			
 				<br>
-				<form>
-</form>
-				<div id="statisticsarea"></div>
+
+				
 			</div>
 		</div>
 
