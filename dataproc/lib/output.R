@@ -30,3 +30,24 @@ writeFilteredOutHeaders <- function (workbook, worksheet) {
     mergeCells(workbook, sheet = worksheet, reference = cells)
   }
 }
+
+genHeatMap <- function(dframe,job_id,prefix=NULL){
+
+  library(gplots)
+  library(RColorBrewer)
+
+  Sys.setlocale("LC_TIME", "en_US.utf8")
+
+  base_dir <- '/var/www/files/AnalysisFiles/'
+  filename <- paste(base_dir,'heat_map',job_id,'.jpg',sep='')
+
+  if(! is.null(prefix)){
+    print('exists')
+    filename <- paste(prefix,'_',filename,sep='')
+  }  
+
+  jpeg(filename)   
+  heatmap.2(as.matrix(dframe), Rowv=FALSE,Colv=FALSE,dendrogram='none',scale='none',col=brewer.pal(11,'RdYlGn')[6:11],trace='none',key=FALSE,cellnote=dframe,notecol='black',lmat=rbind( c(1, 3), c(2,1), c(1,4) ), lhei=c(1, 4, 2 ))
+  dev.off()
+  
+}

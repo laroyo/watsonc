@@ -1,24 +1,27 @@
 #!/usr/bin/Rscript
 
 #Parse a results file from Crowdflower, and generates contingency tables for relations/workers and sentences as an output. 
-
 library(XLConnect)
+library(RMySQL)
+
+con <- dbConnect(MySQL(), user="watsoncs",password="Tre2akEf",dbname='watsoncs',host='localhost')
+
 source('lib/simplify.R')
 source('lib/measures.R')
+source('lib/output.R')
 
 args <- commandArgs(trailingOnly = TRUE)
 
-#The script acepts parameters. If none passed, the following will be used as an examaple. 
+#The script accepts parameters. If none passed, the following will be used as an examaple. 
 if(length(args) == 0){
-  inputfile <- 'example_data/rf145547.csv'
-  outputfile  <- "output-results-cflower.xlsx"
+#FIXME: a job_id should always be passed. 
 } else {
-  inputfile <- args[1]
-  outputfile  <- args[2]
+  job_id <- args[1]
 }
 
-raw_data <- read.csv(inputfile)
 
+query <- sprintf('select unit_id,worker_id,worker_trust,external_type,relation,explanation,selected_words,started_at,created_at,term1,term2,sentence from cflower_results where job_id = %s', job_id)
+raw_data <- dbGetQuery(con, query)
 #Shorten the names of some fields. 
 names(raw_data)[names(raw_data)=="step_1_select_the_valid_relations"] <- "relation"
 names(raw_data)[names(raw_data)=="step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"] <- "selected_words"
@@ -45,7 +48,10 @@ workerDf <- labeldf(workerDf)
 wmeasuresDf <- calc_measures(workerDf,list('RelCount'))
 combinedWorkersDf <- merge(workerDf,wmeasuresDf,by=0)
 
-createSheet(wb.new, name = "pivot-worker")
-writeWorksheet(wb.new,data=combinedWorkersDf,sheet=2,startRow=1,startCol=1,rownames=NULL)
+## createSheet(wb.new, name = "pivot-worker")
+## writeWorksheet(wb.new,data=combinedWorkersDf,sheet=2,startRow=1,startCol=1,rownames=NULL)
 
 saveWorkbook(wb.new)
+genHeatMap(sentenceDf,job_id)
+
+
