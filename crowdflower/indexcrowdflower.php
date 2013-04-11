@@ -3,18 +3,15 @@ include_once '../includes/dbinfo.php';
 include_once '../includes/functions.php';
 $content_type = "application/json";
 $api_key = "c6b735ba497e64428c6c61b488759583298c2cf3";
-
 //$api_key = "b5e3b32b4d29d45c16dc09274e099f731237e35f";
 
 $url = "http://api.crowdflower.com/v1/jobs.json?key=".$api_key;
 $uploadDirectory = "Files/";
-$file = $_FILES['uploadedfile']['name'];
+//$file = $_FILES['uploadedfile']['name'];
 //$file_name = $_FILES['uploadedfile']['tmp_name'];
-$file_name = "/tmp/phpzFFfCb";
-//$file_name = "/www/files/Experiments/04April2013-14:07:33/NOSPC-ROA-L/04April2013-14:29:56_04April2013-14:07:33_NOSPC-ROA-L_batch1.csv"
-//$file = $_POST["filename"];
-//$file_id = $_POST["fileid"];
+$file_id = $_POST["fileid"];
 $template_used = "";
+
 
 /* useful functions for printing the results from the web server */
 function objectToArray($obj) {
@@ -50,28 +47,14 @@ function prefixDataKeys($data, $prefix) {
       return $newdata;
 }
 
-/* Get number of sentences of the file 
-function getLines($filename){
-$linecount = 0;
-$handle = fopen($filename, "r");
-	while(!feof($handle)){
-		$line = fgets($handle);
-		$linecount++;
-	}
-	fclose($handle);
-} else  {
-	dieError("function: getLines cannot open:".$filename);
-}
-   return $linecount;
-}
-*/
 
-/* Get file storage path at the server 
-$getpath = mysql_query("SELECT storage_path FROM file_storage WHERE id = '$file_id' ") or die('Error: ' . mysql_error());
-list($file_name) = mysql_fetch_row($getpath);
-$getfilterapplied = mysql_query("SELECT filter_named FROM batches_for_cf WHERE file_id = '$file_id' ") or die('Error: ' . mysql_error());
-list($filter_applied) = mysql_fetch_row($getfilterapplied);
-*/
+/* Get file data from the database based on file_id */ 
+$getdata = mysql_query("SELECT b.filter_named, s.original_name, s.storage_path
+FROM  batches_for_cf b
+INNER JOIN file_storage as s on b.file_id = s.id WHERE s.id = '$file_id' ") or die('Error: ' . mysql_error());
+
+list($filter_applied, $file, $file_name) = mysql_fetch_row($getdata);
+
 
 /* create the settings' array */
 $data = array();
@@ -123,6 +106,7 @@ $job_id = $array["id"];
 $upload_query = "curl -T \"$file_name\" -H \"Content-Type:text/csv\" \"https://api.crowdflower.com/v1/jobs/$job_id/upload.json?key=$api_key\"";
 $response = exec($upload_query);
 //print_r(json_decode($response));
+
 
 /* print the responses from the CrowdFlower server */
 //print_r(objectToArray($response));
@@ -214,9 +198,7 @@ $order_query = "curl -X POST -d \"debit[units_count]=7&$channels_string\" \"http
 
 /* save data array to the database */
 
-//$nr_sentences_file = getLines($file_name) - 2;
-$nr_sentences_file = "NA";
-$type_of_units = "NA";   //pending
+$nr_sentences_file = $_POST["sentences"];
 $units_per_job = count(file($file_name)) - 1;
 $units_per_assignment = $data["units_per_assignment"];
 $judgments_per_job = $units_per_job * $data["judgments_per_unit"];
@@ -234,17 +216,14 @@ $run_time = 0;
 $status = "Running";
 
 
-//add two more columns to the table: payment_per_hour and channels
-//the values are: $payment_per_hour and $channels_used
-
-$insertSQL = "INSERT INTO cfinput ( job_id, job_title , created_by , file_name, nr_sentences_file, type_of_units, template,
+$insertSQL = "INSERT INTO cfinput ( job_id, job_title , created_by , cfbatch_id, file_name, nr_sentences_file, type_of_units, template,
 max_judgments_per_worker, max_judgments_per_ip, units_per_assignment, units_per_job,
 judgments_per_unit, judgments_per_job, seconds_per_unit, seconds_per_assignment,
 payment_per_unit, payment_per_assignment,total_payment_per_unit,  total_payment_per_job,
 payment_per_hour, channels_used, job_comments, 
 job_judgments_made, job_completion, run_time, status)
 VALUES
-( '$job_id', '{$data["title"]}', '{$_SERVER["REMOTE_USER"]}', '$file', '$nr_sentences_file', '$type_of_units', '$template_used',
+( '$job_id', '{$data["title"]}', '{$_SERVER["REMOTE_USER"]}', '$file_id' , '$file', '$nr_sentences_file', '$filter_applied', '$template_used',
 '{$data["max_judgments_per_worker"]}', '{$data["max_judgments_per_ip"]}', '{$data["units_per_assignment"]}', '$units_per_job',
 '{$data["judgments_per_unit"]}', '$judgments_per_job', '$calibrated_unit_time', '$seconds_per_assignment',
 '$payment_per_unit', '$payment_per_assignment','$total_payment_per_unit',  '$total_payment_per_job',
@@ -262,10 +241,6 @@ else
 	echo "<b>A new job is created and saved.</b>";
 	echo "<br />";
 	echo "<b>Job ID: $job_id</b>";
-	echo "<br />";
-	echo "<b>$file</b>";
-	echo "<br />";
-	echo "<b>$file_name</b>";
 	echo "<br />";
 //  header("Location: index.php");
 	echo "<a href='../index.php'>Back to Home Page</a>";

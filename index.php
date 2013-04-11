@@ -1,12 +1,14 @@
 <?php 
 include_once 'includes/dbinfo.php';
 include_once 'includes/functions.php';
+
+////
 ?>
 <!doctype html>
 <html lang="us">
 <head>
 <meta charset="utf-8">
-<title>Watson-Crowdsourcing</title>
+<title>Crowd Watson</title>
 <!-- Style sheets  -->
 <link href="css/huimain.css" rel="stylesheet">
 <link href="plugins/jquery-ui/css/dark-hive/jquery-ui-1.10.1.custom.css"
@@ -20,44 +22,19 @@ include_once 'includes/functions.php';
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
-if (window.File && window.FileReader && window.FileList && window.Blob) {
-	
-} else {
-  alert('The File APIs are not fully supported in this browser.');
-}
-
-function handleFileSelect(evt) {
-	
-	var files = evt.target.files; // FileList object
-	var reader = new FileReader();
-	reader.onload = function(theFile) {    
-        	str = theFile.target.result;            // load file values
-        	var lines = str.split(/[\r\n|\n]+/);    // split data by line
-		document.getElementById('sentences').value = lines.length - 2;
-	//	document.getElementById('sentences').value = 100;
-	}
-	reader.onerror = function() { console.log('Error reading file');}       // error message    
-        reader.readAsText(files[0]);
-  }
-window.addEventListener('DOMContentLoaded', pageCompleteListener, false);
-
-function pageCompleteListener(event) {
-
-	document.getElementById('uploadedfile').addEventListener('change', handleFileSelect, false);
-}
 
 function computePayment()
 {
+	
 	var payment_per_sentence = document.getElementById("payment_per_sentence");
-	var payment_per_job = document.getElementById("payment_per_job")
+	var payment_per_job = document.getElementById("payment_per_job");
 
+	var judgments_per_unit = document.getElementById("judgments_per_unit").value;
 	var units_per_assignment = document.getElementById("units_per_assignment").value;
 	var payment_per_assignment = document.getElementById("payment").value;
-	var judgments_per_unit = document.getElementById("judgments_per_unit").value;
-	var total_sentences = document.getElementById("sentences").value;
-	
-
-	if (units_per_assignment != "" && payment_per_assignment != "" && judgments_per_unit != "" && total_sentences != "") {
+    var total_sentences = document.getElementById("sentences").value;	
+     	
+	if (judgments_per_unit != "" && units_per_assignment != "" && payment_per_assignment != "" && total_sentences != "") {
 	 	payment_per_sentence.value = ((parseInt(judgments_per_unit) * (parseInt(payment_per_assignment) / parseInt(units_per_assignment))) + (parseInt(judgments_per_unit) * (parseInt(payment_per_assignment) / parseInt(units_per_assignment))) * 46.35 / 100 ) / 100 ;
 		payment_per_job.value = parseInt(total_sentences) * payment_per_sentence.value;
 	}
@@ -72,7 +49,6 @@ function computeTime() {
 	seconds_per_assignment.value = parseInt(seconds_per_unit) * parseInt(units_per_assignment);
 
 	computePaymentPerHour();
-
 }
 
 function computePaymentPerHour() {
@@ -82,8 +58,6 @@ function computePaymentPerHour() {
         if (seconds_per_assignment != "" && payment_per_assignment != "") {
                 payment_per_hour.value = ((60 * 60) / parseInt(seconds_per_assignment)) * (parseInt(payment_per_assignment) / 100);
         }
-
-
 }
 
 
@@ -105,14 +79,16 @@ function computePaymentPerHour() {
 				<li><a href="#tabs-4" >Statistics</a></li>
 			</ul>
 			<div id="tabs-1" >
-				<h1>Watson-Crowdsourcing</h1>
+				<h1>Crowd Watson</h1>
 				<br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing"><img
 					src="graphs/crowdsourcing.jpg" alt="No show" title = "What is the Crowdsourcing?" /></a>
 			</div>
 			<div id="tabs-Raw">
 			
 				<h3>Upload Raw Files</h3>
+				<br />
 				<form enctype="multipart/form-data" action="services/uploadRaw.php" method="POST">
+				<div class="borderframe"  >
 					<div class="labelfield">Choose a RAW file to upload:</div>
 					<div class="inputfield">
 						<input name="rawuploadedfile" type="file" />
@@ -127,6 +103,7 @@ function computePaymentPerHour() {
 					<div class="inputfield">
 						<input type="submit" value="Submit"
 							title="Click Submit to upload raw file" />
+					</div>
 					</div>
 				</form>
 			</div>
@@ -143,24 +120,25 @@ function computePaymentPerHour() {
 				<br>
 			
 				<div id="dialog-confirm" title="Select a file from the server">
+				<button class="reset" title = "Click to clear all the filter options" >Reset Search</button> <!-- targetted by the "filter_reset" option -->
+<br>
   <?php
 
-$result = mysql_query("SELECT b.*, s.original_name, s.storage_path 
+$result = mysql_query("SELECT b.*, s.original_name
 FROM  batches_for_cf  b
-LEFT JOIN file_storage as s on b.file_id = s.id
+INNER JOIN file_storage as s on b.file_id = s.id
 ORDER BY  b.created DESC");
 
 echo "<table id='historytable' class='tablesorter'>";
 echo "<thead>"; //thead tag is required for using tablesorter
 echo "<tr>";
 echo "<th>File ID</th>";
+echo "<th>File Name</th>";
 echo "<th>Filter Applied</th>";
+echo "<th>Batch Size</th>";
 echo "<th>Created By</th>";
 echo "<th>Created Date</th>";
-echo "<th>File Name</th>";
-echo "<th>Storage Path</th>";
 echo "<th>Comments</th>";
-
 echo "</tr>";
 echo "</thead>";
 echo "<tbody>"; //tbody tag is required for using tablesorter
@@ -172,16 +150,14 @@ while($row = mysql_fetch_array($result)){
 	    extract ( $row );
 	    
         echo "<tr>";
-        echo "<td><input type='radio' id='radiofile' name ='radiofile'/><label for='radiofile'><a href = 'https://crowdflower.com/jobs' target='_blank' class = 'tdlinks' >$file_id</a></label></td>";
+        echo "<td><input type='radio' id='radiofile' name ='radiofile'/>$file_id</label></td>";
+        echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$file_id' class = 'tdlinks' >$original_name</a></td>";
         echo "<td>$filter_named</td>";
+        echo "<td>$batch_size</td>";
         echo "<td>$created_by</td>";
         echo "<td>$created</td>";
-        echo "<td>$original_name</td>";
-        echo "<td>$storage_path</td>";
         echo "<td>$comment</td>";
-       
-    
-     echo "</tr>";
+        echo "</tr>";
 }
 
 echo "</tbody>";
@@ -193,9 +169,10 @@ echo "</table>";
 id="form">
 <div class="borderframe"  > 
 	<div class="labelfield">Choose a file to upload:</div>
-	<div class="inputfield"><input name="uploadedfile" type="file" id="uploadedfile" value = "Upload File" />
-	
+	<div class="inputfield"><input name="uploadedfile" type="button" id="uploadedfile" value = "Upload File" />
+    <input type="hidden" name="fileid" id="fileid" />
 	<input type="hidden" name="sentences" id="sentences" />
+	<label for="uploadedfile" style ="font-size: 80%" >No File Chosen</label> 
 </div>
 	<div class="labelfield">Job title:</div> <div class="inputfield"><input type="text" 
 
@@ -248,8 +225,6 @@ name="template" value="t3"> Relations without definitions and extra questions re
 name="template" value="t4"> Relations without definitions and without extra questions <br /><br></div>
 
 
-
-
 	<div class="labelfield">Choose the channels: </div>
                 <div class="inputfield"><input type="radio" name="channels" value="c1" checked>
 
@@ -283,15 +258,10 @@ name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
 			<div id="tabs-3">
 				<h3>This page is to show the history of jobs created on CrowdFlower</h3>
 				<p style ="font-size: 80%" >A sentence is an unit;  An assignment is composed sentences;  A job is composed assignments.</p>
-				<p style ="font-size: 80%">All the payments are in cents;  Job Completion is in percentage;  Run Time is in days.</p>
+				<p style ="font-size: 80%">All the payments are in cents;  Job Completion is in percentage;  Run Time is in days and hours.</p>
 				<br>
 				<?php 	
 
-				$content_type = "application/json";
-				$api_key = "c6b735ba497e64428c6c61b488759583298c2cf3";
-				//$api_key = "b5e3b32b4d29d45c16dc09274e099f731237e35f";
-				$url = "http://api.crowdflower.com/v1/jobs.json?key=".$api_key;
-							
 				$result = mysql_query("SELECT * FROM `cfinput` WHERE 1");
 				
 				/* Update run_time in the database */
@@ -324,7 +294,7 @@ name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
   <br>
 <?php
 
-$result = mysql_query("SELECT * FROM  `cfinput` LIMIT 0 , 30");
+$result = mysql_query("SELECT * FROM  `cfinput` ORDER BY created_date DESC");
 
 echo "<table id='historytable' class='tablesorter'>";
 echo "<thead>"; //thead tag is required for using tablesorter
@@ -333,7 +303,7 @@ echo "<th title = 'Link to CrowdFlower'>Job ID</th>";
 echo "<th>Job Title</th>";
 echo "<th>Created Date</th>";
 echo "<th>Created By</th>";
-echo "<th>File Name</th>";
+echo "<th title = 'Click to open the file'>File Name</th>";
 echo "<th>Number of Sentences</th>";
 echo "<th>Type of Units</th>";
 echo "<th>Template</th>";
@@ -373,7 +343,7 @@ while($row = mysql_fetch_array($result)){
         echo "<td>$job_title</td>";
         echo "<td>$created_date</td>";
         echo "<td>$created_by</td>";
-        echo "<td>$file_name</td>";
+        echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'tdlinks' >$file_name</a></td>";
         echo "<td>$nr_sentences_file</td>";
         echo "<td>$type_of_units</td>";
         echo "<td>$template</td>";
@@ -429,11 +399,6 @@ echo "</table>";
 				<p>Get Files. It may take some time to show the results. Just wait for a while</p>
 				<br>
 				<form>
-  <div id="radio">
-    <input type="radio" id="radio1" name="radio" /><label for="radio1">Choice 1</label>
-    <input type="radio" id="radio2" name="radio" checked="checked" /><label for="radio2">Choice 2</label>
-    <input type="radio" id="radio3" name="radio" /><label for="radio3">Choice 3</label>
-  </div>
 </form>
 				<div id="statisticsarea"></div>
 			</div>
