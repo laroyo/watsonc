@@ -5,8 +5,6 @@
 include_once '../includes/functions.php';
 include("extractinfo.php");
 
-include("../file_storage.inc"); 
-
 date_default_timezone_set("Europe/Amsterdam"); 
 
 if(isset($_GET["job_id"])){
