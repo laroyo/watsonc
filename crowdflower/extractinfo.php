@@ -84,12 +84,12 @@ function getResults($job_id) {
 		}
 	}
 	$result_file_info = array(
-	    'name' : $job_id. '_file_results.csv',
-	    'type' : 'text/csv'
+	    'name' => $job_id. '_file_results.csv',
+	    'type' => 'text/csv'
         );
 	$overview_file_info = array(
-	    'name' : $job_id. '_file_results.csv',
-	    'type' : 'text/csv'
+	    'name' => $job_id. '_file_results.csv',
+	    'type' => 'text/csv'
 	); 
 	
 	//FIXME: Specify a correct user as creator of the files (instead of 'script')
