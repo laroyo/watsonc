@@ -20,7 +20,6 @@ include_once 'includes/functions.php';
 <script src="plugins/jquery-ui/js/jquery-ui-1.10.1.custom.js"></script>
 <script src="plugins/tablesorter/js/jquery.tablesorter.min.js" type="text/javascript"></script>
 <script src="plugins/tablesorter/js/jquery.tablesorter.widgets.min.js" type="text/javascript"></script>
-<script src="plugins/jquery-multi-open-accordion/jquery-multi-open-accordion/jquery.multi-accordion-1.5.3.js" type="text/javascript"></script>
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
@@ -398,7 +397,11 @@ echo "</table>";
 			</div>
 				<div id="tabs-4">
 				<h3>This page is to show results data and to link to various results files</h3>
+				<h4>So far, the record is stored manually for testing!</h4>
 				</br>
+				<div id="dialog-image" style="display: none;">
+             <img id="statisticsimage" src=""/>
+                </div>
 <?php
 
 $results = mysql_query("SELECT * FROM  `results_table` ORDER BY created_date DESC");
@@ -435,7 +438,9 @@ while($row = mysql_fetch_array($results)){
 	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$origin_file_id' class = 'filelinks' >$origin_file_name</a></td>";
 	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$filtered_sentences_file_id' class = 'filelinks' >$number_filtered_sentences</a></td>";
 	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$filtered_workers_file_id' class = 'filelinks' >$number_filtered_workers</a></td>";
-	echo "<td>See Image</td>";
+	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/showImage.php?id=$statistics_image_id' id = 'showimage' class = 'filelinks' value = '$statistics_image' >$statistics_image
+	</a>
+	</td>";
 	echo "<td title='$job_id'>
 	<a href = 'https://crowdflower.com/jobs' target='_blank' class = 'tdlinks' >
 	Link to History Table

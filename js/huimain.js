@@ -125,6 +125,52 @@ $(function() {
     });
   });
 
+
+ function PreviewImage (uri, image_name) {
+
+	  imageDialog = $("#dialog-image");
+	  imageTag = $('#statisticsimage');
+
+	  // Get statistics_image_id
+	  uriParts = uri.split("=");
+	  image_id = uriParts[uriParts.length - 1];
+	  
+	  imageTag.attr('src', uri);
+
+	  imageTag.load(function(){
+
+	    $( "#dialog-image" ).dialog({
+		      resizable: true,
+              height: 'auto',
+		      width: 'auto',
+		      modal: true,
+		      title: image_name,
+		      buttons: {
+		          "Download": function() {
+		          $( this ).dialog( "close" );
+		          window.open("http://crowd-watson.nl/wcs/services/getFile.php?id="+image_id);
+		          },
+		        Cancel: function() {
+		          $( this ).dialog( "close" );
+		        }
+		      }
+		    });
+	  });
+	  
+	}
+
+
+$(document).ready(function() {
+
+	  $('#showimage').click(function(event){
+
+	    event.preventDefault();
+	    PreviewImage($(this).attr('href'), $(this).attr('value'));
+
+	  });               
+	});
+
+
 $(function() {
     $( "#accordion" ).accordion({
       collapsible: true,
