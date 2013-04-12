@@ -14,11 +14,12 @@ args <- commandArgs(trailingOnly = TRUE)
 
 #The script accepts parameters. If none passed, the following will be used as an examaple. 
 if(length(args) == 0){
-#FIXME: a job_id should always be passed. 
+	stop('Error: you should provide a Job id (parameter)')
 } else {
   job_id <- args[1]
 }
 
+outputfile <- paste(job_id,'sentenceMetrics.xlsx',sep='_')
 
 query <- sprintf('select unit_id,worker_id,worker_trust,external_type,relation,explanation,selected_words,started_at,created_at,term1,term2,sentence from cflower_results where job_id = %s', job_id)
 raw_data <- dbGetQuery(con, query)
