@@ -66,18 +66,18 @@ numAnnotations <- function(dframe){
   return(as.vector(rowSums(filtDf)))
 }
 
-agreement <- function(raw_data){
+agreement <- function(dframe){
 
   # Sentence Matrix => contains the vector sentences for each worker. 
   
   sentMat <- list()
 
-  worker_ids <- unique(raw_data$worker_id)
+  worker_ids <- unique(dframe$worker_id)
   
-  for (worker_id in worker_ids){  
-    sentMat[[as.character(worker_id)]] <- getSentenceMatrix(raw_data, worker_id)
+  for (worker_id in worker_ids){
+    sentMat[[as.character(worker_id)]] <- getSentenceMatrix(dframe, worker_id)
   }
-  return (unlist(lapply(worker_ids, workerAgreement, raw_data=raw_data, sentMat=sentMat)))
+  return (unlist(lapply(worker_ids, workerAgreement, raw_data=dframe, sentMat=sentMat)))
 }
 
 workerAgreement <- function(worker_id, raw_data, sentMat) {
@@ -143,11 +143,11 @@ workerCosine <- function(worker_id, dframe){
 
 cosMeasure <- function(dframe){
   
-  sentMat <- list()
-
   worker_ids <- unique(dframe$worker_id)  
   return (unlist(lapply(worker_ids, workerCosine, dframe=dframe)))
 }
+
+
 
 
 

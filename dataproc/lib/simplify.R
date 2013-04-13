@@ -81,7 +81,7 @@ simplify <- function(data,field,mField) {
 
   #df with the values for multOptions
   #To be decomposed and the sum to sr.
-  mr <- data[data[[mField]] %in% allOptions[mulOptions],]
+  mr <- data[data[[mField]] %in% allOptions[mulOptions],,drop=FALSE]
 
   #Express the mr dframe as a contingency table.
  
@@ -94,13 +94,21 @@ simplify <- function(data,field,mField) {
 
   srels <- unique(union(allOptions[simpOptions],unlist(splitlabels)))
 
-  #df with the values for simpleOptions
-  sr <- table(data)[,srels,drop=FALSE]
-
-  mm <- matrix(0,length(rownames(sr)),length(srels))
+  mm <- matrix(0,length(rownames(table(data))),length(srels))
   mult <- as.table(mm)
-  rownames(mult) <- rownames(sr)
+  rownames(mult) <- rownames(table(data))
   colnames(mult) <- srels
+
+  sr <- mult
+
+  #df with the values for simpleOptions
+  #if(length(simpOptions) < length(srels)){
+  #DataFrame with *only* the simple relations
+  sred <- table(data)[,allOptions[simpOptions],drop=FALSE]
+  for(rel in allOptions[simpOptions]){
+    sr[,rel] <- sred[,rel]
+  }    
+  #}
   
   #rels <- unique(merge(unlist(splitlabels))
   if(length(mulrels) > 0){

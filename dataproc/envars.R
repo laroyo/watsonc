@@ -2,7 +2,7 @@
 basepath <- '/home/gsc/watson'
 
 #Lib path
-libpath <- paste(basepath,'/lib',sep='')
+libpath <- paste(basepath,'/dataproc/lib',sep='')
 
 #Db Parameters.
 
