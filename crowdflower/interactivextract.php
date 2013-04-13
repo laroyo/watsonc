@@ -16,6 +16,7 @@ if($job_id > 1 ){
   getResults($job_id); 
   print("OK");
 } else {
+  header('HTTP/1.1 400 Bad Request');
   print('Error: you must provide a valid job_id'); 
 }
 
