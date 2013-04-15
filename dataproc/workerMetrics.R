@@ -87,7 +87,7 @@ if(dim(raw_data)[1] == 0){
 
     agrValues <- agreement(filt)
     cosValues <- cosMeasure(filt)
-    sentRelScoreValues <- sentRelScoreMeasure(filt)
+    #sentRelScoreValues <- sentRelScoreMeasure(filt)
 
     df <- data.frame(row.names=filtWorkers,numSents=numSent, cos=cosValues, agr=agrValues, annotSentence=(numAnnot/numSent))
 

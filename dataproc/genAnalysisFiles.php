@@ -18,10 +18,10 @@ if(isset($_GET['job_id'])){
 
 $sent_res = exec('/usr/bin/Rscript /var/www/html/wcs/dataproc/sentenceMetrics.R '. $job_id); 
 
-/* if($sent_res == 'OK') */
-/*   $worker_res = exec('/usr/bin/Rscript /var/www/html/wcs/dataproc/workerMetrics.R '. $job_id); */
+if($sent_res == 'OK')
+  $worker_res = exec('/usr/bin/Rscript /var/www/html/wcs/dataproc/workerMetrics.R '. $job_id);
 
-$worker_res = 'OK'; 
+#$worker_res = 'OK'; 
 
 if($sent_res == 'JOB_NOT_FOUND') {
   header('HTTP/1.1 400 Bad Request');
