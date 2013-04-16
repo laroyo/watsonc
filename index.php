@@ -8,7 +8,7 @@ include_once 'includes/functions.php';
 <html lang="us">
 <head>
 <meta charset="utf-8">
-<title>Crowd Watson</title>
+<title>Crowd-Watson</title>
 <!-- Style sheets  -->
 <link href="css/huimain.css" rel="stylesheet">
 <link href="plugins/jquery-ui/css/dark-hive/jquery-ui-1.10.1.custom.css"
@@ -73,18 +73,24 @@ function computePaymentPerHour() {
 		<div id="tabs">
 			<ul>
 				<li><a href="#tabs-1" >Home</a></li>
-			    <li><a href="#tabs-upload">Upload Raw</a></li>
-			    <li><a href="#tabs-ProcessInput">Process Input</a></li>
-				<li><a href="#tabs-2" >Jobs</a></li>
-				<li><a href="#tabs-3" >History</a></li>
-				<li><a href="#tabs-4" >Results</a></li>
+			    <li><a href="#tabs-2">Configurate Raw</a></li>
+			    <li><a href="#tabs-3">Process Input</a></li>
+				<li><a href="#tabs-4" >Jobs</a></li>
+				<li><a href="#tabs-5" >History</a></li>
+				<li><a href="#tabs-6" >Results</a></li>
 			</ul>
+			
+			
+			
 			<div id="tabs-1" >
-				<h1>Crowd Watson</h1>
-				<br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing"><img
-					src="graphs/crowdsourcing.jpg" alt="No show" title = "What is the Crowdsourcing?" /></a>
+				<h1>Crowd-Watson</h1>
+				<br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing" target="_blank" ><img
+					src="graphs/crowdsourcing.jpg" alt="No show" title = "What is Crowdsourcing?" /></a>
 			</div>
-			<div id="tabs-upload">
+			
+			
+			
+			<div id="tabs-2">
 				<div id="accordion">
   <h5>CrowdFlower</h5>
   <div id="tabs-Raw">	
@@ -98,9 +104,10 @@ function computePaymentPerHour() {
 					<div class="inputfield">
 						<input type="text" name="title" class="textboxInput" />
 					</div>
-					<br />
-					<textarea name="freeComment" rows="5" cols="100" ></textarea>
-					<br />
+					<div class="labelfield" >Comments:</div>
+					<div class="inputfield"><input type="text" name="raw_comment" class = 
+                               "commentboxInput"/></div>
+                    <div class="labelfield">&nbsp;</div>
 					<div class="inputfield">
 						<input type="submit" value="Submit"
 							title="Click Submit to upload raw file" />
@@ -116,16 +123,30 @@ function computePaymentPerHour() {
 			</div>
 			
 			
-			<div id="tabs-ProcessInput">
 			
-				<h3>Process Input Files</h3>
-				<p>This is to process input files for CrowdFlower</p>
+			<div id="tabs-3">
+	  <div id="accordion">			
+  <h5>CrowdFlower</h5>
+<div id="tabs-ProcessInput">
 				<div id="preprocessarea" class="borderframe">
 				</div>
 			</div>
-			<div id="tabs-2">
-				<h3>This page is to create new jobs on CrowdFlower</h3>
-				<br>
+			<h5>Games</h5>
+  <div>
+    <p>Pending</p>
+  </div>
+			</div>
+
+  </div>
+  
+  
+  
+			<div id="tabs-4">
+			<div id="accordion">
+
+  <h5>CrowdFlower</h5>
+<div>
+				
 			
 				<div id="dialog-confirm" title="Select a file from the server">
 				<button class="reset" title = "Click to clear all the filter options" >Reset Search</button> <!-- targetted by the "filter_reset" option -->
@@ -261,13 +282,21 @@ name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
 </div>
 </form> 
 			</div>
+			<h5>Games</h5>
+  <div>
+    <p>Pending</p>
+  </div>
+  </div>
+  </div>
 			
+		
 			
-			<div id="tabs-3">
-				<h3>This page is to show the history of jobs created on CrowdFlower</h3>
-				<p style ="font-size: 80%" >A sentence is an unit;  An assignment is composed sentences;  A job is composed assignments.</p>
-				<p style ="font-size: 80%">All the payments are in cents;  Job Completion is in percentage;  Run Time is in days and hours.</p>
-				<br>
+			<div id="tabs-5">
+			<div id="accordion">
+
+  <h5>CrowdFlower</h5>
+<div>
+				
 				<?php 	
 
 				$result = mysql_query("SELECT * FROM `history_table` WHERE 1");
@@ -276,7 +305,6 @@ name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
 				while($item = mysql_fetch_array($result))
               {
 
-	           //$date_diff = round(abs(strtotime(date('Y-m-d H:i:s'))-strtotime($row[3]))/86400);
 	           $date2 = date('Y-m-d H:i:s');
 	           $date1 = $item["created_date"];
 	           $ts1 = strtotime($date1);
@@ -291,7 +319,7 @@ name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
 	              $hours = 0;	           
 	           }
 	           $run_time = $days." days ".$hours." hours";
-	           $updateRuntime = mysql_query("Update history_table Set run_time = '$run_time' Where job_id = '{$item["job_id"]}' ");
+	           $updateRuntime = mysql_query("Update history_table Set run_time = '$run_time' Where job_id = '{$item["job_id"]}' and status != 'Finished' ");
               	           	 	           
               }
              ?>
@@ -383,10 +411,10 @@ while($row = mysql_fetch_array($history)){
         <dir class = 'cStatus'>$status</dir>
         </td>";
         echo "<td title='$job_id'>
-        <a href = 'https://crowdflower.com/jobs' target='_blank' class = 'tdlinks' >
- Link to Results Table
- </a>
-  </td>";
+        <a href = '#tabs-4' id ='toresults' class = 'tdlinks' >
+        Link to Results
+        </a>
+        </td>";
     
      echo "</tr>";
 }
@@ -395,12 +423,24 @@ echo "</tbody>";
 echo "</table>";
 ?>
 			</div>
-				<div id="tabs-4">
-				<h3>This page is to show results data and to link to various results files</h3>
+			<h5>Games</h5>
+  <div>
+    <p>Pending</p>
+  </div>
+
+</div>
+  </div>
+			
+			
+			
+				<div id="tabs-6">
+				<div id="accordion">
+
+  <h5>CrowdFlower</h5>
+<div>		
 				<h4>So far, the record is stored manually for testing!</h4>
-				</br>
 				<div id="dialog-image" style="display: none;">
-             <img id="statisticsimage" src=""/>
+                <img id="statisticsimage" src=""/>
                 </div>
 <?php
 
@@ -443,7 +483,7 @@ while($row = mysql_fetch_array($results)){
 	</td>";
 	echo "<td title='$job_id'>
 	<a href = 'https://crowdflower.com/jobs' target='_blank' class = 'tdlinks' >
-	Link to History Table
+	Link to History
 	</a>
 	</td>";
 
@@ -453,14 +493,16 @@ while($row = mysql_fetch_array($results)){
 
 	echo "</tbody>";
 	echo "</table>";
-?>
-			
-				<br>
-
-				
+?>		
 			</div>
+			<h5>Games</h5>
+  <div>
+    <p>Pending</p>
+  </div>
+  </div>
+  </div>
+  
 		</div>
-
 	</div>
 </body>
 </html>

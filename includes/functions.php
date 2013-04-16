@@ -112,4 +112,33 @@ function getLines($id) {
 	
 	return $linecount;
 }
+
+
+function updateRuntime($job_id)
+{
+	
+	// Get current run_time
+	$getCreatedDate = mysql_query("Select created_date From history_table Where job_id = '$job_id' ");
+	list($date1) = mysql_fetch_row ($getCreatedDate);
+	
+	$date2 = date('Y-m-d H:i:s');
+	$ts1 = strtotime($date1);
+	$ts2 = strtotime($date2);
+	
+	$diff = $ts2 - $ts1;
+	$days = floor($diff/86400);   //24*60*60
+	$hours = round(($diff-$days*60*60*24)/(60*60));
+	if($hours == 24)
+	{
+		$days += 1;
+		$hours = 0;
+	}
+	$run_time = $days." days ".$hours." hours";
+	
+	return $run_time;
+	
+}
+
+
+
 ?>

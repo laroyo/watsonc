@@ -31,7 +31,8 @@
 .borderframe {
 	border:2px double white;
 	padding: 10px;
-	width: 65%;
+	width: auto;
+	height: auto;
 }
 
 a[href].tdlinks {

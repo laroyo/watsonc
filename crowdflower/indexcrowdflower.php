@@ -216,7 +216,7 @@ $run_time = 0;
 $status = "Running";
 
 
-$insertSQL = "INSERT INTO cfinput ( job_id, job_title , created_by , cfbatch_id, file_name, nr_sentences_file, type_of_units, template,
+$insertSQL = "INSERT INTO history_table ( job_id, job_title , created_by , cfbatch_id, file_name, nr_sentences_file, type_of_units, template,
 max_judgments_per_worker, max_judgments_per_ip, units_per_assignment, units_per_job,
 judgments_per_unit, judgments_per_job, seconds_per_unit, seconds_per_assignment,
 payment_per_unit, payment_per_assignment,total_payment_per_unit,  total_payment_per_job,

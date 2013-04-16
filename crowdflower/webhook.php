@@ -1,5 +1,6 @@
 <?php
 include_once '/var/www/html/wcs/includes/dbinfo.php';
+include_once '/var/www/html/wcs/includes/functions.php';
 include_once '/var/www/html/wcs/crowdflower/extractinfo.php';
 /*
 function objectToArray($obj) {
@@ -27,11 +28,11 @@ function getSignal() {
 		$array = objectToArray(json_decode($payload));
 		$job_id = $array[0]["job_id"];
 //		fwrite($fh, $job_id);
-		$updateJudgements = mysql_query("Update cfinput Set job_judgements_made = job_judgements_made + 1 Where job_id = '$job_id' ") or die(mysql_error());
-		$getData =  mysql_query("select judgements_per_job, job_judgements_made from cfinput where job_id = '$job_id' ") or die(mysql_error());	
-		list($judgements_per_job, $job_judgements_made) = mysql_fetch_row($getData);
-		$job_completion = $job_judgements_made / $judgements_per_job;
-		$updateCompletion = mysql_query("Update cfinput Set job_completion = $job_completion Where job_id = '$job_id' ") or die(mysql_error());
+		$updatejudgments = mysql_query("Update history_table Set job_judgments_made = job_judgments_made + 1 Where job_id = '$job_id' ") or die(mysql_error());
+		$getData =  mysql_query("select judgments_per_job, job_judgments_made from history_table where job_id = '$job_id' ") or die(mysql_error());	
+		list($judgments_per_job, $job_judgments_made) = mysql_fetch_row($getData);
+		$job_completion = $job_judgments_made / $judgments_per_job;
+		$updateCompletion = mysql_query("Update history_table Set job_completion = $job_completion Where job_id = '$job_id' ") or die(mysql_error());
 
 	}
 
@@ -40,6 +41,11 @@ function getSignal() {
 		$job_id = $array["id"];
 //		fwrite($fh, $job_id);
 		getResults($job_id);
+   // change status to Finished and update run_time to final
+	
+      $getruntime = updateRuntime($job_id);
+	  $updateruntime = mysql_query("Update history_table Set run_time = '$getruntime', status = 'Finished' Where job_id = '$job_id' ") or die(mysql_error());
+		
 	}
 //fclose($fh);
 }
