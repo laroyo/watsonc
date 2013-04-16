@@ -1,3 +1,48 @@
+FilteredWorkers <- 'FilteredWorkers'
+FilteredSentences <- 'FilteredSentences'
+AnalysisFiles <- 'AnalysisFiles'
+
+folderTypes <- list('filtWorkers' = 'FilteredWorkers','filtSentences'='FilteredSentences', 'analysisFiles'='AnalysisFiles')
+fileTypes <- list('heatMap' = 'heatmap','workerMetrics'='workerMetrics','sentenceMetrics' = 'sentenceMetrics')
+mimeTypes <- list('csv'='text/csv', 'excel'='application/vnd.ms-excel', 'jpg' = 'image/jpeg')
+fileExt <- list('csv'='.csv','excel'= '.xlsx', 'jpg' = '.jpg')
+
+eval(parse(text="csv='text/csv'; excel='application/vnd.ms-excel'"),envir=mimeTypes)
+
+getFilePath <- function(job_id,folderName){
+  
+  if(folderName %in% unlist(folderTypes)){
+    Sys.setlocale("LC_TIME", "en_US.utf8")
+
+    timestamp <- format(Sys.time(), "%d%b%Y-%H:%M:%S")    
+    path <- paste(filespath,folderName,timestamp,sep='/')
+    dir.create(path, showWarnings = FALSE)
+       
+    return(path)
+    
+  } else {
+    stop(paste('Error: wrong type of file : ',folderName,sep=''))
+  }
+}
+
+getFileName <- function (job_id,fileType,prefix=NULL){
+  if(fileType %in% unlist(fileTypes)){
+    if(fileType == 'heatmap'){
+      ext = fileExt[['jpg']]
+    } else {
+      ext = fileExt[['excel']]
+    }
+      
+    filename <- paste(fileType,'_',job_id,ext,sep='')
+    if(! is.null(prefix)){
+      filename <- paste(prefix,'_',filename,sep='')
+    }
+    return (filename)
+  } else {
+    stop(paste('Error: wrong type of file : ',fileType,sep=''))
+  }
+}
+
 writeOutputHeaders <- function(workbook, worksheet){
 
   writeWorksheet(workbook,data="Worker ID",sheet=worksheet,startRow=1,startCol=1,header=FALSE)  
@@ -14,7 +59,7 @@ writeOutputHeaders <- function(workbook, worksheet){
 }
 
 writeFilteredOutHeaders <- function (workbook, worksheet) {
-
+  
   writeWorksheet(workbook,data="|V| < STDEV",sheet=worksheet,startRow=1,startCol=1,header=FALSE)
   writeWorksheet(workbook,data="norm|V| < STDEV",sheet=worksheet,startRow=1,startCol=3,header=FALSE)
   writeWorksheet(workbook,data="norm|R| < STDEV",sheet=worksheet,startRow=1,startCol=5,header=FALSE)
@@ -31,23 +76,26 @@ writeFilteredOutHeaders <- function (workbook, worksheet) {
   }
 }
 
-genHeatMap <- function(dframe,job_id,prefix=NULL){
-
+genHeatMap <- function(dframe,job_id,prefix=NULL,dir=NULL){
+  
   library(gplots)
   library(RColorBrewer)
 
-  Sys.setlocale("LC_TIME", "en_US.utf8")
+  fname <- getFileName(job_id,fileTypes[['heatMap']])
+  if(is.null(dir)){
+    dir <- getFilePath(job_id,folderTypes[['analysisFiles']])
+  }
+  
+  path = paste(dir, fname,sep='/')
 
-  base_dir <- '/var/www/files/AnalysisFiles/'
-  filename <- paste(base_dir,'heat_map',job_id,'.jpg',sep='')
-
-  if(! is.null(prefix)){
-    print('exists')
-    filename <- paste(prefix,'_',filename,sep='')
-  }  
-
-  jpeg(filename)   
+  jpeg(path)   
   heatmap.2(as.matrix(dframe), Rowv=FALSE,Colv=FALSE,dendrogram='none',scale='none',col=brewer.pal(11,'RdYlGn')[6:11],trace='none',key=FALSE,cellnote=dframe,notecol='black',lmat=rbind( c(1, 3), c(2,1), c(1,4) ), lhei=c(1, 4, 2 ))
   dev.off()
+  #FIXME set a valid creator,
+  creator <- 'script'
+  saveFileMetadata(fname,path,mimeTypes[['jpg']],-1,creator)
   
 }
+
+
+

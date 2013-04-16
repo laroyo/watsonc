@@ -3,21 +3,23 @@ source('envars.R')
 
 #Parse a results file from Crowdflower, and generates contingency tables for relations/workers and sentences as an output. 
 library(XLConnect)
-library(RMySQL)
-
-con <- dbConnect(MySQL(), user=dbuser,password=dbpwd,dbname=dbname,host=host)
 
 source(paste(libpath,'/','simplify.R',sep=''))
 source(paste(libpath,'/','measures.R',sep=''))
-source(paste(libpath,'/','output.R',sep=''))
+source(paste(libpath,'/','db.R',sep=''))
+source(paste(libpath,'/','fileStorage.R',sep=''))
+
+#source(paste(libpath,'/','output.R',sep=''))
+
 
 args <- commandArgs(trailingOnly = TRUE)
 
-#The script accepts parameters. If none passed, the following will be used as an examaple. 
-if(length(args) == 0){
-  stop('Error: you should provide a Job id (parameter)')
-} else {
+if(length(args) > 0){
   job_id <- args[1]
+} else {
+  if(!exists('job_id')){
+    stop('Error: you should provide a Job id (parameter)')
+  }
 }
 
 outputfile <- paste(filespath,'/','AnalysisFiles','/',job_id,'_sentenceMetrics.xlsx',sep='')
@@ -41,8 +43,13 @@ if(dim(raw_data)[1] == 0){
   
   #Merge the data and the measures data frames into a single df, to export it. 
   combinedDf <- merge(sentenceDf,measuresDf,by=0)
+
+  fname <- getFileName(job_id,fileTypes[['sentenceMetrics']])
+  path <- getFilePath(job_id, folderTypes[['analysisFiles']])
   
-  wb.new <- loadWorkbook(outputfile, create = TRUE)
+  wb.new <- loadWorkbook(paste(path,fname,sep='/'), create = TRUE)
+  print('full path')
+  print(paste(path,fname,sep='/'))
   
   createSheet(wb.new, name = "pivot-sentence")
   writeWorksheet(wb.new,data=combinedDf,sheet=1,startRow=1,startCol=1,rownames=NULL)
@@ -59,9 +66,14 @@ if(dim(raw_data)[1] == 0){
   ## writeWorksheet(wb.new,data=combinedWorkersDf,sheet=2,startRow=1,startCol=1,rownames=NULL)
 
   saveWorkbook(wb.new)
-  genHeatMap(sentenceDf,job_id)
+  genHeatMap(sentenceDf,job_id,dir=path)
 
+  #FIXME: get the adecuate value for the creator
+  creator = 'script'
+  saveFileMetadata(fname,path,mimeTypes[['excel']],-1,creator)
+  dbDisconnect(con)
   cat('OK')
+
 }
 
 

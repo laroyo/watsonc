@@ -4,36 +4,39 @@
 
 source('envars.R')
 library(XLConnect)
-library(RMySQL)
 
-con <- dbConnect(MySQL(), user=dbuser,password=dbpwd,dbname=dbname,host=host)
+source(paste(libpath,'/db.R',sep=''),chdir=TRUE)
 
 source(paste(libpath,'/measures.R',sep=''),chdir=TRUE)
 source(paste(libpath,'/filters.R',sep=''),chdir=TRUE)
 source(paste(libpath,'/simplify.R',sep=''),chdir=TRUE)
-source(paste(libpath,'/output.R',sep=''),chdir=TRUE)
+source(paste(libpath,'/fileStorage.R',sep=''),chdir=TRUE)
 
 #For calculating the cosine. 
 library(lsa)
 
 args <- commandArgs(trailingOnly = TRUE)
 
-#The script accepts parameters. If none passed, the following will be used as an examaple. 
-if(length(args) == 0){  
-  stop('Error: you should provide a Job id (parameter)')
-} else {
+if(length(args) > 0){
   job_id <- args[1]
+} else {
+  if(!exists('job_id')){
+    stop('Error: you should provide a Job id (parameter)')
+  }
 }
-query <- sprintf('select unit_id,worker_id,worker_trust,external_type,relation,explanation,selected_words,started_at,created_at,term1,term2,sentence from cflower_results where job_id = %s', job_id)
-raw_data <- dbGetQuery(con, query)
+
+#FIXME: this be obtained when storing the file on the file storage. 
+file_id <- -1
+
+raw_data <- getJob(job_id)
 
 if(dim(raw_data)[1] == 0){
   cat('JOB_NOT_FOUND')
 } else {
   #Shorten the names of some fields. 
-  names(raw_data)[names(raw_data)=="step_1_select_the_valid_relations"] <- "relation"
-  names(raw_data)[names(raw_data)=="step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"] <- "selected_words"
-  names(raw_data)[names(raw_data)=="step_2b_if_you_selected_none_in_step_1_explain_why"] <- "explanation"
+  ## names(raw_data)[names(raw_data)=="step_1_select_the_valid_relations"] <- "relation"
+  ## names(raw_data)[names(raw_data)=="step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"] <- "selected_words"
+  ## names(raw_data)[names(raw_data)=="step_2b_if_you_selected_none_in_step_1_explain_why"] <- "explanation"
   
   sentenceTable <- pivot(raw_data,'unit_id','relation')
 
@@ -53,6 +56,7 @@ if(dim(raw_data)[1] == 0){
     discarded[[f]] <- belowDiff(mdf,f)
     #The filtered *in* 
     filtered[[f]] <- setdiff(rownames(sentenceDf),discarded[[f]])
+    insertFiltSentences(job_id, file_id, f, discarded[[f]])
   }
 
   #After applying the filters, add the "NULL" filter.
@@ -138,8 +142,17 @@ if(dim(raw_data)[1] == 0){
   colnames(sf) = 'label'
   spamLabels <- rownames(sf[sf$label==TRUE,,drop=FALSE])
   
+  insertFiltWorkers(job_id,file_id, '[cos,annotSentence,agr]',spamLabels)
+
+  numFilteredSentences <- length(unlist(discarded))
+  numFilteredWorkers <- length(spamLabels)
   
-  wb.new <- loadWorkbook(paste('/var/www/files/',job_id,'_workerMetrics.xlsx',sep=""), create = TRUE)
+  updateResults(job_id, numFilteredSentences, numFilteredWorkers)  
+
+  fname <- getFileName(job_id,fileTypes[['workerMetrics']])
+  path <- getFilePath(job_id, folderTypes[['analysisFiles']])
+  
+  wb.new <- loadWorkbook(paste(path,fname,sep='/'), create = TRUE)
   
   ## createSheet(wb.new, name = "pivot-worker")
   ## writeOutputHeaders(wb.new,"pivot-worker")
@@ -168,7 +181,12 @@ if(dim(raw_data)[1] == 0){
   
   saveWorkbook(wb.new)
 
+  #FIXME: get the adecuate value for the creator
+  creator = 'script'
+  saveFileMetadata(fname,path,mimeTypes[['excel']],-1,creator)
+  
   cat('OK')
+  dbDisconnect(con)
 }
 
 
