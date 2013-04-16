@@ -171,12 +171,22 @@ $(document).ready(function() {
 	});
 
 
+
+$('#toresults').click(function() {  
+	 $("#tabs").tabs('select',3);
+	 return false;
+});
+
+
+
 $(function() {
-    $( "#accordion" ).accordion({
+    $( "div#accordion" ).accordion({
       collapsible: true,
       heightStyle: "content"
     });
   });
+
+
 
 $(function() {
 
