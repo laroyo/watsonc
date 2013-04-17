@@ -28,7 +28,7 @@ insertFiltWorkers <- function(job_id, file_id, filter, filteredWorkers){
 
 updateResults <- function(job_id, numFiltSentences, numFiltWorkers){
   
-  query <- sprintf("update results_table set number_filtered_sentences = %d, number_filtered_workers = %d where job_id = %d" , numFiltSentences,
+  query <- sprintf("update results_table set number_filtered_sentences = %s, number_filtered_workers = %s where job_id = %s" , numFiltSentences,
                    numFiltWorkers,job_id)  
   return(dbGetQuery(con, query))  
 }

@@ -185,8 +185,8 @@ if(dim(raw_data)[1] == 0){
   creator = 'script'
   saveFileMetadata(fname,path,mimeTypes[['excel']],-1,creator)
   
-  cat('OK')
   dbDisconnect(con)
+  cat('OK')	
 }
 
 
