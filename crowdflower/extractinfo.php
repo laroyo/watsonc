@@ -1,6 +1,6 @@
 <?php
 
-include('../includes/functions.php'); 
+include_once('../includes/functions.php'); 
 
 function objectToArray($obj) {
 	if (is_object($obj)) {

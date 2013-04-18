@@ -91,7 +91,7 @@ function storeContentInFile($file_info, $content,$createdby) {
   if(!is_dir($base_dir))
     mkdir($base_dir, 0777, true); 
 
-  $storage_path = $base_dir . uniqid()."_".basename($file_info['name']);	
+  $storage_path = $base_dir . basename($file_info['name']);	
   
   $original_name = $file_info['name'];
   $mime_type = $file_info['mime_type'];
