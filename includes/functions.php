@@ -2,9 +2,23 @@
 include_once 'dbinfo.php';
 $filesdir = "/var/www/files/";
 function dieError($msg) {
-	error_log($msg);
-	die($msg);
+  error_log($msg);
+  die($msg);
 }
+
+$file_types = array(
+		    "AnalysisFiles", 	       
+		    "Appliedfileters",
+		    "CFlowerResultFiles",
+		    "CSVFiles",
+		    "Experiments",
+		    "FilteredSentences",
+		    "FilteredWorkers",
+		    "Filters",
+		    "TextFiles", 	       	       
+	       ); 
+
+
 function getFolder() {
 	global $filesdir;
 	date_default_timezone_set('UTC');
@@ -45,35 +59,99 @@ function storeFile($filefieldname) {
 }
 
 /**
+ * @author Guillermo S. 
+ * Build the folder path for storing the different types of file results. 
+ **/
+function getFolderForResults($type, $time=NULL){
+  
+  global $file_types; 
+  global $filesdir; 
+  
+  if($time == NULL){
+    $time = time(); 
+  }
+  
+  $currentDate = date('dFY',$time);
+  $currentTime = date('H:i:s',$time);  
+  $timestamp = $currentDate."-".$currentTime;
+  if(in_array($type, $file_types)){    
+    return $filesdir.  $type."/" . $timestamp;  
+  } else {
+    throw new Exception("Invalid folder type: ". $type); 
+  }
+}
+
+
+/**
+ * @author Guillermo S. 
  * Store a file, passing the content as a parameter. 
  **/
 function storeContentInFile($file_info, $content,$createdby) {
-	$storage_path = getFolder().uniqid()."_".basename($file_info['name']);
-	$original_name = $file_info['name'];
-	$mime_type = $file_info['type'];
+  $base_dir = getFolderForResults($file_info['file_type']) .'/'; 
+  if(!is_dir($base_dir))
+    mkdir($base_dir, 0777, true); 
 
-	switch($mime_type){
-	case "text/csv": 
-	  $filesize = 0; 
-	  $fp_csv = fopen($storage_path, 'w');
-	  foreach($content as $row){
-	    $filesize += fputcsv($fp_csv, $row); 
-	  }	  
-	  fclose($fp_csv); 
-	  break; 
+  $storage_path = $base_dir . uniqid()."_".basename($file_info['name']);	
+  
+  $original_name = $file_info['name'];
+  $mime_type = $file_info['mime_type'];
+  $file_type = $file_info['file_type']; 
+  $job_id = $file_info['job_id']; 
+
+  // Store the information as a File. 
+  switch($mime_type){
+  case "text/csv": 
+    $filesize = 0; 
+    $fp_csv = fopen($storage_path, 'w');
+    foreach($content as $row){
+      $filesize += fputcsv($fp_csv, $row); 
+    }	  
+    fclose($fp_csv); 
+    break; 
+  }
+
+  //Store the information in the database. 
+  switch($file_type){
+  case 'CFlowerResultFiles': 
+    $nline = 0; 
+    foreach($content as $row){
+      $q = "insert into cflower_results (job_id,unit_id,worker_id,worker_trust,external_type,relation,selected_words,explanation,started_at,created_at,term1,term2,sentence)".
+
+	"values ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')";   
+      if($nline > 0){
+	$row[5] = mysql_real_escape_string($row[5]);
+	$row[6] = mysql_real_escape_string($row[6]);
+	$row[7] = date("Y-m-d H:i:s",strtotime($row[7])); 
+	$row[8] = date("Y-m-d H:i:s",strtotime($row[8])); 
+	$row[11] = mysql_real_escape_string($row[11]);
+	for($i = 0; $i < sizeof($row); $i++){
+	  $row[$i] = trim($row[$i]); 
 	}
+	
+	array_unshift($row,$job_id); 
+	$sql = vsprintf($q, $row);            
+      
+	mysql_query($sql) or dieError("function: storeFile<br/>\n".$sql."<br/>\n".mysql_error());
+	$inserted += mysql_affected_rows();
+      }
+      $nline++; 
+    }
+    break; 
+  }
 
-	if($filesize > 0){       
-	  $query="INSERT INTO `file_storage`(`original_name`, `storage_path`, `mime_type`, `filesize`, `createdby`) 
+  // Store the file metadata. 
+  if($filesize > 0){       
+    $query="INSERT INTO `file_storage`(`original_name`, `storage_path`, `mime_type`, `filesize`, `createdby`) 
 		VALUES ('".$original_name."','".$storage_path."','".$mime_type."',".$filesize.",'".$createdby."')";
-	  mysql_query($query) or dieError("function: storeContentInFile<br/>".$query."<br/>".mysql_error());
-	  return mysql_insert_id();
-	} else{
-		return null;
-	}
+    mysql_query($query) or dieError("function: storeContentInFile<br/>".$query."<br/>".mysql_error());
+    return mysql_insert_id();
+  } else{
+    return null;
+  }
 }
 
 /**
+ * @autor Guillermo S. 
  * Returns a file's storage path. To be used by scripts to directly access the file. 
  **/
 function getFileStoragePath($file_type, $search_criteria){     

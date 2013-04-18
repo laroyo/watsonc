@@ -33,7 +33,7 @@ function storeCSVFile($filefieldname, $storageFolder) {
         $filesize = filesize($storageFolder."/".$filefieldname);
         $query="INSERT INTO `file_storage`(`original_name`, `storage_path`, `mime_type`, `filesize`, `createdby`) 
                 VALUES ('".$original_name."','".$storage_path."','".$mime_type."',".$filesize.",'".$_SERVER['REMOTE_USER']."')";
-                mysql_query($query) or dieError("function: storeFile<br/>".$query."<br/>".mysql_error());
+                mysql_query($query) or dieError("function: storeCSVFile<br/>".$query."<br/>".mysql_error());
         return mysql_insert_id();
 }
 
@@ -173,8 +173,16 @@ if ($textFilesAddr == "") {
 		$fileid = storeCSVFile($name, $storageCSV);
 		$lines = getLines($fileid) - 1;
 		$comment = $_POST["files_comment"];
-		$query="INSERT INTO `processing_file`(`fileid`, `lines`, `comment`, `createdby`) 
-                        VALUES ('".$fileid."','".$lines."','".$comment."','".$_SERVER['REMOTE_USER']."')";
+
+		$storage_path = $filesdir."TextFiles/".$timestamp."/".substr(0, strlen($name) - 8);
+		$queryId="SELECT `id` FROM `file_storage` WHERE `storage_path` = '".$storage_path."'";
+                $rowFileId = getOneFieldFromQuery($queryId, 'id');
+	
+		$queryId="SELECT `lines` FROM `raw_file` WHERE `fileid` = '".$rowFileId."'";
+                $sentences = getOneFieldFromQuery($queryId, 'lines');
+		
+		$query="INSERT INTO `processing_file`(`fileid`, `rawfileid`, `lines`, `sentences`, `comment`, `createdby`) 
+                        VALUES ('".$fileid."','".$rawFileId."','".$lines."','".$sentences."','".$comment."','".$_SERVER['REMOTE_USER']."')";
                         mysql_query($query) or dieError("function: processing_file<br/>".$query."<br/>".mysql_error());
 	}
 
@@ -189,10 +197,71 @@ if ($textFilesAddr == "") {
 	mkdir($filesdir.'Filters/'.$timestamp."/withRelationsOutside", 0777, true);
 	mkdir($filesdir.'Filters/'.$timestamp."/long", 0777, true);
 	mkdir($filesdir.'Filters/'.$timestamp."/shortAndAverage", 0777, true);
-//	error_log("OK8");
+
 	$resp = shell_exec("/usr/bin/java -jar ".$jardir."SpecialChars.jar ".$filesdir."CSVFiles/".$timestamp." ".$filesdir."Filters/".$timestamp);
+	$folders = array("/noSemicolon", "/withSemicolon", "/noTermBetweenBr", "/withTermBetweenBr", "/noSpecialCase");
+	$filters = array("NOSC", "SC", "NOABB", "ABB", "NOSPC");
+	$storageCSV = $filesdir."Filters/".$timestamp;
+
+	foreach($folders as $keyFolder => $filterName) {
+		$oneFilterFiles = getAllFilesFromDirectory($storageCSV.$filterName);
+		foreach($oneFilterFiles as $name) {
+			$fileid = storeCSVFile($name, $storageCSV.$filterName);
+			
+			$storage_path = "/var/www/files/Filters/".$timestamp.$filterName."/".$name;
+			$queryId="SELECT `id` FROM `file_storage` WHERE `storage_path` = '".$storage_path."'";
+                	$preprocFileId = getOneFieldFromQuery($queryId, 'id');
+
+			$comment = $_POST['files_comment'];
+			$fileFilter = $filters[$keyFolder];
+
+			$query="INSERT INTO `one_filter_file`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `createdby`) 
+	    	            VALUES ('".$fileid."','".$preprocFileId."','".$fileFilter."','".$comment."','".$_SERVER['REMOTE_USER']."')";
+        		        mysql_query($query) or dieError("function: one_filter_file<br/>".$query."<br/>".mysql_error());
+		}
+	} 
+
 	$resp = shell_exec("/usr/bin/java -jar ".$jardir."ClusterOnRelation.jar ".$filesdir."CSVFiles/".$timestamp." ".$filesdir."Filters/".$timestamp);
+	$folders = array("/noRelation", "/withRelationsBetween", "/withRelationsOutside");
+	$filters = array("NOR", "RBA", "ROA");
+	$storageCSV = $filesdir."Filters/".$timestamp;
+	foreach($folders as $keyFolder => $filterName) {
+		$oneFilterFiles = getAllFilesFromDirectory($storageCSV.$filterName);
+		foreach($oneFilterFiles as $name) {
+			$fileid = storeCSVFile($name, $storageCSV.$filterName);
+			$storage_path = "/var/www/files/Filters/".$timestamp.$filterName."/".$name;
+			$queryId="SELECT `id` FROM `file_storage` WHERE `storage_path` = '".$storage_path."'";
+                	$preprocFileId = getOneFieldFromQuery($queryId, 'id');
+
+			$comment = $_POST['files_comment'];
+			$fileFilter = $filters[$keyFolder];
+
+			$query="INSERT INTO `one_filter_file`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `createdby`) 
+	    	            VALUES ('".$fileid."','".$preprocFileId."','".$fileFilter."','".$comment."','".$_SERVER['REMOTE_USER']."')";
+        		        mysql_query($query) or dieError("function: one_filter_file<br/>".$query."<br/>".mysql_error());
+		}
+	} 
+
 	$resp = shell_exec("/usr/bin/java -jar ".$jardir."LengthSelection.jar ".$filesdir."CSVFiles/".$timestamp." ".$filesdir."Filters/".$timestamp);
+	$folders = array("/long", "/shortAndAverage");
+	$filters = array("long", "short");
+	$storageCSV = $filesdir."Filters/".$timestamp;
+	foreach($folders as $filterName) {
+		$oneFilterFiles = getAllFilesFromDirectory($storageCSV.$filterName);
+		foreach($oneFilterFiles as $name) {
+			$fileid = storeCSVFile($name, $storageCSV.$filterName);
+			$storage_path = "/var/www/files/Filters/".$timestamp.$filterName."/".$name;
+			$queryId="SELECT `id` FROM `file_storage` WHERE `storage_path` = '".$storage_path."'";
+                	$preprocFileId = getOneFieldFromQuery($queryId, 'id');
+
+			$comment = $_POST['files_comment'];
+			$fileFilter = $filters[$keyFolder];
+
+			$query="INSERT INTO `one_filter_file`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `createdby`) 
+	    	            VALUES ('".$fileid."','".$preprocFileId."','".$fileFilter."','".$comment."','".$_SERVER['REMOTE_USER']."')";
+        		        mysql_query($query) or dieError("function: one_filter_file<br/>".$query."<br/>".mysql_error());
+		}
+	} 
 
 	shell_exec("rm -rf ".$filesdir."csvFiles");
 	shell_exec("rm -rf ".$filesdir."allCsvFiles");

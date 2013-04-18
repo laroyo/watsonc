@@ -1,6 +1,6 @@
 <?php
 
-include('includes/functions.php'); 
+include('../includes/functions.php'); 
 
 function objectToArray($obj) {
 	if (is_object($obj)) {
@@ -83,18 +83,22 @@ function getResults($job_id) {
 			array_push($results_content, $row_result); 
 		}
 	}
-	$result_file_info = array(
+	$results_file_info = array(
 	    'name' => $job_id. '_file_results.csv',
-	    'type' => 'text/csv'
+	    'job_id' => $job_id,
+	    'mime_type' => 'text/csv',
+	    'file_type' => 'CFlowerResultFiles'
         );
 	$overview_file_info = array(
 	    'name' => $job_id. '_file_results.csv',
-	    'type' => 'text/csv'
+	    'job_id' => $job_id,
+	    'mime_type' => 'text/csv',
+	    'file_type' => 'CFlowerResultFiles'
 	); 
 	
-	//FIXME: Specify a correct user as creator of the files (instead of 'script')
+	//FIXME: Specify a correct user as creator of the files (instead of 'script')	
 	storeContentInFile($results_file_info,$results_content,'script'); 
-	storeContentInFile($overview_file_info,$results_content,'script'); 
+	//storeContentInFile($overview_file_info,$results_content,'script'); 
 	/* fclose($fp_results); */
 	/* fclose($fp_overview); */
 }
