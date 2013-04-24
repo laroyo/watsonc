@@ -730,8 +730,8 @@ button.ui-button::-moz-focus-inner {
 /* To change the width and height of tabs */
 .ui-tabs {
 	position: relative;/* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
-	padding: .2em;
-	width: auto;
+	padding: 0em;
+	width: 135%;
 	height: auto;  
 }
 .ui-tabs .ui-tabs-nav {

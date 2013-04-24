@@ -215,6 +215,7 @@ $job_completion = 0.0;
 $run_time = 0;
 $status = "Running";
 $status_change = "abled";
+$checkbox_check = "disabled";
 
 
 $insertSQL = "INSERT INTO history_table ( job_id, origin, job_title , created_by , cfbatch_id, file_name, nr_sentences_file, type_of_units, template,
@@ -222,14 +223,14 @@ max_judgments_per_worker, max_judgments_per_ip, units_per_assignment, units_per_
 judgments_per_unit, judgments_per_job, seconds_per_unit, seconds_per_assignment,
 payment_per_unit, payment_per_assignment,total_payment_per_unit,  total_payment_per_job,
 payment_per_hour, channels_used, job_comments, 
-job_judgments_made, job_completion, run_time, status, status_change)
+job_judgments_made, job_completion, run_time, status, status_change, checkbox_check)
 VALUES
 ( '$job_id', '$origin', '{$data["title"]}', '{$_SERVER["REMOTE_USER"]}', '$file_id' , '$file', '$nr_sentences_file', '$filter_applied', '$template_used',
 '{$data["max_judgments_per_worker"]}', '{$data["max_judgments_per_ip"]}', '{$data["units_per_assignment"]}', '$units_per_job',
 '{$data["judgments_per_unit"]}', '$judgments_per_job', '$calibrated_unit_time', '$seconds_per_assignment',
 '$payment_per_unit', '$payment_per_assignment','$total_payment_per_unit',  '$total_payment_per_job',
  '$payment_per_hour', '$channels_used', '$job_comments',
-'$job_judgments_made', '$job_completion', '$run_time', '$status', '$status_change')";
+'$job_judgments_made', '$job_completion', '$run_time', '$status', '$status_change', '$checkbox_check')";
 
 
 if (!mysql_query($insertSQL,$con))

@@ -163,15 +163,18 @@ function getResults($job_id) {
 	$avg_time = gmdate('H:i:s', array_sum($timeDifference) / $noJudgments);	
 
 	$updatehistorytable = mysql_query("Update history_table Set origin='$origin', channels_percentage='$channel_percentage', min_time_unitworker='$min_time', max_time_unitworker='$max_time', avg_time_unitworker='$avg_time' Where job_id = '$job_id' ") or die(mysql_error());
+	
+	$queryFileName="SELECT `file_name` FROM `history_table` WHERE `job_id` = '".$job_id."'";
+        $fileName = getOneFieldFromQuery($queryFileName, 'file_name');
 
 	$results_file_info = array(
-	    'name' => $job_id. '_file_results.csv',
+	    'name' => $job_id. '_'.$fileName,
 	    'job_id' => $job_id,
 	    'mime_type' => 'text/csv',
 	    'file_type' => 'CFlowerResultFiles'
         );
 	$overview_file_info = array(
-	    'name' => $job_id. '_file_results.csv',
+	    'name' => $job_id. '_'.$fileName,
 	    'job_id' => $job_id,
 	    'mime_type' => 'text/csv',
 	    'file_type' => 'CFlowerResultFiles'
