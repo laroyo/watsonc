@@ -21,10 +21,10 @@ function workerMetricsRow($row, $job_id=NULL){
   else
     echo "<td></td>"; 
   if($job_id == 'aggregated'){
-    echo "<td><a href='/graphs/numSent_histogram_76.jpg' target='_blank'>". sprintf("%.2f", $row['numSents']) . "</a></td>\n"; 
-    echo "<td><a href='/graphs/cos_histogram_76.jpg' target='_blank'>". sprintf("%.2f", $row['cos']) . "</a></td>\n"; 
-    echo "<td><a href='/graphs/agr_histogram_76.jpg' target='_blank'>". sprintf("%.2f", $row['agr']) . "</a></td>\n"; 
-    echo "<td><a href='/graphs/annotSent_histogram_76.jpg' target='_blank'>". sprintf("%.2f", $row['annotSent']) . "</a></td></tr>\n"; 
+    echo "<td><a href='/graphs/numSent_histogram_$set_id.jpg' target='_blank'>". sprintf("%.2f", $row['numSents']) . "</a></td>\n"; 
+    echo "<td><a href='/graphs/cos_histogram_$set_id.jpg' target='_blank'>". sprintf("%.2f", $row['cos']) . "</a></td>\n"; 
+    echo "<td><a href='/graphs/agr_histogram_$set_id.jpg' target='_blank'>". sprintf("%.2f", $row['agr']) . "</a></td>\n"; 
+    echo "<td><a href='/graphs/annotSent_histogram_$set_id.jpg' target='_blank'>". sprintf("%.2f", $row['annotSent']) . "</a></td></tr>\n"; 
   } else {
     echo "<td>". sprintf("%.2f", $row['numSents']) . "</td>\n"; 
     echo "<td>". sprintf("%.2f", $row['cos']) . "</td>\n"; 
@@ -65,8 +65,8 @@ if(isset($_GET['set_id'])){
 
  if(!$set_id){
    echo "Computing new values.... "; 
-   echo "Invoking script: " .'/usr/bin/Rscript '. $_SERVER['DOCUMENT_ROOT'] . '/wcs/dataproc/set_analytics.R ' . implode(' ',$job_ids); 
-   $set_id = exec('/usr/bin/Rscript '. $_SERVER['DOCUMENT_ROOT'] . '/wcs/dataproc/set_analytics.R ' . implode(' ',$job_ids));
+   echo "Invoking script: " .'/usr/bin/Rscript '. $_SERVER['DOCUMENT_ROOT'] . '/dataproc/set_analytics.R ' . implode(' ',$job_ids); 
+   $set_id = exec('/usr/bin/Rscript '. $_SERVER['DOCUMENT_ROOT'] . '/dataproc/set_analytics.R ' . implode(' ',$job_ids));
    if(! $set_id){
      echo "Error: the statistics for the requested set cannot be computed"; 
      return; 
@@ -132,14 +132,16 @@ if(sizeof($crossjob_workers) > 0){
   echo "<br> Min: ". $cjstats['min'] . " Mean:  " . $cjstats['mean'] . " Max: ". $cjstats['max']. "<br>"; 
   //var_dump($res['mean']); 
 }
-  
+
+echo "<b> NEW: </b><a href='/graphs/workerLabels_$set_id.jpg'>Worker Labels distribution</a> (Most active workers only)"; 
 echo "<hr>"; 
 print('job_ids');
 print(implode($job_ids,' '));
 
 $time_stats = getCompletionTimeStats($job_ids);
 echo "<br><h4>Time stats: </h4>";
-echo "<a href='/graphs/set_histogram_$set_id.jpg' target='_blank'>Distribution of worker times</a> (<----- After filtering outliers)";
+echo "<a href='/graphs/set_histogram_$set_id.jpg' target='_blank'>Distribution of worker times (Plot)</a> (WITH outliers)<br/>";
+echo "<a href='/graphs/set_line_histogram_$set_id.jpg' target='_blank'>Distribution of worker times (Histogram)</a> (After filtering outliers)<br/>";
 $set_time_stats = getSetCompletionTimeStats($time_stats, $judgmentsPerJob);
 ?>
 <br><table>

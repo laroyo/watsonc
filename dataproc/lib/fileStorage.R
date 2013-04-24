@@ -127,7 +127,7 @@ plotTimes <- function(tVector, job_id, prefix=NULL, dir=NULL){
   jpeg(path,width=750,height=750)
   h<-hist(tVector, breaks=10, col="blue", xlab="Task completion time",ylab="Number of tasks completed on that time", main="Task completion time")
   dev.off()
-
+  
   fname2 <- getFileName(job_id,fileTypes[['histogram']],paste(prefix,'_line',sep=''))
   path2 = paste(dir, fname2,sep='/')
   jpeg(path2,width=750,height=750)
