@@ -1,8 +1,7 @@
 #!/usr/bin/Rscript
 
-source(paste('/var/www/html/wcs/dataproc/','envars.R',sep=''))
-#source(paste('/home/gsc/watson/dataproc/','envars.R',sep=''))
-
+source('/var/www/html/wcs/dataproc/envars.R')
+	
 source(paste(libpath,'/db.R',sep=''),chdir=TRUE)
 source(paste(libpath,'/measures.R',sep=''),chdir=TRUE)
 source(paste(libpath,'/filters.R',sep=''),chdir=TRUE)
