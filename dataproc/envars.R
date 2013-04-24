@@ -13,5 +13,6 @@ host <- 'localhost'
 
 #Files directory
 filespath <- '/var/www/files'
-
+imagespath <- '/var/www/html/wcs/graphs/'
+'
 
