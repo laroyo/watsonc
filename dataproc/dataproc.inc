@@ -34,11 +34,13 @@ function getJobsInSet($set_id){
   return(json_decode($row[0]));   
 }
 
-function getFilteredSentences($set_id){
+function getFilteredSentences($set_id){ 
+  $res = NULL; 
   $rs = mysql_query("SELECT * from filtered_sentences where set_id = $set_id"); 
-  while($row = mysql_fetch_assoc($rs)){
-    $res[]  = $row; 
-  }
+  if($rs)
+     while($row = mysql_fetch_assoc($rs)){
+       $res[]  = $row; 
+     }    
   return $res; 
 }
 

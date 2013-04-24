@@ -10,10 +10,9 @@ if(!isset($_POST['postback']) && !isset($_GET['set_id'])){
   <input type="checkbox" name="job_ids[]" value="178569"/> 178569<br/>
   <input type='submit'>
 </form>
-<? 
+<?php
     return; 
 }
-
 function workerMetricsRow($row, $job_id=NULL){
   echo "<tr>\n"; 
 
@@ -65,18 +64,17 @@ if(isset($_GET['set_id'])){
 }
 
  if(!$set_id){
-   print("Computing new values.... "); 
-   echo "Invoking script: " .'/usr/bin/Rscript '. $_SERVER['DOCUMENT_ROOT'] . 'dataproc/set_analytics.R ' . implode(' ',$job_ids); 
-   $set_id = exec('/usr/bin/Rscript '. $_SERVER['DOCUMENT_ROOT'] . 'dataproc/set_analytics.R ' . implode(' ',$job_ids));
+   echo "Computing new values.... "; 
+   echo "Invoking script: " .'/usr/bin/Rscript '. $_SERVER['DOCUMENT_ROOT'] . '/wcs/dataproc/set_analytics.R ' . implode(' ',$job_ids); 
+   $set_id = exec('/usr/bin/Rscript '. $_SERVER['DOCUMENT_ROOT'] . '/wcs/dataproc/set_analytics.R ' . implode(' ',$job_ids));
    if(! $set_id){
-     print('Error: the statistics for the requested set cannot be computed'); 
+     echo "Error: the statistics for the requested set cannot be computed"; 
      return; 
    }
  } 
 
-print("<h3> Analytics for set:  $set_id </h3>"); 
-
-print("<h4> (Jobs:" . implode($job_ids,',') . ")</h4>");
+echo "<h3> Analytics for set:  $set_id </h3>"; 
+echo "<h4> (Jobs:" . implode($job_ids,',') . ")</h4>";
 
 $judgmentsPerJob = getJudgmentsPerJob($job_ids); 
 //var_dump($judPerJob); 
@@ -89,10 +87,8 @@ if(sizeof($filteredSentences) == 0){
 }
 
 echo "<br><h4>Sentence Metrics </h4>"; 
-
 echo "<a href='/graphs/set_heatmap_$set_id.jpg' target='_blank'> Heat map </a><br>"; 
-
-print('<table>'); 
+echo '<table>'; 
 
 
 foreach($filteredSentences as $sentence){
@@ -138,14 +134,13 @@ if(sizeof($crossjob_workers) > 0){
 }
   
 echo "<hr>"; 
+print('job_ids');
+print(implode($job_ids,' '));
 
-/* print('job_ids');  */
-/* print(implode($job_ids,' '));  */
-
-$time_stats = getCompletionTimeStats($job_ids); 
-echo "<br><h4>Time stats: </h4>"; 
-echo "<a href='/graphs/set_histogram_$set_id.jpg' target='_blank'>Distribution of worker times</a> (<----- After filtering outliers)"; 
-$set_time_stats = getSetCompletionTimeStats($time_stats, $judgmentsPerJob); 
+$time_stats = getCompletionTimeStats($job_ids);
+echo "<br><h4>Time stats: </h4>";
+echo "<a href='/graphs/set_histogram_$set_id.jpg' target='_blank'>Distribution of worker times</a> (<----- After filtering outliers)";
+$set_time_stats = getSetCompletionTimeStats($time_stats, $judgmentsPerJob);
 ?>
 <br><table>
 <tr><td></td><td>Min</td><td>Avg</td><td>Max</td></tr>
@@ -154,5 +149,7 @@ $set_time_stats = getSetCompletionTimeStats($time_stats, $judgmentsPerJob);
 foreach($time_stats as $job_id => $row){
   echo("<tr><td>Job $job_id</td><td> " .$row['min_time_unitworker']. "</td><td>".$row["avg_time_unitworker"]. "</td><td>".$row['max_time_unitworker']. "</td></tr>");
 }
-print('</table>');
-echo "<hr>"; 
+echo '</table>';
+echo "<hr>";
+
+

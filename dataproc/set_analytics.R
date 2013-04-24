@@ -1,6 +1,6 @@
 #!/usr/bin/Rscript
 
-source(paste('/home/gsc/watson/dataproc/','envars.R',sep=''))
+source(paste('/var/www/html/wcs/dataproc/','envars.R',sep=''))
 
 source(paste(libpath,'/db.R',sep=''),chdir=TRUE)
 source(paste(libpath,'/measures.R',sep=''),chdir=TRUE)
@@ -31,7 +31,7 @@ if(dim(raw_data)[1] == 0){
   sentenceTable <- pivot(raw_data,'unit_id','relation')
   sentenceDf <- getDf(sentenceTable)
 
-  genHeatMap(sentenceDf,set_id,prefix='set',dir='/home/gsc/watson/graphs')
+  genHeatMap(sentenceDf,set_id,prefix='set',dir='/var/www/html/wcs/graphs')
   
   #Calculate the measures to apply the filters.
   filters <- list('SQRT','NormSQRT','NormR')
@@ -113,14 +113,14 @@ for (id in job_ids){
 }
 
 fVector <- filterOutliers(tVector,40)
-genHistogram(fVector[[3]],set_id,prefix='set',dir='/home/gsc/watson/graphs')
+genHistogram(fVector[[3]],set_id,prefix='set',dir='/var/www/html/wcs/graphs')
 
 
-data <- getJob(job_id)
-workerTable <- pivot(data,'worker_id','relation')
-workerDf <- getDf(workerTable)
-mcolors <- colors()[c(26,51,76,90,93,95,101,126,151,376,56,81,255,448)]
-barplot(t(workerDf[1:40,]), col=mcolors, space=0.1, cex.axis=0.8,las=2,names.arg=rownames(workerDf[1:40,]),cex=0.8)
+# data <- getJob(job_id)
+# workerTable <- pivot(data,'worker_id','relation')
+# workerDf <- getDf(workerTable)
+# mcolors <- colors()[c(26,51,76,90,93,95,101,126,151,376,56,81,255,448)]
+# barplot(t(workerDf[1:40,]), col=mcolors, space=0.1, cex.axis=0.8,las=2,names.arg=rownames(workerDf[1:40,]),cex=0.8)
 
 
 cat(1)
