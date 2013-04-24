@@ -107,29 +107,28 @@ $upload_query = "curl -T \"$file_name\" -H \"Content-Type:text/csv\" \"https://a
 $response = exec($upload_query);
 //print_r(json_decode($response));
 
-
 /* print the responses from the CrowdFlower server */
 //print_r(objectToArray($response));
 //print_r($array);
 
 if ($_POST["template"] == "t1") {
 	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
- $template_used = "With definitions and with extra questions" ;
+ $template_used = "Def, extraQue" ;
  $response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t2") {
 	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndWithoutExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
-	$template_used = "With definitions but without extra questions" ;
+	$template_used = "Def" ;
 	$response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t3") {
 	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
-	$template_used = "Without definitions but with extra questions" ;
+	$template_used = "extraQue" ;
 	$response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t4") {
 	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithoutExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
-	$template_used = "Without definitions and without extra questions" ;
+	$template_used = "None" ;
 	$response = exec($update_cml_job);
 }
 
@@ -210,25 +209,27 @@ $payment_per_unit = $_POST["payment"] / $units_per_assignment;
 $job_comments = $_POST["job_comment"];
 $payment_per_hour = $_POST["payment_per_hour"];
 /* when creating a new job, those are saved with default values */
+$origin = "CF";
 $job_judgments_made = 0;
 $job_completion = 0.0;
 $run_time = 0;
 $status = "Running";
+$status_change = "abled";
 
 
-$insertSQL = "INSERT INTO history_table ( job_id, job_title , created_by , cfbatch_id, file_name, nr_sentences_file, type_of_units, template,
+$insertSQL = "INSERT INTO history_table ( job_id, origin, job_title , created_by , cfbatch_id, file_name, nr_sentences_file, type_of_units, template,
 max_judgments_per_worker, max_judgments_per_ip, units_per_assignment, units_per_job,
 judgments_per_unit, judgments_per_job, seconds_per_unit, seconds_per_assignment,
 payment_per_unit, payment_per_assignment,total_payment_per_unit,  total_payment_per_job,
 payment_per_hour, channels_used, job_comments, 
-job_judgments_made, job_completion, run_time, status)
+job_judgments_made, job_completion, run_time, status, status_change)
 VALUES
-( '$job_id', '{$data["title"]}', '{$_SERVER["REMOTE_USER"]}', '$file_id' , '$file', '$nr_sentences_file', '$filter_applied', '$template_used',
+( '$job_id', '$origin', '{$data["title"]}', '{$_SERVER["REMOTE_USER"]}', '$file_id' , '$file', '$nr_sentences_file', '$filter_applied', '$template_used',
 '{$data["max_judgments_per_worker"]}', '{$data["max_judgments_per_ip"]}', '{$data["units_per_assignment"]}', '$units_per_job',
 '{$data["judgments_per_unit"]}', '$judgments_per_job', '$calibrated_unit_time', '$seconds_per_assignment',
 '$payment_per_unit', '$payment_per_assignment','$total_payment_per_unit',  '$total_payment_per_job',
  '$payment_per_hour', '$channels_used', '$job_comments',
-'$job_judgments_made', '$job_completion', '$run_time', '$status')";
+'$job_judgments_made', '$job_completion', '$run_time', '$status', '$status_change')";
 
 
 if (!mysql_query($insertSQL,$con))

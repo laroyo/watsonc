@@ -43,7 +43,7 @@ if($response_array["state"] == "running") {
 	if (array_key_exists("success", $pause_response_array)) {
 		echo "The job was paused";
     		//  update the database
-		$updateDB = mysql_query("Update cfinput Set status = '$status' Where job_id = '$job_id' ") or mysql_error();
+		$updateDB = mysql_query("Update history_table Set status = '$status' Where job_id = '$job_id' ") or mysql_error();
 	}
 }
 else {

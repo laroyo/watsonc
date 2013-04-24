@@ -177,7 +177,13 @@ $('#toresults').click(function() {
 	 return false;
 });
 
-
+$(function() {
+    $( "button" )
+      .button()
+      .click(function( event ) {
+        event.preventDefault();
+      });
+  });
 
 $(function() {
     $( "div#accordion" ).accordion({
@@ -187,8 +193,20 @@ $(function() {
   });
 
 
+$(document).ready(function(){
 
+
+	$("#hidecolumns").multiselect({
+		   header: "Choose an Option!"
+	});
+	    
+	});
+	
+	
+	
 $(function() {
+	
+
 
 	  // call the tablesorter plugin
 	  $("table.tablesorter").tablesorter({
@@ -197,8 +215,11 @@ $(function() {
 	    // hidden filter input/selects will resize the columns, so try to minimize the change
 	    widthFixed : true,
 
+	    showProcessing: true,
+	    headerTemplate : '{content} {icon}',
 	    // initialize zebra striping and filter widgets
-	    widgets: ["zebra", "filter"],
+	    widgets: [ "zebra", "filter", "stickyHeaders", "resizable", 'col-reorder'],
+	    
 
 	    // headers: { 5: { sorter: false, filter: false } },
 
@@ -223,7 +244,7 @@ $(function() {
 
 	      // if true, filters are collapsed initially, but can be revealed by hovering over the grey bar immediately
 	      // below the header row. Additionally, tabbing through the document will open the filter row when an input gets focus
-	      filter_hideFilters : true,
+	      filter_hideFilters : false,
 
 	      // Set this option to false to make the searches case sensitive
 	      filter_ignoreCase : true,
@@ -241,11 +262,25 @@ $(function() {
 
 	      // Filter using parsed content for ALL columns
 	      // be careful on using this on date columns as the date is parsed and stored as time in seconds
-	      filter_useParsedData : false
+	      filter_useParsedData : false,
+	      
+	      resizable_addLastColumn : true,
+	      
+	      stickyHeaders : 'tablesorter-stickyHeader',
+	      
+	      scroller_height : 200,
+	      scroller_barWidth : 17,
+	      scroller_jumpToHeader: true,
+	      scroller_idPrefix : 's_'
+	      
+	      
 
 	    }
 
 	  });
+	  
+	  
+	  
 
 	  // External search
 	  // buttons set up like this:
@@ -274,7 +309,3 @@ $(function() {
 	  });
 
 	});
-
-
-
-

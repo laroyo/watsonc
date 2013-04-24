@@ -11,15 +11,16 @@ include_once 'includes/functions.php';
 <title>Crowd-Watson</title>
 <!-- Style sheets  -->
 <link href="css/huimain.css" rel="stylesheet">
-<link href="plugins/jquery-ui/css/dark-hive/jquery-ui-1.10.1.custom.css"
-	rel="stylesheet">
-<link href="plugins/tablesorter/css/theme.default.css" rel="stylesheet" type="text/css" />	
-
+<link href="plugins/jquery-ui/css/dark-hive/jquery-ui-1.10.1.custom.css" rel="stylesheet">
+<link href="plugins/Mottie-tablesorter/css/theme.default.css" rel="stylesheet" type="text/css" />	
+<link href="plugins/multiselect/css/jquery.multiselect.css" rel="stylesheet" type="text/css" />	
 <!-- js libraries  -->
 <script src="plugins/jquery-ui/js/jquery-1.9.1.js"></script>
 <script src="plugins/jquery-ui/js/jquery-ui-1.10.1.custom.js"></script>
-<script src="plugins/tablesorter/js/jquery.tablesorter.min.js" type="text/javascript"></script>
-<script src="plugins/tablesorter/js/jquery.tablesorter.widgets.min.js" type="text/javascript"></script>
+<script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.min.js" type="text/javascript"></script>
+<script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.widgets.min.js" type="text/javascript"></script>
+<script src="plugins/multiselect/js/jquery.multiselect.js" type="text/javascript"></script>
+<script src="plugins/multiselect/js/jquery.multiselect.min.js" type="text/javascript"></script>
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
@@ -180,7 +181,7 @@ while($row = mysql_fetch_array($result)){
 
         echo "<tr>";
         echo "<td><input type='radio' id='radiofile' name ='radiofile'/>$file_id</label></td>";
-        echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$file_id' class = 'tdlinks' >$original_name</a></td>";
+        echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$file_id' class = 'filelinks' >$original_name</a></td>";
         echo "<td>$filter_named</td>";
         echo "<td>$batch_size</td>";
         echo "<td>$created_by</td>";
@@ -193,12 +194,10 @@ echo "</tbody>";
 echo "</table>";
 ?>
 </div>
-				<form enctype="multipart/form-data" action="/wcs/crowdflower/indexcrowdflower.php" method="POST" 
-
-id="form">
+				<form enctype="multipart/form-data" action="/wcs/crowdflower/indexcrowdflower.php" method="POST" id="form">
 <div class="borderframe"  > 
 	<div class="labelfield">Choose a file to upload:</div>
-	<div class="inputfield"><input name="uploadedfile" type="button" id="uploadedfile" value = "Choose Server File" />
+	<div class="inputfield"><input name="uploadedfile" type="button" id="uploadedfile" value = "Choose Server File"  />
     <input type="hidden" name="fileid" id="fileid" />
 	<input type="hidden" name="sentences" id="sentences" />
 	<label for="uploadedfile" style ="font-size: 80%" >No File Chosen</label> 
@@ -318,7 +317,7 @@ name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
 	              $days += 1;
 	              $hours = 0;	           
 	           }
-	           $run_time = $days." days ".$hours." hours";
+	           $run_time = $days."d ".$hours."h";
 	           $updateRuntime = mysql_query("Update history_table Set run_time = '$run_time' Where job_id = '{$item["job_id"]}' and status != 'Finished' ");
               	           	 	           
               }
@@ -327,6 +326,15 @@ name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
 				
 <!--  <button class="search" data-filter-column="10" data-filter-text="2?%">Saved Search</button> (search the Discount column for "2?%") -->
   <button class="reset" title = "Click to clear all the filter options" >Reset Search</button> <!-- targetted by the "filter_reset" option -->
+<select id="hidecolumns" name="hidecolumns" multiple="multiple" title = "to Hide/Show Columns">
+<option value="0">JI</option>
+<option value="1">Orig</option>
+<option value="2">JT</option>
+<option value="3">CD</option>
+<option value="4">CB</option>
+<option value="5">NoS</option>
+</select>
+<div id="target">target</div>
   <br>
 <?php
 
@@ -335,34 +343,43 @@ $history = mysql_query("SELECT * FROM  `history_table` ORDER BY created_date DES
 echo "<table id='historytable' class='tablesorter'>";
 echo "<thead>"; //thead tag is required for using tablesorter
 echo "<tr>";
-echo "<th title = 'Link to CrowdFlower'>Job ID</th>";
-echo "<th>Job Title</th>";
-echo "<th>Created Date</th>";
-echo "<th>Created By</th>";
-echo "<th title = 'Click to open the file'>File Name</th>";
-echo "<th>Number of Sentences</th>";
-echo "<th>Type of Units</th>";
-echo "<th>Template</th>";
-echo "<th>Max Judgment Per Worker</th>";
-echo "<th>Max Judgment Per Ip</th>";
-echo "<th>Units Per Assignment</th>";
-echo "<th>Units Per Job</th>";
-echo "<th>Judgments Per Unit</th>";
-echo "<th title = 'Judgments Per Unit * Units Per Job'>Judgments Per Job</th>";
-echo "<th>Seconds Per Unit</th>";
-echo "<th>Seconds Per Assignment</th>";
-echo "<th>Payment Per Unit</th>";
-echo "<th title = 'Payment Per Unit * Units Per Assignment'>Payment Per Assignment</th>";
-echo "<th title = 'Payment Per Unit * Judgements Per Unit'>Total Payment Per Unit</th>";
-echo "<th title = 'Total Payment Per Unit * Units Per Job'>Total Payment Per Job</th>";
-echo "<th>Payment Per Hour</th>";
-echo "<th>Channel Used</th>";
-echo "<th>Comments</th>";
-echo "<th>Job Judgments Made</th>";
-echo "<th title = 'Job Judgments Made / Judgments Per Job'>Job Completion</th>";
-echo "<th title = 'Days'>Run Time</th>";
-echo "<th>Status</th>";
-echo "<th>Link</th>";
+echo "<th title = 'Job ID - Link to Batch File'>JI</th>";
+echo "<th title = 'Origin'>Orig</th>";
+echo "<th title = 'Job Title'>JT</th>";
+echo "<th title = 'Created Date'>CD</th>";
+echo "<th title = 'Created By'>CB</th>";
+//echo "<th title = 'Click to open the file'>File Name</th>";
+echo "<th title = 'Number of Sentences' >NoS</th>";
+echo "<th title = 'Type of Units'>ToU</th>";
+echo "<th title = 'Template'>Tmpl</th>";
+echo "<th title = 'Max Judgment Per Worker'>Max JpW</th>";
+//echo "<th title = 'Max Judgment Per Ip'>Max JpI</th>";
+echo "<th title = 'Units Per Assignment'>UpA</th>";
+echo "<th title = 'Units Per Job'>UpJ</th>";
+echo "<th title = 'Judgments Per Unit'>JpU</th>";
+echo "<th title = 'Judgments Per Job'>JpJ</th>";
+echo "<th title = 'Seconds Per Unit'>SpU</th>";
+echo "<th title = 'Seconds Per Assignment'>SpA</th>";
+echo "<th title = 'Payment Per Unit'>PpU</th>";
+echo "<th title = 'Payment Per Assignment'>PpA</th>";
+echo "<th title = 'Total Payment Per Unit'>tPpU</th>";
+echo "<th title = 'Total Payment Per Job'>tPpJ</th>";
+echo "<th title = 'Payment Per Hour'>PpH</th>";
+echo "<th title = 'Channel Used'>CU</th>";
+echo "<th title = 'Channels Percentage'>CP</th>";
+echo "<th title = 'Comments' >Cmt</th>";
+echo "<th title = 'Job Judgments Made'>JJm</th>";
+echo "<th title = 'Job Completion'>JC</th>";
+echo "<th title = 'Run Time'>RT</th>";
+echo "<th title = 'Average Time Per Job'>Ave TpJ</th>";
+echo "<th title = 'Min Time Per Job'>Min TpJ</th>";
+echo "<th title = 'Max Time Per Job'>Max TpJ</th>";
+echo "<th title = 'Number Filtered Sentences'>NfS</th>";
+echo "<th title = 'Total Number of Workers'>tNoW</th>";
+echo "<th title = 'Number Filtered Workers'>NfW</th>";
+echo "<th title = 'Status'>Status</th>";
+echo "<th title = 'Link'>Link</th>";
+echo "<th title = 'Job ID - Link to Origin'>JI</th>";
 echo "</tr>";
 echo "</thead>";
 echo "<tbody>"; //tbody tag is required for using tablesorter
@@ -375,47 +392,55 @@ while($row = mysql_fetch_array($history)){
 
         echo "<tr>";
      // echo "<td><a href = 'index.php#tabs-4' class = 'tdlinks' >$job_id</a></td>";
-        echo "<td><a href = 'https://crowdflower.com/jobs' target='_blank' class = 'tdlinks' >$job_id</a></td>";
-        echo "<td>$job_title</td>";
-        echo "<td>$created_date</td>";
-        echo "<td>$created_by</td>";
-        echo "<td style ='font-size: 80%' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$file_name</a></td>";
-        echo "<td>$nr_sentences_file</td>";
-        echo "<td>$type_of_units</td>";
+        echo "<td style ='font-size: 80%' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
+	echo "<td style ='font-size: 80%' >$origin</td>";
+        echo "<td style ='font-size: 80%' >$job_title</td>";
+        echo "<td style ='font-size: 80%'>$created_date</td>";
+        echo "<td style ='font-size: 80%'>$created_by</td>";
+       // echo "<td style ='font-size: 80%' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$file_name</a></td>";
+        echo "<td style ='font-size: 80%'>$nr_sentences_file</td>";
+        echo "<td style ='font-size: 80%'>$type_of_units</td>";
         echo "<td style ='font-size: 80%' >$template</td>";
-        echo "<td>$max_judgments_per_worker</td>";
-        echo "<td>$max_judgments_per_ip</td>";
-        echo "<td>$units_per_assignment</td>";
-        echo "<td>$units_per_job</td>";
-        echo "<td>$judgments_per_unit</td>";
-        echo "<td>$judgments_per_job</td>";
-        echo "<td>$seconds_per_unit</td>";
-        echo "<td>$seconds_per_assignment</td>";
-        echo "<td>$payment_per_unit</td>";
-        echo "<td>$payment_per_assignment</td>";
-        echo "<td>$total_payment_per_unit</td>";
-        echo "<td>$total_payment_per_job</td>";
-        echo "<td>$$payment_per_hour</td>";
-        echo "<td>$channels_used</td>";
-        echo "<td>$job_comments</td>";
-        echo "<td>$job_judgments_made</td>";
-        echo "<td>$job_completion</td>";
-        echo "<td>$run_time</td>";
-        echo "<td title='$job_id'>
-        <select class= 'changeStatus'>
-        <option value='ChangeStatus'>--Change--</option>
+        echo "<td style ='font-size: 80%'>$max_judgments_per_worker</td>";
+      //echo "<td style ='font-size: 80%'>$max_judgments_per_ip</td>";
+        echo "<td style ='font-size: 80%'>$units_per_assignment</td>";
+        echo "<td style ='font-size: 80%'>$units_per_job</td>";
+        echo "<td style ='font-size: 80%'>$judgments_per_unit</td>";
+        echo "<td style ='font-size: 80%'>$judgments_per_job</td>";
+        echo "<td style ='font-size: 80%'>$seconds_per_unit</td>";
+        echo "<td style ='font-size: 80%'>$seconds_per_assignment</td>";
+        echo "<td style ='font-size: 80%'>$payment_per_unit</td>";
+        echo "<td style ='font-size: 80%'>$payment_per_assignment</td>";
+        echo "<td style ='font-size: 80%'>$total_payment_per_unit</td>";
+        echo "<td style ='font-size: 80%'>$total_payment_per_job</td>";
+        echo "<td style ='font-size: 80%'>$payment_per_hour</td>";
+        echo "<td style ='font-size: 80%'>$channels_used</td>";
+	echo "<td style ='font-size: 80%'>$channels_percentage</td>";
+        echo "<td style ='font-size: 80%'>$job_comments</td>";
+        echo "<td style ='font-size: 80%'>$job_judgments_made</td>";
+        echo "<td style ='font-size: 80%'>$job_completion</td>";
+        echo "<td style ='font-size: 80%'>$run_time</td>";
+	echo "<td style ='font-size: 80%'>$avg_time_unitworker</td>";
+	echo "<td style ='font-size: 80%'>$min_time_unitworker</td>";
+	echo "<td style ='font-size: 80%'>$max_time_unitworker</td>";
+	echo "<td style ='font-size: 80%'>$no_filtered_sentences</td>";
+	echo "<td style ='font-size: 80%'>$no_workers</td>";
+	echo "<td style ='font-size: 80%'>$no_filtered_workers</td>";
+        echo "<td>
+        <select $status_change class= 'changeStatus'>
+        <option value='ChangeStatus'>-Change-</option>
         <option value='Paused'>Pause</option>
         <option value='Running'>Resume</option>
         <option value='Canceled'>Cancel</option>
         <option value='Deleted'>Delete</option></select>
         <dir class = 'cStatus'>$status</dir>
         </td>";
-        echo "<td title='$job_id'>
+        echo "<td style ='font-size: 80%'>
         <a href = '#tabs-4' id ='toresults' class = 'tdlinks' >
         Link to Results
         </a>
         </td>";
-    
+        echo "<td style ='font-size: 80%' ><a href = 'https://crowdflower.com/jobs/$job_id'   target='_blank'   class = 'tdlinks' >$job_id</a></td>";
      echo "</tr>";
 }
 
