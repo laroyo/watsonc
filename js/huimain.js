@@ -7,28 +7,36 @@
   $( "#tabs" ).tabs();
 }
 
- 
+ function addClassesToFilterRow(){
+	 var table = $("#historytable");
+	 var headerRows = $(table).find(".tablesorter-headerRow").children();
+	 var filterRows =  $(table).find(".tablesorter-filter-row").children();
+	 for ( var int = 0; int < headerRows.length; int++) {
+		 var hrow =  $(headerRows[int]);
+		var classname = $(headerRows[int]).attr('class').split(' ');
+		if (classname[0].substring(0,1) == 'c') {
+			$(filterRows[int]).addClass(classname[0]);
+		}
+	}
+	 
+	 
+	 
+ }
  
 $(document).ready(function() {
 	$("#statisticsarea").load("/wcs/dataproc/genAnalysisFiles.php");
 	$("#preprocessarea").load("/wcs/preprocessing/preprocinterface.php");
 	$( "#tabs" ).tabs();	
-});
-
-
-
-$(document).ready(function() {
-	
     $(".changeStatus").change(function(){ 
     	
-    alert($("option:selected", this).text() +" "+$(".changeStatus").index(this) + " " + $(this).closest('tr').children().slice(0,1).text());
-    $(this).parent().children("dir.cStatus").text($("option:selected", this).val());   
+    alert($("option:selected", this).text() +" " + $(this).closest('tr').children().slice(1,2).text());
+    $(this).parent().parent().children("td.cStatus").text($("option:selected", this).val());   
     var selectedstatus = $("option:selected", this).text();
     if(selectedstatus == "Pause")
     	{
     var xmlRequest = $.ajax({
     	type: 'POST',
-        data: ({status : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(0,1).text()}),
+        data: ({status : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(1,2).text()}),
         url: '/wcs/statuschange/pause_job.php'
     	});
     	 
@@ -38,7 +46,7 @@ $(document).ready(function() {
     	{
     	 var xmlRequest = $.ajax({
     	    	type: 'POST',
-    	        data: ({status : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(0,1).text()}),
+    	        data: ({status : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(1,2).text()}),
     	        url: '/wcs/statuschange/resume_job.php'
     	    	});
     	    	 
@@ -48,7 +56,7 @@ $(document).ready(function() {
 	{
     	 var xmlRequest = $.ajax({
     	    	type: 'POST',
-    	        data: ({status : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(0,1).text()}),
+    	        data: ({status : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(1,2).text()}),
     	        url: '/wcs/statuschange/cancel_job.php'
     	    	});
     	    	 
@@ -58,7 +66,7 @@ $(document).ready(function() {
 	{
     	 var xmlRequest = $.ajax({
     	    	type: 'POST',
-    	        data: ({status : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(0,1).text()}),
+    	        data: ({status : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(1,2).text()}),
     	        url: '/wcs/statuschange/delete_job.php'
     	    	});
     	    	 
@@ -67,18 +75,14 @@ $(document).ready(function() {
     
     });
     $( "#tabs" ).tabs();	
-});
-
-
-$(document).ready(function() {
     $(".takeAction").change(function(){ 
     	
-    alert($("option:selected", this).text() +"  " + $(this).closest('tr').children().slice(0,1).text());
+    alert($("option:selected", this).text() +"  " + $(this).closest('tr').children().slice(1,2).text());
     if( $("option:selected", this).val() == "Extract" )
 	 {
     	var xmlRequest = $.ajax({
         	type: 'POST',
-            data: ({actions : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(0,1).text()}),
+            data: ({actions : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(1,2).text()}),
             url: '/wcs/crowdflower/reachextractinfo.php'
         	});
         	 
@@ -88,7 +92,7 @@ $(document).ready(function() {
     {
     	var xmlRequest = $.ajax({
         	type: 'POST',
-            data: ({actions : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(0,1).text()}),
+            data: ({actions : $("option:selected", this).val(), job_id : $(this).closest('tr').children().slice(1,2).text()}),
             url: '/wcs/dataproc/genAnalysisFiles.php'
         	});
         	 
@@ -159,48 +163,44 @@ $(function() {
 	  
 	}
 
-
-$(document).ready(function() {
-
-	  $('#showimage').click(function(event){
-
-	    event.preventDefault();
-	    PreviewImage($(this).attr('href'), $(this).attr('value'));
-
-	  });               
-	});
-
-
-
-$('#toresults').click(function() {  
+ $('#toresults').click(function() {  
 	 $("#tabs").tabs('select',3);
 	 return false;
 });
+ 
+ 
+$(document).ready(function() {
 
-$(function() {
-    $( "button" )
-      .button()
-      .click(function( event ) {
-        event.preventDefault();
-      });
-  });
+	  $('#showimage').click(function(event) {
 
-$(function() {
-    $( "div#accordion" ).accordion({
-      collapsible: true,
-      heightStyle: "content"
-    });
-  });
+		event.preventDefault();
+		PreviewImage($(this).attr('href'), $(this).attr('value'));
 
+	});
 
-$(document).ready(function(){
+	$("button").button().click(function(event) {
+		event.preventDefault();
+	});
 
+	$("div#accordion").accordion({
+		collapsible : true,
+		heightStyle : "content"
+	});
 
+	
+	
 	$("#hidecolumns").multiselect({
-		   header: "Choose an Option!"
+		header : "Hide/Show Columns",
+		click : function(event, ui) {
+			if (ui.checked) {
+				$("." + ui.value).show();
+			} else {
+				$("." + ui.value).hide();
+			}
+		}
 	});
-	    
-	});
+    $("#hidecolumns").multiselect("checkAll");
+});
 	
 	
 	
@@ -279,7 +279,7 @@ $(function() {
 
 	  });
 	  
-	  
+	  addClassesToFilterRow();
 	  
 
 	  // External search

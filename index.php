@@ -10,10 +10,11 @@ include_once 'includes/functions.php';
 <meta charset="utf-8">
 <title>Crowd-Watson</title>
 <!-- Style sheets  -->
-<link href="css/huimain.css" rel="stylesheet">
 <link href="plugins/jquery-ui/css/dark-hive/jquery-ui-1.10.1.custom.css" rel="stylesheet">
 <link href="plugins/Mottie-tablesorter/css/theme.default.css" rel="stylesheet" type="text/css" />	
 <link href="plugins/multiselect/css/jquery.multiselect.css" rel="stylesheet" type="text/css" />	
+<link href="plugins/multiselect/css/jquery.multiselect.filter.css" rel="stylesheet" type="text/css" />
+<link href="css/huimain.css" rel="stylesheet">
 <!-- js libraries  -->
 <script src="plugins/jquery-ui/js/jquery-1.9.1.js"></script>
 <script src="plugins/jquery-ui/js/jquery-ui-1.10.1.custom.js"></script>
@@ -21,6 +22,8 @@ include_once 'includes/functions.php';
 <script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.widgets.min.js" type="text/javascript"></script>
 <script src="plugins/multiselect/js/jquery.multiselect.js" type="text/javascript"></script>
 <script src="plugins/multiselect/js/jquery.multiselect.min.js" type="text/javascript"></script>
+<script src="plugins/multiselect/js/jquery.multiselect.filter.js" type="text/javascript"></script>
+<script src="plugins/multiselect/js/jquery.multiselect.filter.min.js" type="text/javascript"></script>
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
@@ -74,7 +77,7 @@ function computePaymentPerHour() {
 		<div id="tabs">
 			<ul>
 				<li><a href="#tabs-1" >Home</a></li>
-			    <li><a href="#tabs-2">Configurate Raw</a></li>
+			   <!-- <li><a href="#tabs-2">Configurate Raw</a></li> -->
 			    <li><a href="#tabs-3">Process Input</a></li>
 				<li><a href="#tabs-4" >Jobs</a></li>
 				<li><a href="#tabs-5" >History</a></li>
@@ -89,7 +92,7 @@ function computePaymentPerHour() {
 					src="graphs/crowdsourcing.jpg" alt="No show" title = "What is Crowdsourcing?" /></a>
 			</div>
 			
-			
+			<!-- 
 			
 			<div id="tabs-2">
 				<div id="accordion">
@@ -122,7 +125,7 @@ function computePaymentPerHour() {
   </div>
 </div>
 			</div>
-			
+			 -->
 			
 			
 			<div id="tabs-3">
@@ -194,93 +197,128 @@ echo "</tbody>";
 echo "</table>";
 ?>
 </div>
-				<form enctype="multipart/form-data" action="/wcs/crowdflower/indexcrowdflower.php" method="POST" id="form">
-<div class="borderframe"  > 
-	<div class="labelfield">Choose a file to upload:</div>
-	<div class="inputfield"><input name="uploadedfile" type="button" id="uploadedfile" value = "Choose Server File"  />
-    <input type="hidden" name="fileid" id="fileid" />
-	<input type="hidden" name="sentences" id="sentences" />
-	<label for="uploadedfile" style ="font-size: 80%" >No File Chosen</label> 
-</div>
-	<div class="labelfield">Job title:</div> <div class="inputfield"><input type="text" 
+						<form enctype="multipart/form-data"
+							action="/wcs/crowdflower/indexcrowdflower.php" method="POST"
+							id="form">
+							<div class="borderframe">
+								<div class="labelfield">Choose a file to upload:</div>
+								<div class="inputfield">
+									<input name="uploadedfile" type="button" id="uploadedfile"
+										value="Choose Server File" /> <input type="hidden"
+										name="fileid" id="fileid" /> <input type="hidden"
+										name="sentences" id="sentences" /> <label for="uploadedfile"
+										style="font-size: 80%">No File Chosen</label>
+								</div>
+								<div class="labelfield">Job title:</div>
+								<div class="inputfield">
+									<input type="text" name="title"> <br />
+								</div>
 
-name="title"> <br /></div>
+								<div class="labelfield">Judgments per unit:</div>
+								<div class="inputfield">
+									<input type="text" name="judgments_per_unit"
+										id="judgments_per_unit" oninput="computePayment()"> <br />
+								</div>
 
-	<div class="labelfield">Judgments per unit:</div><div class="inputfield"><input type="text" 
+								<div class="labelfield">Maxim judgments per worker:</div>
+								<div class="inputfield">
+									<input type="text" name="max_judgments_per_worker"> <br />
+								</div>
 
-name="judgments_per_unit" id="judgments_per_unit" oninput="computePayment()" > <br /></div>
+								<div class="labelfield">Units per assignment (CF: Units per
+									page):</div>
+								<div class="inputfield">
+									<input type="text" name="units_per_assignment"
+										oninput="computePayment()" id="units_per_assignment"> <br />
+								</div>
 
-	<div class="labelfield">Maxim judgments per worker:</div> <div class="inputfield"><input 
+								<div class="labelfield">Payment per assignment (CF: Payment per
+									page) (cents):</div>
+								<div class="inputfield">
+									<input type="text" name="payment" oninput="computePayment()"
+										id="payment"> <br />
+								</div>
 
-type="text" name="max_judgments_per_worker"> <br /></div>
+								<div class="labelfield">Seconds per unit:</div>
+								<div class="inputfield">
+									<input type="text" name="seconds_per_unit"
+										id="seconds_per_unit" oninput="computeTime()"> <br />
+								</div>
 
-	<div class="labelfield">Units per assignment (CF: Units per page):</div> <div 
+								<div class="labelfield"
+									title="The purposes or notes of creating the job">Comments:</div>
+								<div class="inputfield">
+									<input type="text" name="job_comment" class="commentboxInput" />
+								</div>
 
-class="inputfield"><input type="text" name="units_per_assignment" oninput="computePayment()" 
+								<div class="labelfield">Choose the template:</div>
+								<div class="inputfield">
+									<input type="radio" name="template" value="t1" checked>
 
-id="units_per_assignment"> <br /></div>
+									Relations with definitions and extra questions required <br />
+								</div>
 
-	<div class="labelfield">Payment per assignment (CF: Payment per page) (cents):</div><div 
+								<div class="labelfield">&nbsp;</div>
+								<div class="inputfield">
+									<input type="radio" name="template" value="t2"> Relations with
+									definitions but without extra questions <br />
+								</div>
 
-class="inputfield"> <input type="text" name="payment" oninput="computePayment()" id="payment"> <br 
+								<div class="labelfield">&nbsp;</div>
+								<div class="inputfield">
+									<input type="radio" name="template" value="t3"> Relations
+									without definitions and extra questions required <br />
+								</div>
 
-/></div>
-
-	<div class="labelfield">Seconds per unit:</div><div class="inputfield"> <input type="text" 
-
-name="seconds_per_unit" id="seconds_per_unit" oninput="computeTime()"> <br /></div>
-
-	<div class="labelfield" title = "The purposes or notes of creating the job">Comments:</div>  
-	<div class="inputfield"><input type="text" name="job_comment" class = 
-
-"commentboxInput"/></div>
-
-	<div class="labelfield">Choose the template: </div>
-		<div class="inputfield"><input type="radio" name="template" value="t1" checked> 
-
-Relations with definitions and extra questions required <br /></div>
-
-		<div class="labelfield">&nbsp;</div><div class="inputfield"><input type="radio" 
-
-name="template" value="t2"> Relations with definitions but without extra questions <br /></div>
-
-		<div class="labelfield">&nbsp;</div><div class="inputfield"><input type="radio" 
-
-name="template" value="t3"> Relations without definitions and extra questions required <br /></div>
-
-		<div class="labelfield">&nbsp;</div><div class="inputfield"><input type="radio" 
-
-name="template" value="t4"> Relations without definitions and without extra questions <br /><br></div>
-
-
-	<div class="labelfield">Choose the channels: </div>
-                <div class="inputfield"><input type="radio" name="channels" value="c1" checked>
-
-Amazon Mechanical Turk <br /></div>
-
-                <div class="labelfield">&nbsp;</div><div class="inputfield"><input type="radio" 
-
-name="channels" value="c2"> All channels <br /></div>
+								<div class="labelfield">&nbsp;</div>
+								<div class="inputfield">
+									<input type="radio" name="template" value="t4"> Relations
+									without definitions and without extra questions <br /> <br>
+								</div>
 
 
-	<div class="labelfield">&nbsp;</div><div class="inputfield"><input type="submit" name="action" 
+								<div class="labelfield">Choose the channels:</div>
+								<div class="inputfield">
+									<input type="radio" name="channels" value="c1" checked> Amazon
+									Mechanical Turk <br />
+								</div>
 
-value="Create Job" /><br /> <br /></div>
+								<div class="labelfield">&nbsp;</div>
+								<div class="inputfield">
+									<input type="radio" name="channels" value="c2"> All channels <br />
+								</div>
 
-<div class="labelfield">Payment per sentence (dollar):</div><div class="inputfield"> <input 
 
-type="text" name="payment_per_sentence" id="payment_per_sentence"> <br /></div>
-<div class="labelfield">Payment per job (dollar):</div><div class="inputfield"> <input type="text" 
+								<div class="labelfield">&nbsp;</div>
+								<div class="inputfield">
+									<input type="submit" name="action" value="Create Job" /><br />
+									<br />
+								</div>
 
-name="payment_per_job" id="payment_per_job"> <br /></div>
-<div class="labelfield">Seconds per assignment:</div><div class="inputfield"> <input type="text" 
+								<div class="labelfield">Payment per sentence (dollar):</div>
+								<div class="inputfield">
+									<input type="text" name="payment_per_sentence"
+										id="payment_per_sentence"> <br />
+								</div>
+								<div class="labelfield">Payment per job (dollar):</div>
+								<div class="inputfield">
+									<input type="text" name="payment_per_job" id="payment_per_job">
+									<br />
+								</div>
+								<div class="labelfield">Seconds per assignment:</div>
+								<div class="inputfield">
+									<input type="text" name="seconds_per_assignment"
+										id="seconds_per_assignment"><br />
+								</div>
 
-name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
-
-<div class="labelfield">Payment per hour:</div><div class="inputfield"> <input type="text" name="payment_per_hour" id="payment_per_hour"> <br /></div>
-</div>
-</form> 
-			</div>
+								<div class="labelfield">Payment per hour:</div>
+								<div class="inputfield">
+									<input type="text" name="payment_per_hour"
+										id="payment_per_hour"> <br />
+								</div>
+							</div>
+						</form>
+					</div>
 			<h5>Games</h5>
   <div>
     <p>Pending</p>
@@ -326,126 +364,142 @@ name="seconds_per_assignment" id="seconds_per_assignment"><br /></div>
 				
 <!--  <button class="search" data-filter-column="10" data-filter-text="2?%">Saved Search</button> (search the Discount column for "2?%") -->
   <button class="reset" title = "Click to clear all the filter options" >Reset Search</button> <!-- targetted by the "filter_reset" option -->
+  <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JOB IDs" >Analyze</button> 
 <select id="hidecolumns" name="hidecolumns" multiple="multiple" title = "to Hide/Show Columns">
-<option value="0">JI</option>
-<option value="1">Orig</option>
-<option value="2">JT</option>
-<option value="3">CD</option>
-<option value="4">CB</option>
-<option value="5">NoS</option>
+<option value="cJobId">Job ID (Batch File)</option>
+<option value="cOrigin">Origin</option>
+<option value="cJobTitle">Job Title</option>
+<option value="cCreatedDate">Created Date</option>
+<option value="cCreatedBy">Created By</option>
+<option value="cNumberOfSentences">Number of Sentences</option>
+<option value="cTypeofUnits">Type of Units</option>
+<option value="cTemplate">Template</option>
+<option value="cMaxJudgmentPerWorker">Max Judgment Per Worker</option>
+<option value="cUnitsPerAssignment">Units Per Assignment</option>
+<option value="cUnitsPerJob">Units Per Job</option>
+<option value="cJudgmentsPerUnit">Judgments Per Unit</option>
+<option value="cJudgmentsPerJob">Judgments Per Job</option>
+<option value="cSecondsPerUnit">Seconds Per Unit</option>
+<option value="cSecondsPerAssignment">Seconds Per Assignment</option>
+<option value="cPaymentPerUnit">Payment Per Unit</option>
+<option value="cPaymentPerAssignment">Payment Per Assignment</option>
+<option value="cTotalPaymentPerUnit">Total Payment Per Unit</option>
+<option value="cTotalPaymentPerJob">Total Payment Per Job</option>
+<option value="cPaymentPerHour">Payment Per Hour</option>
+<option value="cChannelUsed">Channel Used</option>
+<option value="cChannelsPercentage">Channels Percentage</option>
+<option value="cComments" >Comments</option>
+<option value="cJobJudgmentsMade">Job Judgments Made</option>
+<option value="cJobCompletion">Job Completion</option>
+<option value="cRunTime">Run Time</option>
+<option value="cAverageTimePerJob">Average Time Per Job</option>
+<option value="cMinTimePerJob">Min Time Per Job</option>
+<option value="cMaxTimePerJob">Max Time Per Job</option>
+<option value="cNumberFilteredSentences">Number Filtered Sentences</option>
+<option value="cTotalNumberofWorkers">Total Number of Workers</option>
+<option value="cNumberFilteredWorkers">Number Filtered Workers</option>
+<option value="cStatus">Status</option>
+<option value="cActions">Actions</option>
+<option value="cJobIDLinktoOrigin">Job ID (Origin)</option>
 </select>
-<div id="target">target</div>
   <br>
 <?php
-
 $history = mysql_query("SELECT * FROM  `history_table` ORDER BY created_date DESC");
-
+echo "<div id='historytableContainer'>";
 echo "<table id='historytable' class='tablesorter'>";
 echo "<thead>"; //thead tag is required for using tablesorter
 echo "<tr>";
-echo "<th title = 'Job ID - Link to Batch File'>JI</th>";
-echo "<th title = 'Origin'>Orig</th>";
-echo "<th title = 'Job Title'>JT</th>";
-echo "<th title = 'Created Date'>CD</th>";
-echo "<th title = 'Created By'>CB</th>";
-//echo "<th title = 'Click to open the file'>File Name</th>";
-echo "<th title = 'Number of Sentences' >NoS</th>";
-echo "<th title = 'Type of Units'>ToU</th>";
-echo "<th title = 'Template'>Tmpl</th>";
-echo "<th title = 'Max Judgment Per Worker'>Max JpW</th>";
-//echo "<th title = 'Max Judgment Per Ip'>Max JpI</th>";
-echo "<th title = 'Units Per Assignment'>UpA</th>";
-echo "<th title = 'Units Per Job'>UpJ</th>";
-echo "<th title = 'Judgments Per Unit'>JpU</th>";
-echo "<th title = 'Judgments Per Job'>JpJ</th>";
-echo "<th title = 'Seconds Per Unit'>SpU</th>";
-echo "<th title = 'Seconds Per Assignment'>SpA</th>";
-echo "<th title = 'Payment Per Unit'>PpU</th>";
-echo "<th title = 'Payment Per Assignment'>PpA</th>";
-echo "<th title = 'Total Payment Per Unit'>tPpU</th>";
-echo "<th title = 'Total Payment Per Job'>tPpJ</th>";
-echo "<th title = 'Payment Per Hour'>PpH</th>";
-echo "<th title = 'Channel Used'>CU</th>";
-echo "<th title = 'Channels Percentage'>CP</th>";
-echo "<th title = 'Comments' >Cmt</th>";
-echo "<th title = 'Job Judgments Made'>JJm</th>";
-echo "<th title = 'Job Completion'>JC</th>";
-echo "<th title = 'Run Time'>RT</th>";
-echo "<th title = 'Average Time Per Job'>Ave TpJ</th>";
-echo "<th title = 'Min Time Per Job'>Min TpJ</th>";
-echo "<th title = 'Max Time Per Job'>Max TpJ</th>";
-echo "<th title = 'Number Filtered Sentences'>NfS</th>";
-echo "<th title = 'Total Number of Workers'>tNoW</th>";
-echo "<th title = 'Number Filtered Workers'>NfW</th>";
-echo "<th title = 'Status'>Status</th>";
-echo "<th title = 'Link'>Link</th>";
-echo "<th title = 'Job ID - Link to Origin'>JI</th>";
+echo "<th  ><input type='checkbox' id='checkboxjob' name ='checkboxjob'/>All</th>";
+echo "<th title = 'Job ID - Link to Batch File' class='cJobId'>JI</th>";
+echo "<th title = 'Origin' class='cOrigin'>Orig</th>";
+echo "<th title = 'Job Title' class='cJobTitle'>JT</th>";
+echo "<th title = 'Created Date' class='cCreatedDate'>CD</th>";
+echo "<th title = 'Created By' class='cCreatedBy'>CB</th>";
+echo "<th title = 'Number of Sentences'  class='cNumberOfSentences' >NoS</th>";
+echo "<th title = 'Type of Units' class='cTypeofUnits'>ToU</th>";
+echo "<th title = 'Template' class='cTemplate'>Tmpl</th>";
+echo "<th title = 'Max Judgment Per Worker' class='cMaxJudgmentPerWorker'>Max JpW</th>";
+echo "<th title = 'Units Per Assignment' class='cUnitsPerAssignment'>UpA</th>";
+echo "<th title = 'Units Per Job' class='cUnitsPerJob'>UpJ</th>";
+echo "<th title = 'Judgments Per Unit' class='cJudgmentsPerUnit'>JpU</th>";
+echo "<th title = 'Judgments Per Job' class='cJudgmentsPerJob'>JpJ</th>";
+echo "<th title = 'Seconds Per Unit' class='cSecondsPerUnit'>SpU</th>";
+echo "<th title = 'Seconds Per Assignment' class='cSecondsPerAssignment'>SpA</th>";
+echo "<th title = 'Payment Per Unit' class='cPaymentPerUnit'>PpU</th>";
+echo "<th title = 'Payment Per Assignment' class='cPaymentPerAssignment'>PpA</th>";
+echo "<th title = 'Total Payment Per Unit' class='cTotalPaymentPerUnit'>tPpU</th>";
+echo "<th title = 'Total Payment Per Job' class='cTotalPaymentPerJob'>tPpJ</th>";
+echo "<th title = 'Payment Per Hour' class='cPaymentPerHour'>PpH</th>";
+echo "<th title = 'Channel Used' class='cChannelUsed'>CU</th>";
+echo "<th title = 'Channels Percentage' class='cChannelsPercentage'>CP</th>";
+echo "<th title = 'Comments'  class='cComments'>Cmt</th>";
+echo "<th title = 'Job Judgments Made' class='cJobJudgmentsMade'>JJm</th>";
+echo "<th title = 'Job Completion' class='cJobCompletion'>JC</th>";
+echo "<th title = 'Run Time' class='cRunTime'>RT</th>";
+echo "<th title = 'Average Time Per Job' class='cAverageTimePerJob'>Ave TpJ</th>";
+echo "<th title = 'Min Time Per Job' class='cMinTimePerJob'>Min TpJ</th>";
+echo "<th title = 'Max Time Per Job' class='cMaxTimePerJob'>Max TpJ</th>";
+echo "<th title = 'Number Filtered Sentences' class='cNumberFilteredSentences'>NfS</th>";
+echo "<th title = 'Total Number of Workers' class='cTotalNumberofWorkers'>tNoW</th>";
+echo "<th title = 'Number Filtered Workers' class='cNumberFilteredWorkers'>NfW</th>";
+echo "<th title = 'Status' class='cStatus'>Status</th>";
+echo "<th title = 'Actions' class='cActions'>Actions</th>";
+echo "<th title = 'Job ID - Link to Origin' class='cJobIDLinktoOrigin'>JI</th>";
 echo "</tr>";
 echo "</thead>";
 echo "<tbody>"; //tbody tag is required for using tablesorter
-
-
-
 while($row = mysql_fetch_array($history)){
-
 	    extract ( $row );
-
         echo "<tr>";
-     // echo "<td><a href = 'index.php#tabs-4' class = 'tdlinks' >$job_id</a></td>";
-        echo "<td style ='font-size: 80%' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
-	echo "<td style ='font-size: 80%' >$origin</td>";
-        echo "<td style ='font-size: 80%' >$job_title</td>";
-        echo "<td style ='font-size: 80%'>$created_date</td>";
-        echo "<td style ='font-size: 80%'>$created_by</td>";
-       // echo "<td style ='font-size: 80%' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$file_name</a></td>";
-        echo "<td style ='font-size: 80%'>$nr_sentences_file</td>";
-        echo "<td style ='font-size: 80%'>$type_of_units</td>";
-        echo "<td style ='font-size: 80%' >$template</td>";
-        echo "<td style ='font-size: 80%'>$max_judgments_per_worker</td>";
-      //echo "<td style ='font-size: 80%'>$max_judgments_per_ip</td>";
-        echo "<td style ='font-size: 80%'>$units_per_assignment</td>";
-        echo "<td style ='font-size: 80%'>$units_per_job</td>";
-        echo "<td style ='font-size: 80%'>$judgments_per_unit</td>";
-        echo "<td style ='font-size: 80%'>$judgments_per_job</td>";
-        echo "<td style ='font-size: 80%'>$seconds_per_unit</td>";
-        echo "<td style ='font-size: 80%'>$seconds_per_assignment</td>";
-        echo "<td style ='font-size: 80%'>$payment_per_unit</td>";
-        echo "<td style ='font-size: 80%'>$payment_per_assignment</td>";
-        echo "<td style ='font-size: 80%'>$total_payment_per_unit</td>";
-        echo "<td style ='font-size: 80%'>$total_payment_per_job</td>";
-        echo "<td style ='font-size: 80%'>$payment_per_hour</td>";
-        echo "<td style ='font-size: 80%'>$channels_used</td>";
-	echo "<td style ='font-size: 80%'>$channels_percentage</td>";
-        echo "<td style ='font-size: 80%'>$job_comments</td>";
-        echo "<td style ='font-size: 80%'>$job_judgments_made</td>";
-        echo "<td style ='font-size: 80%'>$job_completion</td>";
-        echo "<td style ='font-size: 80%'>$run_time</td>";
-	echo "<td style ='font-size: 80%'>$avg_time_unitworker</td>";
-	echo "<td style ='font-size: 80%'>$min_time_unitworker</td>";
-	echo "<td style ='font-size: 80%'>$max_time_unitworker</td>";
-	echo "<td style ='font-size: 80%'>$no_filtered_sentences</td>";
-	echo "<td style ='font-size: 80%'>$no_workers</td>";
-	echo "<td style ='font-size: 80%'>$no_filtered_workers</td>";
-        echo "<td>
-        <select $status_change class= 'changeStatus'>
+        echo "<td style ='font-size: 80%' ><input type='checkbox' $checkbox_check id='checkboxjob' name ='checkboxjob'/></td>";
+        echo "<td style ='font-size: 80%' class='cJobId'><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
+		echo "<td style ='font-size: 80%' class='cOrigin'>$origin</td>";
+        echo "<td style ='font-size: 80%' class='cJobTitle'>$job_title</td>";
+        echo "<td style ='font-size: 80%' class='cCreatedDate'>$created_date</td>";
+        echo "<td style ='font-size: 80%' class='cCreatedBy'>$created_by</td>";
+        echo "<td style ='font-size: 80%' class='cNumberOfSentences'>$nr_sentences_file</td>";
+        echo "<td style ='font-size: 80%' class='cTypeofUnits'>$type_of_units</td>";
+        echo "<td style ='font-size: 80%' class='cTemplate'>$template</td>";
+        echo "<td style ='font-size: 80%' class='cMaxJudgmentPerWorker'>$max_judgments_per_worker</td>";
+        echo "<td style ='font-size: 80%' class='cUnitsPerAssignment'>$units_per_assignment</td>";
+        echo "<td style ='font-size: 80%' class='cUnitsPerJob'>$units_per_job</td>";
+        echo "<td style ='font-size: 80%' class='cJudgmentsPerUnit'>$judgments_per_unit</td>";
+        echo "<td style ='font-size: 80%' class='cJudgmentsPerJob'>$judgments_per_job</td>";
+        echo "<td style ='font-size: 80%' class='cSecondsPerUnit'>$seconds_per_unit</td>";
+        echo "<td style ='font-size: 80%' class='cSecondsPerAssignment'>$seconds_per_assignment</td>";
+        echo "<td style ='font-size: 80%' class='cPaymentPerUnit'>$payment_per_unit</td>";
+        echo "<td style ='font-size: 80%' class='cPaymentPerAssignment'>$payment_per_assignment</td>";
+        echo "<td style ='font-size: 80%' class='cTotalPaymentPerUnit'>$total_payment_per_unit</td>";
+        echo "<td style ='font-size: 80%' class='cTotalPaymentPerJob'>$total_payment_per_job</td>";
+        echo "<td style ='font-size: 80%' class='cPaymentPerHour'>$payment_per_hour</td>";
+        echo "<td style ='font-size: 80%' class='cChannelUsed'>$channels_used</td>";
+		echo "<td style ='font-size: 80%' class='cChannelsPercentage'>$channels_percentage</td>";
+        echo "<td style ='font-size: 80%' class='cComments'>$job_comments</td>";
+        echo "<td style ='font-size: 80%' class='cJobJudgmentsMade'>$job_judgments_made</td>";
+        echo "<td style ='font-size: 80%' class='cJobCompletion'>$job_completion</td>";
+        echo "<td style ='font-size: 80%' class='cRunTime'>$run_time</td>";
+		echo "<td style ='font-size: 80%' class='cAverageTimePerJob'>$avg_time_unitworker</td>";
+		echo "<td style ='font-size: 80%' class='cMinTimePerJob'>$min_time_unitworker</td>";
+		echo "<td style ='font-size: 80%' class='cMaxTimePerJob'>$max_time_unitworker</td>";
+		echo "<td style ='font-size: 80%' class='cNumberFilteredSentences'>$no_filtered_sentences</td>";
+		echo "<td style ='font-size: 80%' class='cTotalNumberofWorkers'>$no_workers</td>";
+		echo "<td style ='font-size: 80%' class='cNumberFilteredWorkers'>$no_filtered_workers</td>";
+        echo "<td style ='font-size: 80%' class='cStatus'>$status</td>";
+        echo "<td style ='font-size: 80%' class='cActions'>
+        <select $status_change class= 'cActions changeStatus'>
         <option value='ChangeStatus'>-Change-</option>
         <option value='Paused'>Pause</option>
         <option value='Running'>Resume</option>
         <option value='Canceled'>Cancel</option>
-        <option value='Deleted'>Delete</option></select>
-        <dir class = 'cStatus'>$status</dir>
+        <option value='Deleted'>Delete</option></select>     
         </td>";
-        echo "<td style ='font-size: 80%'>
-        <a href = '#tabs-4' id ='toresults' class = 'tdlinks' >
-        Link to Results
-        </a>
-        </td>";
-        echo "<td style ='font-size: 80%' ><a href = 'https://crowdflower.com/jobs/$job_id'   target='_blank'   class = 'tdlinks' >$job_id</a></td>";
+        echo "<td style ='font-size: 80%' class='cJobIDLinktoOrigin'><a href = 'https://crowdflower.com/jobs/$job_id'   target='_blank'   class = 'tdlinks' >$job_id</a></td>";
      echo "</tr>";
 }
 
 echo "</tbody>";
 echo "</table>";
+echo "</div>";
 ?>
 			</div>
 			<h5>Games</h5>
