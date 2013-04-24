@@ -115,5 +115,26 @@ genHistogram <- function(tVector,job_id,prefix=NULL,dir=NULL){
   ## lines(xfit, yfit, col="blue", lwd=2)
 }
 
+plotTimes <- function(tVector, job_id, prefix=NULL, dir=NULL){
+
+  fname <- getFileName(job_id,fileTypes[['histogram']],prefix)
+  if(is.null(dir)){
+    dir <- getFilePath(job_id,folderTypes[['analysisFiles']])
+  }
+  
+  path = paste(dir, fname,sep='/')
+  
+  jpeg(path,width=750,height=750)
+  h<-hist(tVector, breaks=10, col="blue", xlab="Task completion time",ylab="Number of tasks completed on that time", main="Task completion time")
+  dev.off()
+
+  fname2 <- getFileName(job_id,fileTypes[['histogram']],paste(prefix,'_line',sep=''))
+  path2 = paste(dir, fname2,sep='/')
+  jpeg(path2,width=750,height=750)
+
+  plot(sort(tVector),type='p',xlab='Element (Index)',ylab='time',main='Task completion times (sorted asc)')
+  dev.off()                          
+}
+
 
 

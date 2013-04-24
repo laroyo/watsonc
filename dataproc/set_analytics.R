@@ -113,7 +113,7 @@ for (id in job_ids){
 }
 
 fVector <- filterOutliers(tVector,40)
-genHistogram(fVector[[3]],set_id,prefix='set',dir='/var/www/html/wcs/graphs')
+plotTimes(fVector[[3]],set_id,prefix='set',dir='/var/www/html/wcs/graphs')
 
 
 # data <- getJob(job_id)
