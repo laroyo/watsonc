@@ -3,7 +3,7 @@ FilteredSentences <- 'FilteredSentences'
 AnalysisFiles <- 'AnalysisFiles'
 
 folderTypes <- list('filtWorkers' = 'FilteredWorkers','filtSentences'='FilteredSentences', 'analysisFiles'='AnalysisFiles')
-fileTypes <- list('heatMap' = 'heatmap','workerMetrics'='workerMetrics','sentenceMetrics' = 'sentenceMetrics')
+fileTypes <- list('heatMap' = 'heatmap','workerMetrics'='workerMetrics','sentenceMetrics' = 'sentenceMetrics', 'histogram' = 'histogram')
 mimeTypes <- list('csv'='text/csv', 'excel'='application/vnd.ms-excel', 'jpg' = 'image/jpeg')
 fileExt <- list('csv'='.csv','excel'= '.xlsx', 'jpg' = '.jpg')
 
@@ -27,7 +27,7 @@ getFilePath <- function(job_id,folderName){
 
 getFileName <- function (job_id,fileType,prefix=NULL){
   if(fileType %in% unlist(fileTypes)){
-    if(fileType == 'heatmap'){
+    if(fileType == 'heatmap' || fileType=='histogram'){
       ext = fileExt[['jpg']]
     } else {
       ext = fileExt[['excel']]
@@ -81,20 +81,38 @@ genHeatMap <- function(dframe,job_id,prefix=NULL,dir=NULL){
   library(gplots)
   library(RColorBrewer)
 
-  fname <- getFileName(job_id,fileTypes[['heatMap']])
+  fname <- getFileName(job_id,fileTypes[['heatMap']],prefix)
   if(is.null(dir)){
     dir <- getFilePath(job_id,folderTypes[['analysisFiles']])
   }
   
   path = paste(dir, fname,sep='/')
 
-  jpeg(path)   
+  jpeg(path,width=750,height=750)   
   heatmap.2(as.matrix(dframe), Rowv=FALSE,Colv=FALSE,dendrogram='none',scale='none',col=brewer.pal(11,'RdYlGn')[6:11],trace='none',key=FALSE,cellnote=dframe,notecol='black',lmat=rbind( c(1, 3), c(2,1), c(1,4) ), lhei=c(1, 4, 2 ))
   dev.off()
   #FIXME set a valid creator,
   creator <- 'script'
   saveFileMetadata(fname,path,mimeTypes[['jpg']],-1,creator)
   
+}
+
+genHistogram <- function(tVector,job_id,prefix=NULL,dir=NULL){
+
+  fname <- getFileName(job_id,fileTypes[['histogram']],prefix)
+  if(is.null(dir)){
+    dir <- getFilePath(job_id,folderTypes[['analysisFiles']])
+  }
+
+  path = paste(dir, fname,sep='/')
+  
+  jpeg(path,width=750,height=750)
+  h<-hist(tVector, breaks=10, col="blue", xlab="Task completion time",main="Histogram with Normal Curve")
+  dev.off()
+  ## xfit<-seq(min(tVector),max(tVector),length=40) 
+  ## yfit<-dnorm(xfit,mean=mean(tVector),sd=sd(tVector)) 
+  ## yfit <- yfit*diff(h$mids[1:2])*length(tVector) 
+  ## lines(xfit, yfit, col="blue", lwd=2)
 }
 
 

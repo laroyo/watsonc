@@ -44,7 +44,7 @@ function getSignal() {
    // change status to Finished and update run_time to final
 	
       $getruntime = updateRuntime($job_id);
-	  $updateruntime = mysql_query("Update history_table Set run_time = '$getruntime', status = 'Finished' Where job_id = '$job_id' ") or die(mysql_error());
+	  $updateruntime = mysql_query("Update history_table Set run_time = '$getruntime', status = 'Finished', status_change = 'disabled' Where job_id = '$job_id' ") or die(mysql_error());
 		
 	}
 //fclose($fh);
