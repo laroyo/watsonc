@@ -34,6 +34,8 @@ To identify possible spammers, a set of metrics (average agreement, annotations/
     * On certain environments it might be necessary to update the XLConnectJars library to a newer version. To do so, type install.packages('XLConnectJars')             
   * Install the lsa library for R (Weka library for working with vectors (cosine) ). 
     * Possible dependencies: RWeka
+  - rjson
+  - RMySQL
 
 * Library files: 
   * [simplify.R](https://github.com/laroyo/watsonc/blob/master/dataproc/lib/simplify.R) : preprocess raw data and create analysis structures. Also contains environmental variables. 
