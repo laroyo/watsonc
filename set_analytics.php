@@ -1,4 +1,5 @@
 <?php
+require_once('includes/envars.php'); 
 
 if(!isset($_POST['postback']) && !isset($_GET['set_id'])){ 
 ?>
@@ -13,7 +14,7 @@ if(!isset($_POST['postback']) && !isset($_GET['set_id'])){
 <?php
     return; 
 }
-function workerMetricsRow($row, $job_id=NULL){
+function workerMetricsRow($row, $job_id=NULL,$set_id=NULL){
   echo "<tr>\n"; 
 
   if($job_id)
@@ -21,10 +22,10 @@ function workerMetricsRow($row, $job_id=NULL){
   else
     echo "<td></td>"; 
   if($job_id == 'aggregated'){
-    echo "<td><a href='/graphs/numSent_histogram_$set_id.jpg' target='_blank'>". sprintf("%.2f", $row['numSents']) . "</a></td>\n"; 
-    echo "<td><a href='/graphs/cos_histogram_$set_id.jpg' target='_blank'>". sprintf("%.2f", $row['cos']) . "</a></td>\n"; 
-    echo "<td><a href='/graphs/agr_histogram_$set_id.jpg' target='_blank'>". sprintf("%.2f", $row['agr']) . "</a></td>\n"; 
-    echo "<td><a href='/graphs/annotSent_histogram_$set_id.jpg' target='_blank'>". sprintf("%.2f", $row['annotSent']) . "</a></td></tr>\n"; 
+    echo "<td><a href='".IMAGES_ROUTE."/numSent_histogram_$set_id.jpg' target='_blank'>". sprintf("%.2f", $row['numSents']) . "</a></td>\n"; 
+    echo "<td><a href='".IMAGES_ROUTE."/cos_histogram_$set_id.jpg' target='_blank'>". sprintf("%.2f", $row['cos']) . "</a></td>\n"; 
+    echo "<td><a href='".IMAGES_ROUTE."/agr_histogram_$set_id.jpg' target='_blank'>". sprintf("%.2f", $row['agr']) . "</a></td>\n"; 
+    echo "<td><a href='".IMAGES_ROUTE."/annotSent_histogram_$set_id.jpg' target='_blank'>". sprintf("%.2f", $row['annotSent']) . "</a></td></tr>\n"; 
   } else {
     echo "<td>". sprintf("%.2f", $row['numSents']) . "</td>\n"; 
     echo "<td>". sprintf("%.2f", $row['cos']) . "</td>\n"; 
@@ -33,12 +34,12 @@ function workerMetricsRow($row, $job_id=NULL){
   }
 
 }
-function workerMetricsTable($workerMetrics){
+function workerMetricsTable($workerMetrics,$set_id){
   
   echo "<table>"; 
   echo "<tr><td></td><td>NumSent</td><td> Cos </td><td> Agreement </td><td> Annotations per sentence </td></tr>"; 
   foreach($workerMetrics as $label => $row){
-    workerMetricsRow($row, $label); 
+    workerMetricsRow($row, $label,$set_id); 
   }
   echo "</table>"; 
 }
@@ -87,7 +88,7 @@ if(sizeof($filteredSentences) == 0){
 }
 
 echo "<br><h4>Sentence Metrics </h4>"; 
-echo "<a href='/graphs/set_heatmap_$set_id.jpg' target='_blank'> Heat map </a><br>"; 
+echo "<a href='$images_path/set_heatmap_$set_id.jpg' target='_blank'> Heat map </a><br>"; 
 echo '<table>'; 
 
 
@@ -118,7 +119,7 @@ $crossjob_workers = getCrossJobWorkers($job_ids);
 echo "<br><h4>Worker Metrics: </h4>"; 
 echo "(Without applying any filter)"; 
 
-workerMetricsTable($workerMetrics); 
+workerMetricsTable($workerMetrics,$set_id); 
 
 //var_dump($workerMetrics); 
 echo "<br> Number of cross-job workers: ". sizeof($crossjob_workers) . "<br>"; 
@@ -133,15 +134,15 @@ if(sizeof($crossjob_workers) > 0){
   //var_dump($res['mean']); 
 }
 
-echo "<b> NEW: </b><a href='/graphs/workerLabels_$set_id.jpg'>Worker Labels distribution</a> (Most active workers only)"; 
+echo "<b> NEW: </b><a href='".IMAGES_ROUTE."/workerLabels_$set_id.jpg'>Worker Labels distribution</a> (Most active workers only)"; 
 echo "<hr>"; 
 print('job_ids');
 print(implode($job_ids,' '));
 
 $time_stats = getCompletionTimeStats($job_ids);
 echo "<br><h4>Time stats: </h4>";
-echo "<a href='/graphs/set_histogram_$set_id.jpg' target='_blank'>Distribution of worker times (Plot)</a> (WITH outliers)<br/>";
-echo "<a href='/graphs/set_line_histogram_$set_id.jpg' target='_blank'>Distribution of worker times (Histogram)</a> (After filtering outliers)<br/>";
+echo "<a href='".IMAGES_ROUTE."/set_histogram_$set_id.jpg' target='_blank'>Distribution of worker times (Plot)</a> (WITH outliers)<br/>";
+echo "<a href='".IMAGES_ROUTE."/set_line_histogram_$set_id.jpg' target='_blank'>Distribution of worker times (Histogram)</a> (After filtering outliers)<br/>";
 $set_time_stats = getSetCompletionTimeStats($time_stats, $judgmentsPerJob);
 ?>
 <br><table>
