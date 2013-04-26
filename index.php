@@ -10,20 +10,19 @@ include_once 'includes/functions.php';
 <meta charset="utf-8">
 <title>Crowd-Watson</title>
 <!-- Style sheets  -->
-<link href="plugins/jquery-ui/css/dark-hive/jquery-ui-1.10.1.custom.css" rel="stylesheet">
+<link href="plugins/jquery-ui/css/pepper-grinder/jquery-ui-1.10.2.custom.css" rel="stylesheet">
 <link href="plugins/Mottie-tablesorter/css/theme.default.css" rel="stylesheet" type="text/css" />	
 <link href="plugins/multiselect/css/jquery.multiselect.css" rel="stylesheet" type="text/css" />	
-<link href="plugins/multiselect/css/jquery.multiselect.filter.css" rel="stylesheet" type="text/css" />
+
 <link href="css/huimain.css" rel="stylesheet">
 <!-- js libraries  -->
 <script src="plugins/jquery-ui/js/jquery-1.9.1.js"></script>
-<script src="plugins/jquery-ui/js/jquery-ui-1.10.1.custom.js"></script>
+<script src="plugins/jquery-ui/js/jquery-ui-1.10.2.custom.js"></script>
 <script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.min.js" type="text/javascript"></script>
 <script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.widgets.min.js" type="text/javascript"></script>
 <script src="plugins/multiselect/js/jquery.multiselect.js" type="text/javascript"></script>
 <script src="plugins/multiselect/js/jquery.multiselect.min.js" type="text/javascript"></script>
-<script src="plugins/multiselect/js/jquery.multiselect.filter.js" type="text/javascript"></script>
-<script src="plugins/multiselect/js/jquery.multiselect.filter.min.js" type="text/javascript"></script>
+
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
@@ -454,12 +453,12 @@ while($row = mysql_fetch_array($history)){
         echo "<td style ='font-size: 80%' ><input type='checkbox' $checkbox_check id='checkboxjob' name ='checkboxjob'/></td>";
         echo "<td style ='font-size: 80%' class='cJobId'><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
 		echo "<td style ='font-size: 80%' class='cOrigin'>$origin</td>";
-        echo "<td style ='font-size: 80%' class='cJobTitle'>$job_title</td>";
-        echo "<td style ='font-size: 80%' class='cCreatedDate'>$created_date</td>";
+        echo "<td style ='font-size: 80%' class='cJobTitle' title = '$job_title' >".substr($job_title,0, 6)."</td>";
+        echo "<td style ='font-size: 80%' class='cCreatedDate' title = '$created_date' >".substr($created_date,0, 6)."</td>";
         echo "<td style ='font-size: 80%' class='cCreatedBy'>$created_by</td>";
         echo "<td style ='font-size: 80%' class='cNumberOfSentences'>$nr_sentences_file</td>";
-        echo "<td style ='font-size: 80%' class='cTypeofUnits'>$type_of_units</td>";
-        echo "<td style ='font-size: 80%' class='cTemplate'>$template</td>";
+        echo "<td style ='font-size: 80%' class='cTypeofUnits' title = '$type_of_units' >".substr($type_of_units,0, 6)."</td>";
+        echo "<td style ='font-size: 80%' class='cTemplate' title = '$template' >".substr($template,0, 6)."</td>";
         echo "<td style ='font-size: 80%' class='cMaxJudgmentPerWorker'>$max_judgments_per_worker</td>";
         echo "<td style ='font-size: 80%' class='cUnitsPerAssignment'>$units_per_assignment</td>";
         echo "<td style ='font-size: 80%' class='cUnitsPerJob'>$units_per_job</td>";
@@ -473,11 +472,11 @@ while($row = mysql_fetch_array($history)){
         echo "<td style ='font-size: 80%' class='cTotalPaymentPerJob'>$total_payment_per_job</td>";
         echo "<td style ='font-size: 80%' class='cPaymentPerHour'>$payment_per_hour</td>";
         echo "<td style ='font-size: 80%' class='cChannelUsed'>$channels_used</td>";
-		echo "<td style ='font-size: 80%' class='cChannelsPercentage'>$channels_percentage</td>";
+		echo "<td style ='font-size: 80%' class='cChannelsPercentage cssChildRow' title = '$channels_percentage' >".substr($channels_percentage,0, 6)."</td>";
         echo "<td style ='font-size: 80%' class='cComments'>$job_comments</td>";
         echo "<td style ='font-size: 80%' class='cJobJudgmentsMade'>$job_judgments_made</td>";
         echo "<td style ='font-size: 80%' class='cJobCompletion'>$job_completion</td>";
-        echo "<td style ='font-size: 80%' class='cRunTime'>$run_time</td>";
+        echo "<td style ='font-size: 80%' class='cRunTime' title = '$run_time' >".substr($run_time,0, 6)."</td>";
 		echo "<td style ='font-size: 80%' class='cAverageTimePerJob'>$avg_time_unitworker</td>";
 		echo "<td style ='font-size: 80%' class='cMinTimePerJob'>$min_time_unitworker</td>";
 		echo "<td style ='font-size: 80%' class='cMaxTimePerJob'>$max_time_unitworker</td>";
