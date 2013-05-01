@@ -97,42 +97,256 @@ td.pager {
   opacity: 0.5;
   filter: alpha(opacity=50);
 }
-#target { padding: 5px; border: 1px solid #000; width:200px; float:right }
-/*
-.cJobId{ 					width: 30px;	}		
-.cOrigin{					width: 30px;	}		
-.cJobTitle{					width: 30px;	}		
-.cCreatedDate{				width: 30px;	}		
-.cCreatedBy{				width: 30px;	}		
-.cNumberOfSentences{		width: 30px;	}	
-.cTypeofUnits{				width: 30px;	}	
-.cTemplate{					width: 30px;	}	
-.cMaxJudgmentPerWorker{ 	width: 30px;	}	
-.cUnitsPerAssignment{		width: 30px;	}
-.cUnitsPerJob{				width: 30px;	}	
-.cJudgmentsPerUnit{			width: 30px;	}	
-.cJudgmentsPerJob{			width: 30px;	}	
-.cSecondsPerUnit{			width: 30px;	}	
-.cSecondsPerAssignment{		width: 30px;	}
-.cPaymentPerUnit{			width: 30px;	}
-.cPaymentPerAssignment{		width: 30px;	}
-.cTotalPaymentPerUnit{		width: 30px;	}
-.cTotalPaymentPerJob{		width: 30px;	}
-.cPaymentPerHour{			width: 30px;	}	
-.cChannelUsed{				width: 30px;	}		
-.cChannelsPercentage{		width: 30px;	}
-.cComments{ 				width: 30px;	}
-.cJobJudgmentsMade{			width: 30px;	}
-.cJobCompletion{			width: 30px;	}
-.cRunTime{					width: 30px;	}		
-.cAverageTimePerJob{		width: 30px;	}
-.cMinTimePerJob{			width: 30px;	}
-.cMaxTimePerJob{			width: 30px;	}
-.cNumberFilteredSentences{	width: 30px;	}
-.cTotalNumberofWorkers{		width: 30px;	}	
-.cNumberFilteredWorkers{	width: 30px;	}
-.cStatus{					width: 30px;	}		
-.cActions{					width: 30px;	}	
-.cJobIDLinktoOrigin{ 		width: 30px;	}
-*/
-.tablesorter-default {width: auto;}
+
+
+
+
+
+/*#target { padding: 5px; border: 1px solid #000; width:200px; float:right }*/
+
+/*td.cJobId{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}	
+td.cOrigin{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cJobTitle{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}		
+td.cCreatedDate{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}		
+td.cCreatedBy{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}	
+td.cNumberOfSentences{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}	
+td.cTypeofUnits{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}	
+td.cTemplate{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cMaxJudgmentPerWorker{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cUnitsPerAssignment{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cUnitsPerJob{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}	
+td.cJudgmentsPerUnit{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}	
+td.cJudgmentsPerJob{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cSecondsPerUnit{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}	
+td.cSecondsPerAssignment{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cPaymentPerUnit{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cPaymentPerAssignment{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cTotalPaymentPerUnit{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cTotalPaymentPerJob{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cPaymentPerHour{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cChannelUsed{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}		
+td.cChannelsPercentage{		width: auto; 
+
+display:block;
+overflow:hidden;
+height: 55px;
+
+}
+td.cComments{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cJobJudgmentsMade{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cJobCompletion{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cRunTime{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}	
+td.cAverageTimePerJob{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cMinTimePerJob{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cMaxTimePerJob{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cNumberFilteredSentences{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cTotalNumberofWorkers{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cNumberFilteredWorkers{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cStatus{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}	
+td.cActions{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+td.cJobIDLinktoOrigin{		width: 20em; 
+
+
+overflow:hidden;
+height: 30px;
+
+}
+.tablesorter-default {width: auto;}  */
