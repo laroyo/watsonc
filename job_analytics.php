@@ -12,7 +12,6 @@ if(isset($_GET['job_id'])){
 <meta charset="utf-8">
 
 <link href="css/nv.d3.css" rel="stylesheet" type="text/css">
-
 <style>
 
 body {
@@ -45,7 +44,7 @@ text {
 
 </style>
 <body>
-<h2>Job Analytics for job 179229</h2>
+<h2>Job Analytics for job <?= $job_id ?></h2>
 
 <h3>Sentence labels</h3>
   <div id="chart1">

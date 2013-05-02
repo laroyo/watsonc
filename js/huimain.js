@@ -200,6 +200,14 @@ $(document).ready(function() {
 		}
 	});
     $("#hidecolumns").multiselect("checkAll");
+    
+    $('td.cChannelsPercentage').load(function() {
+        var len = $(this).text().length;
+        if (len >= 10) {
+            $(this).text($(this).text().substring(0, 10));
+        }
+    });
+    
 });
 	
 	
@@ -228,7 +236,7 @@ $(function() {
 	      // If there are child rows in the table (rows with class name from "cssChildRow" option)
 	      // and this option is true and a match is found anywhere in the child row, then it will make that row
 	      // visible; default is false
-	      filter_childRows : false,
+	      filter_childRows : true,
 
 	      // if true, a filter will be added to the top of each table column;
 	      // disabled by using -> headers: { 1: { filter: false } } OR add class="filter-false"
