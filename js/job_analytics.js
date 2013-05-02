@@ -1,4 +1,4 @@
-d3.csv("sentences.csv", function(sents) {
+d3.csv("dataproc/sentences.csv", function(sents) {
     keys = Object.keys(sents); 
     ids = [];
     rels = ["D","S","C","M","L","AW","P","SE","IA","PO","T","CI"]; 

@@ -1,6 +1,6 @@
 <?php
 
-require_once('includes/dbinfo.php'); 
+require_once('../includes/dbinfo.php'); 
 
 function getSetId($job_ids,$indiv=FALSE){
   $res = NULL; 
