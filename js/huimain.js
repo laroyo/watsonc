@@ -26,7 +26,7 @@
 $(document).ready(function() {
 	$("#statisticsarea").load("/wcs/dataproc/genAnalysisFiles.php");
 	$("#preprocessarea").load("/wcs/preprocessing/preprocinterface.php");
-	$( "#tabs" ).tabs();	
+		
     $(".changeStatus").change(function(){ 
     	
     alert($("option:selected", this).text() +" " + $(this).closest('tr').children().slice(1,2).text());
@@ -103,6 +103,9 @@ $(document).ready(function() {
 });
 
 
+
+
+
 	
 $(function() {
 	 $( "#dialog-confirm" ).dialog({
@@ -124,11 +127,48 @@ $(function() {
 	        }
 	      }
 	    });
-    $( "#uploadedfile" ).click(function() {
-      $( "#dialog-confirm" ).dialog( "open" );
-    });
-  });
+   $( "#uploadedfile" ).click(function() {
+     $( "#dialog-confirm" ).dialog( "open" );
+   });
+   
+   
+    
+   $('#passjobid').click(function() {
+   	    
+var arr = [];    
 
+ $(':checkbox[name=job_ids]:checked').each(function()     
+ {         
+     arr.push(this.value);    
+ });    
+                     
+ $("#testjobidarray").val(arr.toString());
+ 
+ var xmlRequest = $.ajax({
+	   	type: 'POST',
+	       data: ({ 'job_ids': arr}),
+	       url: '/wcs/set_analytics.php'
+	   	});
+	   	 
+	xmlRequest.done( function(data) {
+		   // $("#testjobidarray").val(data);
+		   // window.location="/wcs/index.php";
+		    window.open();
+	}); 	
+ 
+ 
+   
+ });
+   
+   
+   
+   
+
+});
+
+
+
+  
 
  function PreviewImage (uri, image_name) {
 
@@ -178,9 +218,9 @@ $(document).ready(function() {
 
 	});
 
-	$("button").button().click(function(event) {
-		event.preventDefault();
-	});
+//	$("button").button().click(function(event) {
+//		event.preventDefault();
+//	});
 
 	$("div#accordion").accordion({
 		collapsible : true,
@@ -214,8 +254,6 @@ $(document).ready(function() {
 	
 $(function() {
 	
-
-
 	  // call the tablesorter plugin
 	  $("table.tablesorter").tablesorter({
 	    theme: 'default',

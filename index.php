@@ -367,7 +367,7 @@ echo "</table>";
 <select id="hidecolumns" name="hidecolumns" multiple="multiple" title = "to Hide/Show Columns">
 <option value="cJobId">Job ID (Batch File)</option>
 <option value="cOrigin">Origin</option>
-<option value="cJobTitle">Job Title</option>
+<!--<option value="cJobTitle">Job Title</option>-->
 <option value="cCreatedDate">Created Date</option>
 <option value="cCreatedBy">Created By</option>
 <option value="cNumberOfSentences">Number of Sentences</option>
@@ -399,8 +399,9 @@ echo "</table>";
 <option value="cNumberFilteredWorkers">Number Filtered Workers</option>
 <option value="cStatus">Status</option>
 <option value="cActions">Actions</option>
-<option value="cJobIDLinktoOrigin">Job ID (Origin)</option>
+<!--<option value="cJobIDLinktoOrigin">Job ID (Origin)</option>-->
 </select>
+<input type="text" id = "testjobidarray" value = "To test job_ids array"/> 
   <br>
 <?php
 $history = mysql_query("SELECT * FROM  `history_table` ORDER BY created_date DESC");
@@ -408,52 +409,52 @@ echo "<div id='historytableContainer'>";
 echo "<table id='historytable' class='tablesorter'>";
 echo "<thead>"; //thead tag is required for using tablesorter
 echo "<tr>";
-echo "<th  ><input type='checkbox' id='checkboxjob' name ='checkboxjob'/>All</th>";
-echo "<th title = 'Job ID - Link to Batch File' class='cJobId'>JI</th>";
+echo "<th  ><input type='checkbox' id='checkboxjob' name ='job_ids[]'/>All</th>";
+echo "<th title = 'Job ID - Link to Batch File' class='cJobId'>JobID</th>";
 echo "<th title = 'Origin' class='cOrigin'>Orig</th>";
-echo "<th title = 'Job Title' class='cJobTitle'>JT</th>";
-echo "<th title = 'Created Date' class='cCreatedDate'>CD</th>";
-echo "<th title = 'Created By' class='cCreatedBy'>CB</th>";
-echo "<th title = 'Number of Sentences'  class='cNumberOfSentences' >NoS</th>";
-echo "<th title = 'Type of Units' class='cTypeofUnits'>ToU</th>";
+//echo "<th title = 'Job Title' class='cJobTitle'>JT</th>";
+echo "<th title = 'Created Date' class='cCreatedDate'>Date</th>";
+echo "<th title = 'Created By' class='cCreatedBy'>Creater</th>";
+echo "<th title = 'Number of Sentences'  class='cNumberOfSentences' >#S</th>";
+echo "<th title = 'Type of Units' class='cTypeofUnits'>TypeU</th>";
 echo "<th title = 'Template' class='cTemplate'>Tmpl</th>";
-echo "<th title = 'Max Judgment Per Worker' class='cMaxJudgmentPerWorker'>Max JpW</th>";
-echo "<th title = 'Units Per Assignment' class='cUnitsPerAssignment'>UpA</th>";
-echo "<th title = 'Units Per Job' class='cUnitsPerJob'>UpJ</th>";
-echo "<th title = 'Judgments Per Unit' class='cJudgmentsPerUnit'>JpU</th>";
-echo "<th title = 'Judgments Per Job' class='cJudgmentsPerJob'>JpJ</th>";
-echo "<th title = 'Seconds Per Unit' class='cSecondsPerUnit'>SpU</th>";
-echo "<th title = 'Seconds Per Assignment' class='cSecondsPerAssignment'>SpA</th>";
-echo "<th title = 'Payment Per Unit' class='cPaymentPerUnit'>PpU</th>";
-echo "<th title = 'Payment Per Assignment' class='cPaymentPerAssignment'>PpA</th>";
-echo "<th title = 'Total Payment Per Unit' class='cTotalPaymentPerUnit'>tPpU</th>";
-echo "<th title = 'Total Payment Per Job' class='cTotalPaymentPerJob'>tPpJ</th>";
-echo "<th title = 'Payment Per Hour' class='cPaymentPerHour'>PpH</th>";
-echo "<th title = 'Channel Used' class='cChannelUsed'>CU</th>";
-echo "<th title = 'Channels Percentage' class='cChannelsPercentage'>CP</th>";
+echo "<th title = 'Max Judgment Per Worker' class='cMaxJudgmentPerWorker'>Max J/W</th>";
+echo "<th title = 'Units Per Assignment' class='cUnitsPerAssignment'>U/A</th>";
+echo "<th title = 'Units Per Job' class='cUnitsPerJob'>U/Job</th>";
+echo "<th title = 'Judgments Per Unit' class='cJudgmentsPerUnit'>J/U</th>";
+echo "<th title = 'Judgments Per Job' class='cJudgmentsPerJob'>J/Job</th>";
+echo "<th title = 'Seconds Per Unit' class='cSecondsPerUnit'>s/U</th>";
+echo "<th title = 'Seconds Per Assignment' class='cSecondsPerAssignment'>s/A</th>";
+echo "<th title = 'Payment Per Unit' class='cPaymentPerUnit'>P/U</th>";
+echo "<th title = 'Payment Per Assignment' class='cPaymentPerAssignment'>P/A</th>";
+echo "<th title = 'Total Payment Per Unit' class='cTotalPaymentPerUnit'>TotalP/U</th>";
+echo "<th title = 'Total Payment Per Job' class='cTotalPaymentPerJob'>TotalP/Job</th>";
+echo "<th title = 'Payment Per Hour' class='cPaymentPerHour'>P/H</th>";
+echo "<th title = 'Channel Used' class='cChannelUsed'>Chnl</th>";
+echo "<th title = 'Channels Percentage' class='cChannelsPercentage'>Chnl%</th>";
 echo "<th title = 'Comments'  class='cComments'>Cmt</th>";
-echo "<th title = 'Job Judgments Made' class='cJobJudgmentsMade'>JJm</th>";
-echo "<th title = 'Job Completion' class='cJobCompletion'>JC</th>";
+echo "<th title = 'Job Judgments Made' class='cJobJudgmentsMade'>JobJ</th>";
+echo "<th title = 'Job Completion' class='cJobCompletion'>JobC</th>";
 echo "<th title = 'Run Time' class='cRunTime'>RT</th>";
-echo "<th title = 'Average Time Per Job' class='cAverageTimePerJob'>Ave TpJ</th>";
-echo "<th title = 'Min Time Per Job' class='cMinTimePerJob'>Min TpJ</th>";
-echo "<th title = 'Max Time Per Job' class='cMaxTimePerJob'>Max TpJ</th>";
-echo "<th title = 'Number Filtered Sentences' class='cNumberFilteredSentences'>NfS</th>";
-echo "<th title = 'Total Number of Workers' class='cTotalNumberofWorkers'>tNoW</th>";
-echo "<th title = 'Number Filtered Workers' class='cNumberFilteredWorkers'>NfW</th>";
+echo "<th title = 'Average Time Per Job' class='cAverageTimePerJob'>Ave T/Job</th>";
+echo "<th title = 'Min Time Per Job' class='cMinTimePerJob'>Min T/J</th>";
+echo "<th title = 'Max Time Per Job' class='cMaxTimePerJob'>Max T/J</th>";
+echo "<th title = 'Number Filtered Sentences' class='cNumberFilteredSentences'>FS</th>";
+echo "<th title = 'Total Number of Workers' class='cTotalNumberofWorkers'>TotalW</th>";
+echo "<th title = 'Number Filtered Workers' class='cNumberFilteredWorkers'>FW</th>";
 echo "<th title = 'Status' class='cStatus'>Status</th>";
 echo "<th title = 'Actions' class='cActions'>Actions</th>";
-echo "<th title = 'Job ID - Link to Origin' class='cJobIDLinktoOrigin'>JI</th>";
+//echo "<th title = 'Job ID - Link to Origin' class='cJobIDLinktoOrigin'>JI</th>";
 echo "</tr>";
 echo "</thead>";
 echo "<tbody>"; //tbody tag is required for using tablesorter
 while($row = mysql_fetch_array($history)){
 	    extract ( $row );
         echo "<tr>";
-        echo "<td style ='font-size: 80%' ><input type='checkbox' $checkbox_check id='checkboxjob' name ='checkboxjob'/></td>";
-        echo "<td style ='font-size: 80%' class='cJobId'><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
+        echo "<td style ='font-size: 80%' ><input type='checkbox' $checkbox_check id='checkboxjob' name ='job_ids' value = '$job_id'/></td>";
+        echo "<td style ='font-size: 80%' class='cJobId' title = '$job_title' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
 		echo "<td style ='font-size: 80%' class='cOrigin'>$origin</td>";
-        echo "<td style ='font-size: 80%' class='cJobTitle' title = '$job_title' >".substr($job_title,0, 6)."</td>";
+  //    echo "<td style ='font-size: 80%' class='cJobTitle' title = '$job_title' >".substr($job_title,0, 6)."</td>";
         echo "<td style ='font-size: 80%' class='cCreatedDate' title = '$created_date' >".substr($created_date,0, 6)."</td>";
         echo "<td style ='font-size: 80%' class='cCreatedBy'>$created_by</td>";
         echo "<td style ='font-size: 80%' class='cNumberOfSentences'>$nr_sentences_file</td>";
@@ -492,7 +493,7 @@ while($row = mysql_fetch_array($history)){
         <option value='Canceled'>Cancel</option>
         <option value='Deleted'>Delete</option></select>     
         </td>";
-        echo "<td style ='font-size: 80%' class='cJobIDLinktoOrigin'><a href = 'https://crowdflower.com/jobs/$job_id'   target='_blank'   class = 'tdlinks' >$job_id</a></td>";
+   //     echo "<td style ='font-size: 80%' class='cJobIDLinktoOrigin'><a href = 'https://crowdflower.com/jobs/$job_id'   target='_blank'   class = 'tdlinks' >$job_id</a></td>";
      echo "</tr>";
 }
 
