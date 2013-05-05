@@ -2,7 +2,7 @@
 include_once 'includes/dbinfo.php';
 include_once 'includes/functions.php';
 
-////
+
 ?>
 <!doctype html>
 <html lang="us">
@@ -397,7 +397,7 @@ echo "</table>";
 <option value="cNumberFilteredSentences">Number Filtered Sentences</option>
 <option value="cTotalNumberofWorkers">Total Number of Workers</option>
 <option value="cNumberFilteredWorkers">Number Filtered Workers</option>
-<option value="cStatus">Status</option>
+<option value="cStatus">Status (Results File)</option>
 <option value="cActions">Actions</option>
 <!--<option value="cJobIDLinktoOrigin">Job ID (Origin)</option>-->
 </select>
@@ -409,8 +409,9 @@ echo "<div id='historytableContainer'>";
 echo "<table id='historytable' class='tablesorter'>";
 echo "<thead>"; //thead tag is required for using tablesorter
 echo "<tr>";
-echo "<th  ><input type='checkbox' id='checkboxjob' name ='job_ids[]'/>All</th>";
-echo "<th title = 'Job ID - Link to Batch File' class='cJobId'>JobID</th>";
+//echo "<th  ><input type='checkbox' id='checkboxjob' name ='job_ids[]'/>All</th>";
+echo "<th class = 'filter-false' ></th>";
+echo "<th title = 'Job ID - Click to download Batch File' class='cJobId'>JobID</th>";
 echo "<th title = 'Origin' class='cOrigin'>Orig</th>";
 //echo "<th title = 'Job Title' class='cJobTitle'>JT</th>";
 echo "<th title = 'Created Date' class='cCreatedDate'>Date</th>";
@@ -442,7 +443,7 @@ echo "<th title = 'Max Time Per Job' class='cMaxTimePerJob'>Max T/J</th>";
 echo "<th title = 'Number Filtered Sentences' class='cNumberFilteredSentences'>FS</th>";
 echo "<th title = 'Total Number of Workers' class='cTotalNumberofWorkers'>TotalW</th>";
 echo "<th title = 'Number Filtered Workers' class='cNumberFilteredWorkers'>FW</th>";
-echo "<th title = 'Status' class='cStatus'>Status</th>";
+echo "<th title = 'Status - Click to download Results File' class='cStatus'>Status</th>";
 echo "<th title = 'Actions' class='cActions'>Actions</th>";
 //echo "<th title = 'Job ID - Link to Origin' class='cJobIDLinktoOrigin'>JI</th>";
 echo "</tr>";
@@ -484,7 +485,7 @@ while($row = mysql_fetch_array($history)){
 		echo "<td style ='font-size: 80%' class='cNumberFilteredSentences'>$no_filtered_sentences</td>";
 		echo "<td style ='font-size: 80%' class='cTotalNumberofWorkers'>$no_workers</td>";
 		echo "<td style ='font-size: 80%' class='cNumberFilteredWorkers'>$no_filtered_workers</td>";
-        echo "<td style ='font-size: 80%' class='cStatus'>$status</td>";
+        echo "<td style ='font-size: 80%' class='cStatus'><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$resultsfile_id' class = '$checkbox_check' >$status</a></td>";
         echo "<td style ='font-size: 80%' class='cActions'>
         <select $status_change class= 'cActions changeStatus'>
         <option value='ChangeStatus'>-Change-</option>

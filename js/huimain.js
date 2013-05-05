@@ -280,7 +280,7 @@ $(function() {
 	      // disabled by using -> headers: { 1: { filter: false } } OR add class="filter-false"
 	      // if you set this to false, make sure you perform a search using the second method below
 	      filter_columnFilters : true,
-
+	     
 	      // css class applied to the table row containing the filters & the inputs within that row
 	      filter_cssFilter : 'tablesorter-filter',
 

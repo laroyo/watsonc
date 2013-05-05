@@ -34,7 +34,7 @@
       checkAllText: 'Check all',
       uncheckAllText: 'Uncheck all',
       noneSelectedText: 'Select options',
-      selectedText: '# selected',
+      selectedText: '# Columns Shown',
       selectedList: 0,
       show: null,
       hide: null,

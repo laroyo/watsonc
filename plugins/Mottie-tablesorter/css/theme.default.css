@@ -3,7 +3,7 @@ Default Theme
 *************/
 /* overall */
 .tablesorter-default {
-	width: 100%;
+	width: auto;
 	font: 12px/18px Arial, Sans-serif;
 	color: #333;
 	background-color: #fff;
@@ -159,8 +159,8 @@ caption {
 	filter: alpha(opacity=0);
 }
 /* filters */
-.tablesorter-default .tablesorter-filter {
-	width: 95%;
+.tablesorter-filter {
+	width: 96%;
 	height: auto;
 	margin: 4px;
 	padding: 4px;

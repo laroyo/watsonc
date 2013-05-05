@@ -45,6 +45,17 @@ a[href].tdlinks {
 	font: bold;	
 	}
 	
+	a[href].abled {
+	color: blue;
+	font: bold;	
+	}
+	
+	a[href].disabled {		
+	pointer-events: none;
+   cursor: default;
+   TEXT-DECORATION: NONE;
+	}
+	
 	table#resultstable {
 	width: 60%;
 	
