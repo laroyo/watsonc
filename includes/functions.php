@@ -148,6 +148,22 @@ function storeContentInFile($file_info, $content,$createdby) {
   } else{
     return null;
   }
+  
+  // Store results file path to history table
+  
+  if($filesize > 0){
+  	
+  	$getresultsfile_id =   mysql_query("select id from file_storage where original_name = '$original_name' ") or die(mysql_error());	
+		list($resultsfile_id) = mysql_fetch_row($getresultsfile_id);
+  
+  	$query="Update history_table set resultsfile_id = '$resultsfile_id' WHERE job_id = '$job_id'";
+  	mysql_query($query) or dieError("function: storeContentInFile<br/>".$query."<br/>".mysql_error());
+  	return mysql_insert_id();
+  	} else{
+  		return null;
+  	}
+  
+  
 }
 
 /**
