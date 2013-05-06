@@ -1,7 +1,8 @@
 <?php
 require_once('includes/envars.php'); 
 
-if(!isset($_POST['postback']) && !isset($_GET['set_id'])){ 
+
+if(!isset($_POST['job_ids']) && !isset($_POST['postback']) && !isset($_GET['set_id'])){ 
 ?>
 <form method ='POST' target=''>
   <input type ="hidden" name='postback' value='1'/> 
