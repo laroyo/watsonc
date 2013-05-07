@@ -254,7 +254,7 @@ echo "</table>";
 								<div class="inputfield">
 									<input type="radio" name="template" value="t1" checked>
 
-									Relations with definitions and extra questions required <br />
+									Relations with definitions and with extra questions required <br />
 								</div>
 
 								<div class="labelfield">&nbsp;</div>
@@ -266,7 +266,7 @@ echo "</table>";
 								<div class="labelfield">&nbsp;</div>
 								<div class="inputfield">
 									<input type="radio" name="template" value="t3"> Relations
-									without definitions and extra questions required <br />
+									without definitions but with extra questions required <br />
 								</div>
 
 								<div class="labelfield">&nbsp;</div>
@@ -363,7 +363,7 @@ echo "</table>";
 				
 <!--  <button class="search" data-filter-column="10" data-filter-text="2?%">Saved Search</button> (search the Discount column for "2?%") -->
   <button class="reset" title = "Click to clear all the filter options" >Reset Search</button> <!-- targetted by the "filter_reset" option -->
-  <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JOB IDs" >Analyze</button> 
+  <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JobIDs" >Analyze</button> 
 <select id="hidecolumns" name="hidecolumns" multiple="multiple" title = "to Hide/Show Columns">
 <option value="cJobId">Job ID (Batch File)</option>
 <option value="cOrigin">Origin</option>
@@ -401,7 +401,7 @@ echo "</table>";
 <option value="cActions">Actions</option>
 <!--<option value="cJobIDLinktoOrigin">Job ID (Origin)</option>-->
 </select>
-<input type="text" id = "testjobidarray" value = "To test job_ids array"/> 
+<input type="hidden" id = "testjobidarray" value = "To test job_ids array"/> 
   <br>
 <?php
 $history = mysql_query("SELECT * FROM  `history_table` ORDER BY created_date DESC");
@@ -456,11 +456,11 @@ while($row = mysql_fetch_array($history)){
         echo "<td style ='font-size: 80%' class='cJobId' title = '$job_title' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
 		echo "<td style ='font-size: 80%' class='cOrigin'>$origin</td>";
   //    echo "<td style ='font-size: 80%' class='cJobTitle' title = '$job_title' >".substr($job_title,0, 6)."</td>";
-        echo "<td style ='font-size: 80%' class='cCreatedDate' title = '$created_date' >".substr($created_date,0, 6)."</td>";
+        echo "<td style ='font-size: 80%' class='cCreatedDate' title = '$created_date' >".substr($created_date,2, 8)."</td>";
         echo "<td style ='font-size: 80%' class='cCreatedBy'>$created_by</td>";
         echo "<td style ='font-size: 80%' class='cNumberOfSentences'>$nr_sentences_file</td>";
         echo "<td style ='font-size: 80%' class='cTypeofUnits' title = '$type_of_units' >".substr($type_of_units,0, 6)."</td>";
-        echo "<td style ='font-size: 80%' class='cTemplate' title = '$template' >".substr($template,0, 6)."</td>";
+        echo "<td style ='font-size: 80%' class='cTemplate' title = '$template_info' >$template</td>";
         echo "<td style ='font-size: 80%' class='cMaxJudgmentPerWorker'>$max_judgments_per_worker</td>";
         echo "<td style ='font-size: 80%' class='cUnitsPerAssignment'>$units_per_assignment</td>";
         echo "<td style ='font-size: 80%' class='cUnitsPerJob'>$units_per_job</td>";

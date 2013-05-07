@@ -11,7 +11,7 @@ $uploadDirectory = "Files/";
 //$file_name = $_FILES['uploadedfile']['tmp_name'];
 $file_id = $_POST["fileid"];
 $template_used = "";
-
+$template_info = "";
 
 /* useful functions for printing the results from the web server */
 function objectToArray($obj) {
@@ -113,22 +113,26 @@ $response = exec($upload_query);
 
 if ($_POST["template"] == "t1") {
 	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
- $template_used = "Def, extraQue" ;
+ $template_used = "T1" ;
+ $template_info = "Relations with definitions and with extra questions required";
  $response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t2") {
 	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndWithoutExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
-	$template_used = "Def" ;
+	$template_used = "T2" ;
+	$template_info = "Relations with definitions but without extra questions";
 	$response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t3") {
 	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
-	$template_used = "extraQue" ;
+	$template_used = "T3" ;
+	$template_info = "Relations without definitions but with extra questions required";
 	$response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t4") {
 	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithoutExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
-	$template_used = "None" ;
+	$template_used = "T4" ;
+	$template_info = "Relations without definitions and without extra questions";
 	$response = exec($update_cml_job);
 }
 
@@ -218,14 +222,14 @@ $status_change = "abled";
 $checkbox_check = "disabled";
 
 
-$insertSQL = "INSERT INTO history_table ( job_id, origin, job_title , created_by , cfbatch_id, file_name, nr_sentences_file, type_of_units, template,
+$insertSQL = "INSERT INTO history_table ( job_id, origin, job_title , created_by , cfbatch_id, file_name, nr_sentences_file, type_of_units, template, template_info,
 max_judgments_per_worker, max_judgments_per_ip, units_per_assignment, units_per_job,
 judgments_per_unit, judgments_per_job, seconds_per_unit, seconds_per_assignment,
 payment_per_unit, payment_per_assignment,total_payment_per_unit,  total_payment_per_job,
 payment_per_hour, channels_used, job_comments, 
 job_judgments_made, job_completion, run_time, status, status_change, checkbox_check)
 VALUES
-( '$job_id', '$origin', '{$data["title"]}', '{$_SERVER["REMOTE_USER"]}', '$file_id' , '$file', '$nr_sentences_file', '$filter_applied', '$template_used',
+( '$job_id', '$origin', '{$data["title"]}', '{$_SERVER["REMOTE_USER"]}', '$file_id' , '$file', '$nr_sentences_file', '$filter_applied', '$template_used', '$template_info',
 '{$data["max_judgments_per_worker"]}', '{$data["max_judgments_per_ip"]}', '{$data["units_per_assignment"]}', '$units_per_job',
 '{$data["judgments_per_unit"]}', '$judgments_per_job', '$calibrated_unit_time', '$seconds_per_assignment',
 '$payment_per_unit', '$payment_per_assignment','$total_payment_per_unit',  '$total_payment_per_job',
