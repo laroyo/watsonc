@@ -166,7 +166,7 @@ $(function() {
  
  var StatisticsForm = document.createElement("form");
  StatisticsForm.target = "Analysis";
- StatisticsForm.method = "POST"; // or "post" if appropriate
+ StatisticsForm.method = "POST"; 
  StatisticsForm.action = "/wcs/set_analytics.php";
  
  var hiddenInput = document.createElement("input");
@@ -174,12 +174,8 @@ $(function() {
  hiddenInput.name = "postback";
  hiddenInput.value = "1";
  StatisticsForm.appendChild(hiddenInput);
-  
-	 
-	 
-	 
-	 for (var i = 0; i < arr.length; i++) {
-	     
+  	 	 
+	 for (var i = 0; i < arr.length; i++) {     
 	     var StatisticsInput = document.createElement("input");
 		 StatisticsInput.type = "hidden";
 		 StatisticsInput.name = "job_ids[]";
@@ -187,12 +183,9 @@ $(function() {
 		 StatisticsForm.appendChild(StatisticsInput);
 	 }
 	 
-	 
- 
-
  document.body.appendChild(StatisticsForm);
 
- Statistics = window.open("", "Analysis", "status=0,title='Statistical Analyses',height=800,width=800,scrollbars=1");
+ Statistics = window.open("", "Analysis", "status=0,title='Statistical Analyses',height=700,width=600,scrollbars=1");
 
 if (Statistics) {
  StatisticsForm.submit();
@@ -200,21 +193,15 @@ if (Statistics) {
  alert('You must allow popups for this Statistics to work.');
 }
  
-   
-//window.open("http://www.w3schools.com","_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=400, height=400");
-
+//window.open("http://www.google.com","_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=400, height=400");
 
  });
    
    
-   
-   
-
+  
 });
 
 
-
-  
 
  function PreviewImage (uri, image_name) {
 
