@@ -67,8 +67,8 @@ if(isset($_GET['set_id'])){
 
  if(!$set_id){
    echo "Computing new values.... "; 
-   echo "Invoking script: " .'/usr/bin/Rscript '. $_SERVER['DOCUMENT_ROOT'] . '/dataproc/set_analytics.R ' . implode(' ',$job_ids); 
-   $set_id = exec('/usr/bin/Rscript '. $_SERVER['DOCUMENT_ROOT'] . '/dataproc/set_analytics.R ' . implode(' ',$job_ids));
+   echo "Invoking script: " .'/usr/bin/Rscript '. $_SERVER['DOCUMENT_ROOT'] . '/wcs/dataproc/set_analytics.R ' . implode(' ',$job_ids); 
+   $set_id = exec('/usr/bin/Rscript '. $_SERVER['DOCUMENT_ROOT'] . '/wcs/dataproc/set_analytics.R ' . implode(' ',$job_ids));
    if(! $set_id){
      echo "Error: the statistics for the requested set cannot be computed"; 
      return; 
