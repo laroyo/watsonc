@@ -135,40 +135,73 @@ $(function() {
     
    $('#passjobid').click(function() {
    	    
-var arr = [];    
+ var arr = [];    
 
  $(':checkbox[name=job_ids]:checked').each(function()     
  {         
      arr.push(this.value);    
  });    
                      
- $("#testjobidarray").val(arr.toString());
+ $("#testjobidarray").val(arr);
  
- var xmlRequest = $.ajax({
-	   	type: 'POST',
-	       data: ({ 'job_ids': arr}),
-	       url: '/wcs/set_analytics.php'
+/* var xmlRequest = $.ajax({
+	   	   type: 'POST',
+	       data: ({'job_ids': arr}),
+	      // url: '/wcs/set_analytics.php'
+	       url: '/wcs/testjobidarrary.php'
 	   	});
 	   	 
 	xmlRequest.done( function(data) {
-		   // $("#testjobidarray").val(data);
+		   $("#testjobidarray").val(data);
 		   // window.location="/wcs/index.php";
-		    window.open();
+		   //window.open('/wcs/set_analytics.php');
+		  //analytics = window.open();
+		 // analytics.parent.document.body.appendChild(data);
+		  //analytics.focus();
+		   window.open();
+		   document.body.appendChild(data);
 	}); 	
+ */
  
  
-   
+ var StatisticsForm = document.createElement("form");
+ StatisticsForm.target = "Analysis";
+ StatisticsForm.method = "POST"; 
+ StatisticsForm.action = "/wcs/set_analytics.php";
+ 
+ var hiddenInput = document.createElement("input");
+ hiddenInput.type = "hidden";
+ hiddenInput.name = "postback";
+ hiddenInput.value = "1";
+ StatisticsForm.appendChild(hiddenInput);
+  	 	 
+	 for (var i = 0; i < arr.length; i++) {     
+	     var StatisticsInput = document.createElement("input");
+		 StatisticsInput.type = "hidden";
+		 StatisticsInput.name = "job_ids[]";
+		 StatisticsInput.value = arr[i];
+		 StatisticsForm.appendChild(StatisticsInput);
+	 }
+	 
+ document.body.appendChild(StatisticsForm);
+
+ Statistics = window.open("", "Analysis", "status=0,title='Statistical Analyses',height=700,width=600,scrollbars=1");
+
+if (Statistics) {
+ StatisticsForm.submit();
+} else {
+ alert('You must allow popups for this Statistics to work.');
+}
+ 
+//window.open("http://www.google.com","_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=400, height=400");
+
  });
    
    
-   
-   
-
+  
 });
 
 
-
-  
 
  function PreviewImage (uri, image_name) {
 
