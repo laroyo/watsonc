@@ -76,6 +76,32 @@ writeFilteredOutHeaders <- function (workbook, worksheet) {
   }
 }
 
+saveSentenceMetrics <- function(workbook, worksheet,sentRelDf,sentClarity) {
+
+  writeWorksheet(wb.new,data="Sentence-relation score",sheet=worksheet,startRow=1,startCol=1,header=FALSE)
+ 
+  writeWorksheet(wb.new,data=sentRelDf,sheet=worksheet,startRow=3,startCol=1,rownames="unit_id")
+    
+  writeWorksheet(wb.new,data=format(sentRelDf,digits=1),sheet=worksheet,startRow=3,startCol=2,rownames=row.names)
+
+  writeWorksheet(wb.new,data=format(as.data.frame(sentClarity),digits=2),sheet=worksheet,startRow=3,startCol=17,rownames=NULL)  
+}
+
+saveRelationSimilarity <- function(workbook, worksheet,relSimilarity,relAmbiguity, relClarity) {
+
+  writeWorksheet(wb.new,data="Relation similarity",sheet=worksheet,startRow=1,startCol=1,header=FALSE)
+  
+  writeWorksheet(wb.new,data=format(as.data.frame.matrix(relSimilarity),digits=1,scientific=FALSE),sheet=worksheet,startRow=3,startCol=2,rownames=NULL)
+
+  writeWorksheet(wb.new,data=all,sheet=worksheet,startRow=4,startCol=1,header=FALSE,rownames=NULL)
+
+  writeWorksheet(wb.new,data="Relation Ambiguity",sheet=worksheet,startRow=dim(relSimilarity)[1] +5, startCol=1,header=FALSE)
+  writeWorksheet(wb.new,data=format(as.data.frame(relAmbiguity),digits=1),sheet=worksheet,startRow = dim(relSimilarity)[1] +6, startCol=2)
+
+  writeWorksheet(wb.new,data="Relation Clarity",sheet=worksheet,startRow=dim(relSimilarity)[1] +8, startCol=1,header=FALSE)
+  writeWorksheet(wb.new,data=format(as.data.frame(t(relClarity)),digits=2),sheet=worksheet,startRow = dim(relSimilarity)[1] +9, startCol=2)
+}
+
 genHeatMap <- function(dframe,job_id,prefix=NULL,dir=NULL){
   
   library(gplots)

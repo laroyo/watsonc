@@ -161,11 +161,31 @@ getSentenceVector <- function(raw_data,unit_id,worker_id=NULL){
   return(getDf(sentTable))      
 }
 
+# Used for testing, mainly, may be useful sometime. 
+createSentenceVector <- function(unit_id, keys, values){
+  df <- as.data.frame(t(values))
+  rownames(df) <- unit_id
+  colnames(df) <- keys
+  return (df)  
+}
+
 #Matrix (dataframe) with the annotations of a worker
 getSentenceMatrix <- function(raw_data,worker_id){
   annotations <- raw_data[raw_data$worker_id == worker_id,]
   sentTable <- pivot(annotations,'unit_id','relation')
   return(getDf(sentTable))      
+}
+
+#The unitary vector for a relation in a sentence. 
+getRelationVector <- function(sentVect,relation){
+
+  mm <- matrix(0,1,length(colnames(sentVect)))
+  vect <- as.table(mm)  
+  rownames(vect) <- rownames(sentVect)
+  colnames(vect) <- colnames(sentVect)
+  
+  vect[,relation] <- sentVect[,relation]
+  return(vect)
 }
 
 #Vector with the annotators of a sentences
@@ -179,12 +199,37 @@ sentMat <- function(raw_data, coworkers) {
     sentMat[[as.character(worker_id)]] <- getSentenceMatrix(raw_data, 216)
   }
 }
+# Relation co-occurence table. 
+getRelCoOccur <- function(raw_data){
+ 
+  relations <- raw_data$relation
+  
+  mulRelations <- relations[grep("\n",relations)]
+  #mulTable <- table(all,all)
+  mulTable <- as.table(matrix(0,nrow=length(all),ncol=length(all),dimnames=list(all,all)))
+    
+  splitted <- lapply(lapply(mulRelations,strsplit, "\n"),unlist)
+
+  #To apply abcol to each of the splitted elements
+  simplRel <- function(elem){
+    unlist(lapply(elem, abcol))
+  }
+
+  getPairs <- function(elem){    
+    perm <- permutations(length(elem),2,elem)
+    return (lapply(seq_len(nrow(perm)), function(i) perm[i,]))
+  }
+
+  relabeled <- lapply(splitted, simplRel)
+  pairs <- lapply(relabeled,getPairs)
+  
+  for (p in pairs) {
+    for (tuple in p) {
+      mulTable[tuple[1],tuple[2]] =  mulTable[tuple[1],tuple[2]] + 1      
+    }
+  }
+  return (mulTable)
+}
 
 
-
-## for (worker_id in annotators){
-##   sv <- getSentenceVector(raw_data,unit_id,worker_id);
-##   print(worker_id)
-##   print(sv)  
-## }
 

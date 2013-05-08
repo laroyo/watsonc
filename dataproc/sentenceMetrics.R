@@ -4,13 +4,17 @@ source('envars.R')
 #Parse a results file from Crowdflower, and generates contingency tables for relations/workers and sentences as an output. 
 library(XLConnect)
 
+
 source(paste(libpath,'/','simplify.R',sep=''))
 source(paste(libpath,'/','measures.R',sep=''))
 source(paste(libpath,'/','db.R',sep=''))
 source(paste(libpath,'/','fileStorage.R',sep=''))
 
 #source(paste(libpath,'/','output.R',sep=''))
-
+#To calculate the permutations for the relation similarity. 
+library(gtools)
+#For calculating the cosine. 
+library(lsa)
 
 args <- commandArgs(trailingOnly = TRUE)
 
@@ -52,9 +56,8 @@ if(dim(raw_data)[1] == 0){
   print(paste(path,fname,sep='/'))
   
   createSheet(wb.new, name = "pivot-sentence")
-  writeWorksheet(wb.new,data=combinedDf,sheet=1,startRow=1,startCol=1,rownames=NULL)
-  
-  
+  writeWorksheet(wb.new,data=format(combinedDf,digits=2),sheet=1,startRow=1,startCol=1,rownames=NULL)
+   
   workerTable <- pivot(raw_data,'worker_id','relation')
   workerDf <- as.data.frame(rbind(sentenceTable))
   workerDf <- labeldf(workerDf)
@@ -64,6 +67,20 @@ if(dim(raw_data)[1] == 0){
   
   ## createSheet(wb.new, name = "pivot-worker")
   ## writeWorksheet(wb.new,data=combinedWorkersDf,sheet=2,startRow=1,startCol=1,rownames=NULL)
+
+  sentRelDf <- sentRelScoreMeasure(raw_data)
+  sentClarity <- sentenceClarity(sentRelDf)
+
+  createSheet(wb.new, name = "sentence-metrics")
+  saveSentenceMetrics(wb.new,"sentence-metrics",sentRelDf,sentClarity)
+  
+  relClarity <- relationClarity(sentRelDf)
+
+  createSheet(wb.new, name = "relation-metrics")
+  relSimilarity <- relationSimilarity(raw_data)
+  relAmbiguity <- relationAmbiguity(relSimilarity)
+
+  saveRelationSimilarity(wb.new,"relation-metrics",relSimilarity,relAmbiguity,relClarity)
 
   saveWorkbook(wb.new)
   genHeatMap(sentenceDf,job_id,dir=path)
