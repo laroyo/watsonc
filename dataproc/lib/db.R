@@ -93,13 +93,17 @@ getJobsInSet <- function(set_id){
 
 #job_ids <- getJobsInSet(set_id)
 ## strptime(,'%Y-%m-%d %H:%M:%S')
-
-getTaskCompletionTimes <- function(job_id){  
-                                        
-  query <- sprintf("select job_id,worker_id,started_at,created_at from cflower_results where job_id = %s", job_id)  
+getTaskCompletionTimes <- function(job_id, df=FALSE){
+  query <- sprintf("select unit_id,worker_id,started_at,created_at from cflower_results where job_id = %s", job_id)     
+  
   rs <- dbGetQuery(con, query)
-  return (as.numeric(strptime(rs$created_at,'%Y-%m-%d %H:%M:%S') - strptime(rs$started_at,'%Y-%m-%d %H:%M:%S')))    
-}
+  t <- as.numeric(strptime(rs$created_at,'%Y-%m-%d %H:%M:%S') - strptime(rs$started_at,'%Y-%m-%d %H:%M:%S'))
+  if(df){    
+    return (data.frame(unit_id=rs$unit_id, worker_id=rs$worker_id,time=t))
+  } else {
+    return(t)
+  }
+} 
 
 
 getSecondsPerUnit <- function(job_id){
