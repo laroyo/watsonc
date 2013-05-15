@@ -173,6 +173,66 @@ function getCrossJobStats($crossjob_workers){
   return $res; 
 }
 
+function getWorkerSentenceScore($worker_id){
+  
+  $query = "select unit_id,score from workerSentenceScore where worker_id = $worker_id";
+  
+  $rs = mysql_query($query); 
+  while($row = mysql_fetch_assoc($rs)){
+    $res[]  = $row; 
+    //$res[$row['unit_id']] = $row['score']; 
+  }
+  return $res;   
+}
+
+function getTaskCompletionTimes(){
+  $query = "select unit_id,UNIX_TIMESTAMP(created_at)-UNIX_TIMESTAMP(started_at) from cflower_results"; 
+  
+  $rs = mysql_query($query); 
+  while($row = mysql_fetch_assoc($rs)){
+    $res[]  = $row;    
+  }
+  return $res;   
+}
+
+function getAvgTaskCompletionTimes($worker_id){
+
+  $avgTaskCompTimes = simpleQuery("select unit_id,UNIX_TIMESTAMP(created_at)-UNIX_TIMESTAMP(started_at) as time from cflower_results where unit_id in worker_units"); 
+  simpleQuery("select unit_id,created_at from cflower_results where unit_id in (select unit_id from cflower_results where worker_id = $worker_id",con); 
+}
+
+function queryKeyValue($query, $key, $value){
+
+  $rs = mysql_query($query); 
+  while($row = mysql_fetch_assoc($rs)){
+    $res[$row[$key]] = $row[$value]; 
+  }  
+  return $res; 
+}
+
+function simpleQuery($query){
+
+  //echo $query; 
+  $rs = mysql_query($query); 
+  while($row = mysql_fetch_assoc($rs)){       
+    $res[] = $row;     
+  }  
+  return $res; 
+}
+
+function queryList($query){
+  $rs = mysql_query($query); 
+  while($row = mysql_fetch_assoc($rs)){       
+    
+    if(sizeof(array_keys($row)) > 1){
+      throw new Exception("The result set contains more than 1 field"); 
+    } else {
+      $keys = array_keys($row);       
+      $res[] = $row[$keys[0]];     
+    }    
+  }  
+  return $res; 
+}
 
 
 
