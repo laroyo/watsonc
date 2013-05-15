@@ -11,9 +11,10 @@ include_once 'includes/functions.php';
 <title>Crowd-Watson</title>
 <!-- Style sheets  -->
 <link href="plugins/jquery-ui/css/pepper-grinder/jquery-ui-1.10.2.custom.css" rel="stylesheet">
+<link href="plugins/jquery.layout-latest/css/layout-default-latest.css" rel="stylesheet">
 <link href="plugins/Mottie-tablesorter/css/theme.default.css" rel="stylesheet" type="text/css" />	
 <link href="plugins/multiselect/css/jquery.multiselect.css" rel="stylesheet" type="text/css" />	
-
+<link href="plugins/jquery.fixheadertable-2.0/css/base.css" rel="stylesheet" type="text/css" />	
 <link href="css/huimain.css" rel="stylesheet">
 <!-- js libraries  -->
 <script src="plugins/jquery-ui/js/jquery-1.9.1.js"></script>
@@ -22,10 +23,31 @@ include_once 'includes/functions.php';
 <script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.widgets.min.js" type="text/javascript"></script>
 <script src="plugins/multiselect/js/jquery.multiselect.js" type="text/javascript"></script>
 <script src="plugins/multiselect/js/jquery.multiselect.min.js" type="text/javascript"></script>
-
+<script src="plugins/jquery.layout-latest/js/jquery.layout-latest.js" type="text/javascript"></script>
+<script src="plugins/jquery.layout-latest/js/jquery.layout-latest.min.js" type="text/javascript"></script>
+<script src="plugins/jquery.fixheadertable-2.0/javascript/jquery.fixheadertable.min.js" type="text/javascript"></script>
+<script src="plugins/jquery.fixheadertable-2.0/javascript/jquery.fixheadertable.js" type="text/javascript"></script>
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
+$(document).ready(function() {
+    $('.historytable').fixheadertable({
+    	 caption  : 'History', 
+    	    height   : 300, 
+    	    width    : 1180, 
+    	    minWidth : 1300,
+    	    colratio : [65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65],
+    	  //  rowratio : [65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65],
+    	    zebra       : true,
+    	   // sortable    : true,
+    	   // sortedColId : 3, 
+    	   // sortType    : ['integer', 'string', 'string', 'string', 'string', 'date'],
+    	   // dateFormat  : 'm/d/Y',
+    	    pager       : true,
+    	    rowsPerPage : 10,
+    	   // resizeCol	: true
+    });
+});
 
 function computePayment()
 {
@@ -73,7 +95,7 @@ function computePaymentPerHour() {
 </head>
 <body>
 	<div id="content">
-		<div id="tabs">
+		<div id="tabs" class="ui-layout-center">
 			<ul>
 				<li><a href="#tabs-1" >Home</a></li>
 			   <!-- <li><a href="#tabs-2">Configurate Raw</a></li> -->
@@ -84,7 +106,7 @@ function computePaymentPerHour() {
 			</ul>
 			
 			
-			
+			 <DIV class="ui-layout-content">
 			<div id="tabs-1" >
 				<h1>Crowd-Watson</h1>
 				<br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing" target="_blank" ><img
@@ -328,9 +350,9 @@ echo "</table>";
 		
 			
 			<div id="tabs-5">
-			<div id="accordion">
+			<div id="no-accordion">
 
-  <h5>CrowdFlower</h5>
+  <!--<h5>CrowdFlower</h5>-->
 <div>
 				
 				<?php 	
@@ -362,7 +384,7 @@ echo "</table>";
 				
 				
 <!--  <button class="search" data-filter-column="10" data-filter-text="2?%">Saved Search</button> (search the Discount column for "2?%") -->
-  <button class="reset" title = "Click to clear all the filter options" >Reset Search</button> <!-- targetted by the "filter_reset" option -->
+  <button class="reset" title = "Click to clear all the filter options" >Reset Filters</button> <!-- targetted by the "filter_reset" option -->
   <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JobIDs" >Analyze</button> 
 <select id="hidecolumns" name="hidecolumns" multiple="multiple" title = "to Hide/Show Columns">
 <option value="cJobId">Job ID (Batch File)</option>
@@ -405,7 +427,7 @@ echo "</table>";
   <br>
 <?php
 $history = mysql_query("SELECT * FROM  `history_table` ORDER BY created_date DESC");
-echo "<div id='historytableContainer'>";
+//echo "<div id='testing'>";
 echo "<table id='historytable' class='tablesorter'>";
 echo "<thead>"; //thead tag is required for using tablesorter
 echo "<tr>";
@@ -486,7 +508,7 @@ while($row = mysql_fetch_array($history)){
 		echo "<td style ='font-size: 80%' class='cTotalNumberofWorkers'>$no_workers</td>";
 		echo "<td style ='font-size: 80%' class='cNumberFilteredWorkers'>$no_filtered_workers</td>";
         echo "<td style ='font-size: 80%' class='cStatus'><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$resultsfile_id' class = '$checkbox_check' >$status</a></td>";
-        echo "<td style ='font-size: 80%' class='cActions'>
+        echo "<td style ='font-size: 80%' class='cActions' title = '$job_id' >
         <select $status_change class= 'cActions changeStatus'>
         <option value='ChangeStatus'>-Change-</option>
         <option value='Paused'>Pause</option>
@@ -500,13 +522,10 @@ while($row = mysql_fetch_array($history)){
 
 echo "</tbody>";
 echo "</table>";
-echo "</div>";
+//echo "</div>";
 ?>
 			</div>
-			<h5>Games</h5>
-  <div>
-    <p>Pending</p>
-  </div>
+
 
 </div>
   </div>
@@ -581,7 +600,7 @@ while($row = mysql_fetch_array($results)){
   </div>
   </div>
   </div>
-  
+  </DIV>
 		</div>
 	</div>
 </body>
