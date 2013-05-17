@@ -23,7 +23,12 @@
 	 
  }
  
+
+ 
+ 
 $(document).ready(function() {
+	
+	
 	$("#statisticsarea").load("/wcs/dataproc/genAnalysisFiles.php");
 	$("#preprocessarea").load("/wcs/preprocessing/preprocinterface.php");
 		
@@ -100,10 +105,8 @@ $(document).ready(function() {
     }
     });
     $( "#tabs" ).tabs();	
+    
 });
-
-
-
 
 
 	
@@ -289,75 +292,79 @@ $(function() {
 	
 	  // call the tablesorter plugin
 	  $("table.tablesorter").tablesorter({
-	    theme: 'default',
+		    theme: 'default',
 
-	    // hidden filter input/selects will resize the columns, so try to minimize the change
-	    widthFixed : true,
+		    // hidden filter input/selects will resize the columns, so try to minimize the change
+		    widthFixed : true,
 
-	    showProcessing: true,
-	    headerTemplate : '{content} {icon}',
-	    // initialize zebra striping and filter widgets
-	    widgets: [ "zebra", "filter", "stickyHeaders", "resizable", 'col-reorder'],
-	    
+		    showProcessing: true,
+		    headerTemplate : '{content} {icon}',
+		    // initialize zebra striping and filter widgets
+		    widgets: [ "zebra", "filter", "stickyHeaders", "resizable", 'col-reorder', 'scroller'],
+		    
 
-	    // headers: { 5: { sorter: false, filter: false } },
+		    // headers: { 5: { sorter: false, filter: false } },
 
-	    widgetOptions : {
+		    widgetOptions : {
 
-	      // If there are child rows in the table (rows with class name from "cssChildRow" option)
-	      // and this option is true and a match is found anywhere in the child row, then it will make that row
-	      // visible; default is false
-	      filter_childRows : true,
+		      // If there are child rows in the table (rows with class name from "cssChildRow" option)
+		      // and this option is true and a match is found anywhere in the child row, then it will make that row
+		      // visible; default is false
+		      filter_childRows : true,
 
-	      // if true, a filter will be added to the top of each table column;
-	      // disabled by using -> headers: { 1: { filter: false } } OR add class="filter-false"
-	      // if you set this to false, make sure you perform a search using the second method below
-	      filter_columnFilters : true,
-	     
-	      // css class applied to the table row containing the filters & the inputs within that row
-	      filter_cssFilter : 'tablesorter-filter',
+		      // if true, a filter will be added to the top of each table column;
+		      // disabled by using -> headers: { 1: { filter: false } } OR add class="filter-false"
+		      // if you set this to false, make sure you perform a search using the second method below
+		      filter_columnFilters : true,
+		     
+		      // css class applied to the table row containing the filters & the inputs within that row
+		      filter_cssFilter : 'tablesorter-filter',
 
-	      // add custom filter functions using this option
-	      // see the filter widget custom demo for more specifics on how to use this option
-	      filter_functions : null,
+		      // add custom filter functions using this option
+		      // see the filter widget custom demo for more specifics on how to use this option
+		      filter_functions : null,
 
-	      // if true, filters are collapsed initially, but can be revealed by hovering over the grey bar immediately
-	      // below the header row. Additionally, tabbing through the document will open the filter row when an input gets focus
-	      filter_hideFilters : false,
+		      // if true, filters are collapsed initially, but can be revealed by hovering over the grey bar immediately
+		      // below the header row. Additionally, tabbing through the document will open the filter row when an input gets focus
+		      filter_hideFilters : false,
 
-	      // Set this option to false to make the searches case sensitive
-	      filter_ignoreCase : true,
+		      // Set this option to false to make the searches case sensitive
+		      filter_ignoreCase : true,
 
-	      // jQuery selector string of an element used to reset the filters
-	      filter_reset : 'button.reset',
+		      // jQuery selector string of an element used to reset the filters
+		      filter_reset : 'button.reset',
 
-	      // Delay in milliseconds before the filter widget starts searching; This option prevents searching for
-	      // every character while typing and should make searching large tables faster.
-	      filter_searchDelay : 300,
+		      // Delay in milliseconds before the filter widget starts searching; This option prevents searching for
+		      // every character while typing and should make searching large tables faster.
+		      filter_searchDelay : 300,
 
-	      // Set this option to true to use the filter to find text from the start of the column
-	      // So typing in "a" will find "albert" but not "frank", both have a's; default is false
-	      filter_startsWith : false,
+		      // Set this option to true to use the filter to find text from the start of the column
+		      // So typing in "a" will find "albert" but not "frank", both have a's; default is false
+		      filter_startsWith : false,
 
-	      // Filter using parsed content for ALL columns
-	      // be careful on using this on date columns as the date is parsed and stored as time in seconds
-	      filter_useParsedData : false,
-	      
-	      resizable_addLastColumn : true,
-	      
-	      stickyHeaders : 'tablesorter-stickyHeader',
-	      
-	      scroller_height : 200,
-	      scroller_barWidth : 17,
-	      scroller_jumpToHeader: true,
-	      scroller_idPrefix : 's_'
-	      
-	      
+		      // Filter using parsed content for ALL columns
+		      // be careful on using this on date columns as the date is parsed and stored as time in seconds
+		      filter_useParsedData : false,
+		      
+		      resizable_addLastColumn : true,
+		      
+		      stickyHeaders : 'tablesorter-stickyHeader',
+		      
+		      scroller_height : 300,
+		      scroller_barWidth : 17,
+		      scroller_jumpToHeader: true,
+		      scroller_idPrefix : 's_'
+		      
+		      
 
-	    }
+		    }
 
-	  });
+		  });
 	  
+	  
+	  
+	
+		
 	  addClassesToFilterRow();
 	  
 

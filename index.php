@@ -11,43 +11,21 @@ include_once 'includes/functions.php';
 <title>Crowd-Watson</title>
 <!-- Style sheets  -->
 <link href="plugins/jquery-ui/css/pepper-grinder/jquery-ui-1.10.2.custom.css" rel="stylesheet">
-<link href="plugins/jquery.layout-latest/css/layout-default-latest.css" rel="stylesheet">
 <link href="plugins/Mottie-tablesorter/css/theme.default.css" rel="stylesheet" type="text/css" />	
 <link href="plugins/multiselect/css/jquery.multiselect.css" rel="stylesheet" type="text/css" />	
-<link href="plugins/jquery.fixheadertable-2.0/css/base.css" rel="stylesheet" type="text/css" />	
+
 <link href="css/huimain.css" rel="stylesheet">
 <!-- js libraries  -->
 <script src="plugins/jquery-ui/js/jquery-1.9.1.js"></script>
 <script src="plugins/jquery-ui/js/jquery-ui-1.10.2.custom.js"></script>
-<script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.min.js" type="text/javascript"></script>
-<script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.widgets.min.js" type="text/javascript"></script>
+<script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.js" type="text/javascript"></script>
+<script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.widgets.js" type="text/javascript"></script>
 <script src="plugins/multiselect/js/jquery.multiselect.js" type="text/javascript"></script>
 <script src="plugins/multiselect/js/jquery.multiselect.min.js" type="text/javascript"></script>
-<script src="plugins/jquery.layout-latest/js/jquery.layout-latest.js" type="text/javascript"></script>
-<script src="plugins/jquery.layout-latest/js/jquery.layout-latest.min.js" type="text/javascript"></script>
-<script src="plugins/jquery.fixheadertable-2.0/javascript/jquery.fixheadertable.min.js" type="text/javascript"></script>
-<script src="plugins/jquery.fixheadertable-2.0/javascript/jquery.fixheadertable.js" type="text/javascript"></script>
+
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
-$(document).ready(function() {
-    $('.historytable').fixheadertable({
-    	 caption  : 'History', 
-    	    height   : 300, 
-    	    width    : 1180, 
-    	    minWidth : 1300,
-    	    colratio : [65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65],
-    	  //  rowratio : [65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65],
-    	    zebra       : true,
-    	   // sortable    : true,
-    	   // sortedColId : 3, 
-    	   // sortType    : ['integer', 'string', 'string', 'string', 'string', 'date'],
-    	   // dateFormat  : 'm/d/Y',
-    	    pager       : true,
-    	    rowsPerPage : 10,
-    	   // resizeCol	: true
-    });
-});
 
 function computePayment()
 {
@@ -95,7 +73,7 @@ function computePaymentPerHour() {
 </head>
 <body>
 	<div id="content">
-		<div id="tabs" class="ui-layout-center">
+		<div id="tabs">
 			<ul>
 				<li><a href="#tabs-1" >Home</a></li>
 			   <!-- <li><a href="#tabs-2">Configurate Raw</a></li> -->
@@ -106,7 +84,7 @@ function computePaymentPerHour() {
 			</ul>
 			
 			
-			 <DIV class="ui-layout-content">
+			
 			<div id="tabs-1" >
 				<h1>Crowd-Watson</h1>
 				<br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing" target="_blank" ><img
@@ -276,7 +254,7 @@ echo "</table>";
 								<div class="inputfield">
 									<input type="radio" name="template" value="t1" checked>
 
-									Relations with definitions and with extra questions required <br />
+									Relations with definitions and extra questions required <br />
 								</div>
 
 								<div class="labelfield">&nbsp;</div>
@@ -288,7 +266,7 @@ echo "</table>";
 								<div class="labelfield">&nbsp;</div>
 								<div class="inputfield">
 									<input type="radio" name="template" value="t3"> Relations
-									without definitions but with extra questions required <br />
+									without definitions and extra questions required <br />
 								</div>
 
 								<div class="labelfield">&nbsp;</div>
@@ -350,9 +328,6 @@ echo "</table>";
 		
 			
 			<div id="tabs-5">
-			<div id="no-accordion">
-
-  <!--<h5>CrowdFlower</h5>-->
 <div>
 				
 				<?php 	
@@ -383,9 +358,9 @@ echo "</table>";
              ?>
 				
 				
-<!--  <button class="search" data-filter-column="10" data-filter-text="2?%">Saved Search</button> (search the Discount column for "2?%") -->
+<!--  <button class="search" data-filter-column="10" data-filter-text="2?%">Saved Filters</button> (search the Discount column for "2?%") -->
   <button class="reset" title = "Click to clear all the filter options" >Reset Filters</button> <!-- targetted by the "filter_reset" option -->
-  <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JobIDs" >Analyze</button> 
+  <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JOB IDs" >Analyze</button> 
 <select id="hidecolumns" name="hidecolumns" multiple="multiple" title = "to Hide/Show Columns">
 <option value="cJobId">Job ID (Batch File)</option>
 <option value="cOrigin">Origin</option>
@@ -427,12 +402,12 @@ echo "</table>";
   <br>
 <?php
 $history = mysql_query("SELECT * FROM  `history_table` ORDER BY created_date DESC");
-//echo "<div id='testing'>";
+echo "<div id='historytableContainer'>";
 echo "<table id='historytable' class='tablesorter'>";
 echo "<thead>"; //thead tag is required for using tablesorter
 echo "<tr>";
 //echo "<th  ><input type='checkbox' id='checkboxjob' name ='job_ids[]'/>All</th>";
-echo "<th class = 'filter-false' ></th>";
+echo "<th class = 'filter-false sorter-false' ></th>";
 echo "<th title = 'Job ID - Click to download Batch File' class='cJobId'>JobID</th>";
 echo "<th title = 'Origin' class='cOrigin'>Orig</th>";
 //echo "<th title = 'Job Title' class='cJobTitle'>JT</th>";
@@ -478,11 +453,11 @@ while($row = mysql_fetch_array($history)){
         echo "<td style ='font-size: 80%' class='cJobId' title = '$job_title' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
 		echo "<td style ='font-size: 80%' class='cOrigin'>$origin</td>";
   //    echo "<td style ='font-size: 80%' class='cJobTitle' title = '$job_title' >".substr($job_title,0, 6)."</td>";
-        echo "<td style ='font-size: 80%' class='cCreatedDate' title = '$created_date' >".substr($created_date,2, 8)."</td>";
+        echo "<td style ='font-size: 80%' class='cCreatedDate' title = '$created_date' >".substr($created_date,0, 6)."</td>";
         echo "<td style ='font-size: 80%' class='cCreatedBy'>$created_by</td>";
         echo "<td style ='font-size: 80%' class='cNumberOfSentences'>$nr_sentences_file</td>";
         echo "<td style ='font-size: 80%' class='cTypeofUnits' title = '$type_of_units' >".substr($type_of_units,0, 6)."</td>";
-        echo "<td style ='font-size: 80%' class='cTemplate' title = '$template_info' >$template</td>";
+        echo "<td style ='font-size: 80%' class='cTemplate' title = '$template' >".substr($template,0, 6)."</td>";
         echo "<td style ='font-size: 80%' class='cMaxJudgmentPerWorker'>$max_judgments_per_worker</td>";
         echo "<td style ='font-size: 80%' class='cUnitsPerAssignment'>$units_per_assignment</td>";
         echo "<td style ='font-size: 80%' class='cUnitsPerJob'>$units_per_job</td>";
@@ -508,7 +483,7 @@ while($row = mysql_fetch_array($history)){
 		echo "<td style ='font-size: 80%' class='cTotalNumberofWorkers'>$no_workers</td>";
 		echo "<td style ='font-size: 80%' class='cNumberFilteredWorkers'>$no_filtered_workers</td>";
         echo "<td style ='font-size: 80%' class='cStatus'><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$resultsfile_id' class = '$checkbox_check' >$status</a></td>";
-        echo "<td style ='font-size: 80%' class='cActions' title = '$job_id' >
+        echo "<td style ='font-size: 80%' class='cActions'>
         <select $status_change class= 'cActions changeStatus'>
         <option value='ChangeStatus'>-Change-</option>
         <option value='Paused'>Pause</option>
@@ -522,12 +497,12 @@ while($row = mysql_fetch_array($history)){
 
 echo "</tbody>";
 echo "</table>";
-//echo "</div>";
+echo "</div>";
 ?>
 			</div>
 
 
-</div>
+
   </div>
 			
 			
@@ -600,7 +575,7 @@ while($row = mysql_fetch_array($results)){
   </div>
   </div>
   </div>
-  </DIV>
+  
 		</div>
 	</div>
 </body>
