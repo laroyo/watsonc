@@ -113,10 +113,10 @@ text {
 
 </style>
 <body>
-<h2>Worker Analytics for worker <?= $worker_id ?></h2>
+<h2>Worker Analytics for worker <? echo($worker_id); ?></h2>
 
 <h3> Sentences: </h3>
-  Number of annotated sentences: <?= sizeof($worker_sentences) ?><br>
+  Number of annotated sentences: <? echo(sizeof($worker_sentences)); ?><br>
 
   <div id="two_graphs" class="lineplot">
     <svg></svg>    
@@ -154,6 +154,6 @@ text {
 <script>
   addLineChart('#two_graphs svg', two_graphs); 
   addLineChart('#combined svg', data); 
-  addLineChart('#times svg', times, <?= $maxTime ?>);  
+  addLineChart('#times svg', times, <?php echo($maxTime); ?>);  
   addLineChart('#diff_times svg',diff_times)
 </script>
