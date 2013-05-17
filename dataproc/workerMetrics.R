@@ -33,10 +33,6 @@ raw_data <- getJob(job_id)
 if(dim(raw_data)[1] == 0){
   cat('JOB_NOT_FOUND')
 } else {
-  #Shorten the names of some fields. 
-  ## names(raw_data)[names(raw_data)=="step_1_select_the_valid_relations"] <- "relation"
-  ## names(raw_data)[names(raw_data)=="step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"] <- "selected_words"
-  ## names(raw_data)[names(raw_data)=="step_2b_if_you_selected_none_in_step_1_explain_why"] <- "explanation"
   
   sentenceTable <- pivot(raw_data,'unit_id','relation')
 
@@ -45,7 +41,7 @@ if(dim(raw_data)[1] == 0){
   #Calculate the measures to apply the filters.
   filters <- list('SQRT','NormSQRT','NormR')
 
-#Calculate the measures to apply the filters.filters <- list('SQRT','NormSQRT')
+  #Calculate the measures to apply the filters.filters <- list('SQRT','NormSQRT')
   mdf <- calc_measures(sentenceDf,filters)
 
   discarded <- list()
@@ -87,17 +83,21 @@ if(dim(raw_data)[1] == 0){
     numSent <- numSentences(filt)
     numAnnot <- numAnnotations(filt)
 
+    annotSentence <- numAnnot / numSent
+    colnames(annotSentence) <- 'annotSentence'
+    
     #sentMat <- list()
 
     agrValues <- agreement(filt)
     cosValues <- cosMeasure(filt)
     #sentRelScoreValues <- sentRelScoreMeasure(filt)
+    
+    #df <- data.frame(row.names=filtWorkers,numSents=numSent, cos=cosValues, agr=agrValues, annotSentence=(numAnnot/numSent))
+    df <- cbind(numSent,cosValues, agrValues,annotSentence)
 
-    df <- data.frame(row.names=filtWorkers,numSents=numSent, cos=cosValues, agr=agrValues, annotSentence=(numAnnot/numSent))
-
-  # Add empty values for filtered out workers
-  # missingworkers <- setdiff(worker_ids,filtWorkers)
-  # emptyCol <-  rep(0,length(missingworkers))
+    # Add empty values for filtered out workers
+    # missingworkers <- setdiff(worker_ids,filtWorkers)
+    # emptyCol <-  rep(0,length(missingworkers))
   
     ## filtrows <- data.frame(row.names=missingworkers,numSents=emptyCol,cos=emptyCol,agr=emptyCol,annotSentence=emptyCol)
     ## df <- rbind(df, filtrows)
@@ -138,6 +138,7 @@ if(dim(raw_data)[1] == 0){
                                  filter3=rowSums(spamCandidates[['NormSQRT']])
                                  )
 
+  #Combine spamFilterOutput. 
   sf <- as.data.frame(rowSums(spamFilterOutput > 0) > 1)
   colnames(sf) = 'label'
   spamLabels <- rownames(sf[sf$label==TRUE,,drop=FALSE])

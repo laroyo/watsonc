@@ -176,6 +176,34 @@ getSentenceMatrix <- function(raw_data,worker_id){
   return(getDf(sentTable))      
 }
 
+#Data frame with the individual annotations of the workers. 
+
+getSentenceAnnotations <- function(raw_data,unit_id){
+
+  worker_ids <- getSentenceAnnotators(raw_data, unit_id)
+  if(length(worker_ids) > 1){
+    df <- getSentenceVector(raw_data,unit_id,worker_ids[1])
+    row.names(df) <- worker_ids[1]    
+    
+    for(worker_id in worker_ids[2:length(worker_ids)]){      
+      sentVector <- getSentenceVector(raw_data,unit_id,worker_id)
+      row.names(sentVector) <- worker_id
+      df <- rbind(df, sentVector)      
+    }
+    return(df)
+  }
+  if(length(worker_ids) == 1){
+    sentVector <- getSentenceVector(raw_data,unit_id,worker_ids[1])
+    row.names(sentVector) <- worker_ids[1]    
+    return (sentVector)
+  }  
+}
+
+getSentenceAnnotators <- function(raw_data, unit_id){
+  annotations <- raw_data[raw_data$unit_id == unit_id,]
+  return (sort(unique(annotations$worker_id))); 
+}
+
 #The unitary vector for a relation in a sentence. 
 getRelationVector <- function(sentVect,relation){
 
@@ -229,6 +257,28 @@ getRelCoOccur <- function(raw_data){
     }
   }
   return (mulTable)
+}
+
+setToOne <- function(sentenceDf){
+
+  df <- as.data.frame(matrix(0, nrow=dim(sentenceDf)[1],ncol=length(all),dimnames=list(rownames(sentenceDf),all)))
+  for(i in (seq(1, dim(sentenceDf)[1]))){
+    for(j in (seq(1,dim(sentenceDf)[2]))){
+      if(sentenceDf[i,j] > 1){
+        df[i,j] <- 1        
+      } else {
+        df[i,j] <- 0
+      }
+    }
+  }
+  return (df)
+}
+
+zeroDiagonal <- function(df){
+  for(i in seq(1,dim(df)[1])){
+    df[i,i] <- 0
+  }
+  return(df)         
 }
 
 

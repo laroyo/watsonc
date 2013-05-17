@@ -57,13 +57,15 @@ NormRAll <- function(dframe){
 #numberOfSentences per worker. 
 numSentences <- function(dframe){
   agr <- aggregate(dframe,by=list(dframe$worker_id),FUN=length)
-  return(agr[,2])
+  return (data.frame(row.names=agr[,1],numSent=agr[,2]))    
+  #return(agr[,2])
 }
 
 numAnnotations <- function(dframe){
   filtTable <- pivot(dframe,'worker_id','relation')
   filtDf <- getDf(filtTable)
-  return(as.vector(rowSums(filtDf)))
+  res <- rowSums(filtDf)
+  return (data.frame(row.names=names(res),numAnnot=res))  
 }
 
 agreement <- function(dframe){
@@ -76,7 +78,8 @@ agreement <- function(dframe){
   for (worker_id in worker_ids){
     sentMat[[as.character(worker_id)]] <- getSentenceMatrix(dframe, worker_id)
   }
-  return (unlist(lapply(worker_ids, workerAgreement, raw_data=dframe, sentMat=sentMat)))
+  values <- (unlist(lapply(worker_ids, workerAgreement, raw_data=dframe, sentMat=sentMat)))
+  return (data.frame(row.names = worker_ids, agr=values))
 }
 
 workerAgreement <- function(worker_id, raw_data, sentMat) {
@@ -143,7 +146,8 @@ workerCosine <- function(worker_id, dframe){
 cosMeasure <- function(dframe){
   
   worker_ids <- sort(unique(dframe$worker_id))
-  return (unlist(lapply(worker_ids, workerCosine, dframe=dframe)))
+  values <- (unlist(lapply(worker_ids, workerCosine, dframe=dframe)))
+  return (data.frame(row.names = worker_ids, cos=values))
 }
 
 sentRelationScore <- function(unit_id, dframe){
@@ -191,7 +195,7 @@ relationSimilarity <- function(raw_data) {
   sinRelation <- relations[-grep("\n",relations)]
   simpTable <- table(unlist(lapply(sinRelation,abcol)))
   
-  numLabelsMul <- sum(rowSums(mulTable))  /2
+  numLabelsMul <- sum(rowSums(mulTable))/2
   numLabelsSimp <- sum(simpTable)
   numLabels <- numLabelsMul + numLabelsSimp
 
@@ -203,8 +207,8 @@ relationSimilarity <- function(raw_data) {
   for (i  in 1:dim(mulTable)[1]){
     for (j  in i:dim(mulTable)[1]){
       if(i != j){
-        probTable[i,j] <- (as.vector(probIndiv)[j] * probInter[i,j]) / as.vector(probIndiv)[i]
-        probTable[j,i] <- (as.vector(probIndiv)[i] * probInter[j,i]) / as.vector(probIndiv)[j]
+        probTable[i,j] <- as.vector(probInter[j,i]) / as.vector(probIndiv)[i]
+        probTable[j,i] <- as.vector(probInter[i,j]) / as.vector(probIndiv)[j]
       } else {
         probTable[i,j] <- 0
       }
@@ -228,6 +232,75 @@ relationClarity <- function(sentRelDf){
   return (rapply(sentRelDf,max))
 }
 
+#Cosine similarity for worker_id and unit_id
+#WARNING: when more than two labels are used, cosine is averaged
+#(used for workerSentenceScore, may not make sense for every scenario). 
+
+workerSentenceCos <- function(raw_data, unit_id,worker_id){
+  if(dim(raw_data[raw_data$worker_id == worker_id & raw_data$unit_id == unit_id,])[1] >0){
+    workerVector <- getSentenceVector(raw_data,unit_id,worker_id)
+    sentVector <- getSentenceVector(raw_data,unit_id)
+    restVector <- sentVector - workerVector
+    
+     #If worker has used multiple lables, and several of the coincide with the rest
+    if(rowSums(restVector & workerVector)>1){
+      scoreVector <- createSentenceVector(unit_id,all,rep(NA,length(all)))            
+      
+      for (relation in colnames(workerVector[,workerVector>0])){
+        
+        unitVector <- createSentenceVector(unit_id,all,rep(0,length(all)))
+        unitVector[,relation] <- 1
+        cos <- cosine(as.vector(t(unitVector)), as.vector(t(restVector)))[1,1]
+        scoreVector[,relation] <- cosine(as.vector(t(unitVector)), as.vector(t(restVector)))[1,1]        
+      }
+      return(rowMeans(scoreVector,na.rm=TRUE)[[1]])      
+    } else { 
+      return (cosine(as.vector(t(workerVector)), as.vector(t(restVector)))[1,1])
+    }    
+  } else {
+    return(NA)
+  }
+}
+
+workerSentenceCosTable <- function(raw_data){
+
+  worker_ids <- sort(unique(raw_data$worker_id))
+  unit_ids <- sort(unique(raw_data$unit_id))
+  
+  cosTable <- as.data.frame(matrix(NA,nrow=length(worker_ids),ncol=length(unit_ids),dimnames=list(worker_ids,unit_ids)))
+
+  for (i in worker_ids){
+    for (j in unit_ids){
+      if(dim(raw_data[raw_data$worker_id == i & raw_data$unit_id == j,])[1] >0){       
+        cosTable[as.character(i),as.character(j)] <- workerSentenceCos(raw_data, j,i)
+      } else {
+        cosTable[as.character(i),as.character(j)] <- NA
+      }
+    }
+  }
+  return (cosTable)
+}
+
+# Worker-Sentence score metric
+# @param SentenceClarity and a table with the cosine similarity for workers and unit_ids (from workerSentenceCosTable function)
+workerSentenceScoreTable <- function(raw_datas,workerSentCosTable,sentClarity){
+
+  worker_ids <- sort(unique(raw_data$worker_id))
+  unit_ids <- sort(unique(raw_data$unit_id))
+  
+  scoreTable <- as.data.frame(matrix(NA,nrow=length(worker_ids),ncol=length(unit_ids),dimnames=list(worker_ids,unit_ids)))
+    
+  for (i in worker_ids){
+    for (j in unit_ids){
+      if(dim(raw_data[raw_data$worker_id == i & raw_data$unit_id == j,])[1] >0){
+        scoreTable[as.character(i),as.character(j)] <- sentClarity[[as.character(j)]] - workerSentCosTable[as.character(i),as.character(j)]
+     } else {
+        scoreTable[as.character(i),as.character(j)] <- NA
+      }
+    }
+  }
+  return (scoreTable)
+}
 
 
 
