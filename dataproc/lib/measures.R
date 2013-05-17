@@ -283,7 +283,7 @@ workerSentenceCosTable <- function(raw_data){
 
 # Worker-Sentence score metric
 # @param SentenceClarity and a table with the cosine similarity for workers and unit_ids (from workerSentenceCosTable function)
-workerSentenceScoreTable <- function(raw_datas,workerSentCosTable,sentClarity){
+workerSentenceScoreTable <- function(raw_data,workerSentCosTable,sentClarity){
 
   worker_ids <- sort(unique(raw_data$worker_id))
   unit_ids <- sort(unique(raw_data$unit_id))
@@ -302,5 +302,41 @@ workerSentenceScoreTable <- function(raw_datas,workerSentCosTable,sentClarity){
   return (scoreTable)
 }
 
+#These functions are tentative metrics (discussed with Chris).
+# Not yet ready for prime time, need revision. 
+
+#Measures relation coOccurence for each of the sentenceVector (aggregated annotations).
+#For relation CoOccurence in worker Vectors see simplify/getRelCoOccur. 
+aggRelCoOccurence <- function(sentenceDf){
+
+  df <- as.data.frame(matrix(0, nrow=length(all),ncol=length(all),dimnames=list(all,all)))
+  
+  for (i in seq(1,length(all))){
+    for (j in seq(i, length(all))){
+      if(i != j){   
+        df[i,j] <- (dim(sentenceDf[sentenceDf[all[i]] & sentenceDf[all[j]],])[1])
+        df[j,i] <- df[i,j]
+      }
+    }
+  }
+  return (df)
+}
+
+#Correlation between the relations of a job.
+#Returns a matrix of correlations Corr(Rel_x,Rel_y)
+relationsCorrelation <- function(sentenceDf){
+
+  df <- as.data.frame(matrix(0, nrow=length(all),ncol=length(all),dimnames=list(all,all)))
+  
+  for (i in seq(1,length(all))){
+    for (j in seq(i, length(all))){
+      if(i != j){
+        df[i,j] <- cor(sentenceDf[all[i]],sentenceDf[all[j]])                
+        df[j,i] <- df[i,j]
+      }
+    }
+  }
+  return (df)
+}
 
 
