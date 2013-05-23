@@ -71,8 +71,19 @@ function checkForFilters3() {
 		<input type="radio" name="length" id="length" value="shortAndAverage" checked> short sentences <br /><br />
 
 	Create the job file: <br />
-	Number of sentences from each relation: <input type="text" id="nosentences" name="nosentences" size="3"> 
+	Introduce the number of sentences for each relation: <br />
+		<input type="text" id="noscause" name="noscause" size="2">  Cause <br />
+		<input type="text" id="noscontra" name="noscontra" size="2">  Contraindicate <br />
+		<input type="text" id="nosdiagnose" name="nosdiagnose" size="2">  Diagnose <br />  
+		<input type="text" id="noslocation" name="noslocation" size="2">  Location <br />
+		<input type="text" id="nosprevent" name="nosprevent" size="2">  Prevent <br />
+		<input type="text" id="nostreat" name="nostreat" size="2">  Treat <br />
+		<input type="text" id="nossymptom" name="nossymptom" size="2">  Symptom <br /> 
 
+<!--
+	Create the job file: <br />
+	Number of sentences from each relation: <input type="text" id="nosentences" name="nosentences" size="3"> 
+--!>
 	<input type="submit" name="action" value="Submit"/>
 </form>
 
