@@ -120,10 +120,18 @@ $(function() {
 	      buttons: {
 	          "Confirm": function() {
 	          $( this ).dialog( "close" );
+	          if ($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(1, 2).text().length == 0 )
+	        	  {
+	        	      alert("Please select a file!");
+	        	      $( "#dialog-confirm" ).dialog( "open" );
+	        	  }
+	          else
+	        	  {
 	          alert($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(1, 2).text() + ' is selected!');	
 	          $( "#fileid" ).val($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(0, 1).text());
 	          $("#sentences" ).val($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(3, 4).text());
 	          $("label[for='uploadedfile']").text($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(1, 2).text());  
+	        	  }
 	          },
 	        Cancel: function() {
 	          $( this ).dialog( "close" );
@@ -145,7 +153,7 @@ $(function() {
      arr.push(this.value);    
  });    
                      
- $("#testjobidarray").val(arr);
+// $("#testjobidarray").val(arr);
  
 /* var xmlRequest = $.ajax({
 	   	   type: 'POST',

@@ -26,6 +26,18 @@ include_once 'includes/functions.php';
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
+$(function(){  
+
+		var winHeight = $(window).height();
+		
+		if ( $('#tabs').height() < winHeight )
+		{
+		$("#whateverYourMainTabElementIs");
+		var tabHeight = winHeight - 28;
+		$('#tabs').height(tabHeight);
+        }
+        
+	}); 
 
 function computePayment()
 {
@@ -85,7 +97,7 @@ function computePaymentPerHour() {
 			
 			
 			
-			<div id="tabs-1" >
+			<div id="tabs-1" class = "generaltab" >
 				<h1>Crowd-Watson</h1>
 				<br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing" target="_blank" ><img
 					src="graphs/crowdsourcing.jpg" alt="No show" title = "What is Crowdsourcing?" /></a>
@@ -93,7 +105,7 @@ function computePaymentPerHour() {
 			
 			<!-- 
 			
-			<div id="tabs-2">
+			<div id="tabs-2" class = "generaltab" >
 				<div id="accordion">
   <h5>CrowdFlower</h5>
   <div id="tabs-Raw">	
@@ -127,7 +139,7 @@ function computePaymentPerHour() {
 			 -->
 			
 			
-			<div id="tabs-3">
+			<div id="tabs-3" class = "generaltab" >
 	  <div id="accordion">			
   <h5>CrowdFlower</h5>
 <div id="tabs-ProcessInput">
@@ -135,16 +147,35 @@ function computePaymentPerHour() {
 				</div>
 			</div>
 			<h5>Games</h5>
-  <div>
-    <p>Pending</p>
-  </div>
+			<div id="tabs-Raw">	
+			<form enctype="multipart/form-data" action="services/uploadRaw.php" method="POST">
+				<div class="borderframe"  >
+					<div class="labelfield">Choose a RAW file to upload:</div>
+					<div class="inputfield">
+						<input name="rawuploadedfile" type="file" />
+					</div>
+					<div class="labelfield">Seed releation</div>
+					<div class="inputfield">
+						<input type="text" name="title" class="textboxInput" />
+					</div>
+					<div class="labelfield" >Comments:</div>
+					<div class="inputfield"><input type="text" name="raw_comment" class = 
+                               "commentboxInput"/></div>
+                    <div class="labelfield">&nbsp;</div>
+					<div class="inputfield">
+						<input type="submit" value="Submit"
+							title="Click Submit to upload raw file" />
+					</div>
+					</div>
+				</form>
+				</div>
 			</div>
 
   </div>
   
   
   
-			<div id="tabs-4">
+			<div id="tabs-4" class = "generaltab" >
 			<div id="accordion">
 
   <h5>CrowdFlower</h5>
@@ -327,7 +358,7 @@ echo "</table>";
 			
 		
 			
-			<div id="tabs-5">
+			<div id="tabs-5" class = "historytab" >
 <div>
 				
 				<?php 	
@@ -453,11 +484,11 @@ while($row = mysql_fetch_array($history)){
         echo "<td style ='font-size: 80%' class='cJobId' title = '$job_title' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
 		echo "<td style ='font-size: 80%' class='cOrigin'>$origin</td>";
   //    echo "<td style ='font-size: 80%' class='cJobTitle' title = '$job_title' >".substr($job_title,0, 6)."</td>";
-        echo "<td style ='font-size: 80%' class='cCreatedDate' title = '$created_date' >".substr($created_date,0, 6)."</td>";
-        echo "<td style ='font-size: 80%' class='cCreatedBy'>$created_by</td>";
-        echo "<td style ='font-size: 80%' class='cNumberOfSentences'>$nr_sentences_file</td>";
-        echo "<td style ='font-size: 80%' class='cTypeofUnits' title = '$type_of_units' >".substr($type_of_units,0, 6)."</td>";
-        echo "<td style ='font-size: 80%' class='cTemplate' title = '$template' >".substr($template,0, 6)."</td>";
+	    echo "<td style ='font-size: 80%' class='cCreatedDate' title = '$created_date' >".substr($created_date,2, 8)."</td>";
+	    echo "<td style ='font-size: 80%' class='cCreatedBy'>$created_by</td>";
+	    echo "<td style ='font-size: 80%' class='cNumberOfSentences'>$nr_sentences_file</td>";
+	    echo "<td style ='font-size: 80%' class='cTypeofUnits' title = '$type_of_units' >".substr($type_of_units,0, 6)."</td>";
+	    echo "<td style ='font-size: 80%' class='cTemplate' title = '$template_info' >$template</td>";
         echo "<td style ='font-size: 80%' class='cMaxJudgmentPerWorker'>$max_judgments_per_worker</td>";
         echo "<td style ='font-size: 80%' class='cUnitsPerAssignment'>$units_per_assignment</td>";
         echo "<td style ='font-size: 80%' class='cUnitsPerJob'>$units_per_job</td>";
@@ -507,7 +538,7 @@ echo "</div>";
 			
 			
 			
-				<div id="tabs-6">
+				<div id="tabs-6" class = "generaltab" >
 				<div id="accordion">
 
   <h5>CrowdFlower</h5>

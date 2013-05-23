@@ -1,8 +1,4 @@
-html, body {
-    height: 100%;
-    padding: 0;
-    margin: 0;
-}
+
 
 .columnline {
 	color : red;
@@ -70,8 +66,20 @@ textarea:focus, input:focus
 {
 background-color: #cbdfeb;   // #97bfd9
 }
-
+#smasize {
+	font-size: 80%;
+	}
 	
+.ui-tabs .historytab {
+	width: 125%;
+}
+
+.historytab .ui-tabs-nav  {
+margin: 0;
+padding: .2em .2em 0;
+width: 128%;
+}
 
 
-.ui-tabs-panel { height: 580px; overflow-x: auto; overflow-y: auto; }
+
+
