@@ -26,9 +26,6 @@ include_once 'includes/functions.php';
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
-
-
-
 $(document).ready(function() {
 	var $tabs=$('#tabs').tabs({"fit":true})
 
@@ -84,6 +81,7 @@ function computePaymentPerHour() {
 <body>
 	<div class="wrapper" >
 		<div id="tabs">
+		<h3 class="ui-tab-title">Crowd-Watson</h3>
 			<ul>
 				<li><a href="#tabs-1" >Home</a></li>
 			   <!-- <li><a href="#tabs-2">Configurate Raw</a></li> -->
@@ -97,11 +95,13 @@ function computePaymentPerHour() {
 			
 			
 			<div id="tabs-1" class = "generaltab" >
-				<h1>Crowd-Watson</h1>
-				<br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing" target="_blank" ><img
-					src="graphs/crowdsourcing.jpg" alt="No show" title = "What is Crowdsourcing?" /></a>
+			</br>
+			<div class="generalborderframe"  >
+				<h1 align="center" >Crowdsourcing for Watson</h1>
+				</br></br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing" target="_blank" ><img
+					src="graphs/crowdsourcing.jpg" alt="No show" title = "What is Crowdsourcing?" class = "center" /></a>
 			</div>
-			
+			</div>
 			<!-- 
 			
 			<div id="tabs-2" class = "generaltab" >
@@ -242,37 +242,37 @@ echo "</table>";
 								</div>
 								<div class="labelfield">Job title:</div>
 								<div class="inputfield">
-									<input type="text" name="title"> <br />
+									<input type="text" class = "textboxInput" name="title"> <br />
 								</div>
 
 								<div class="labelfield">Judgments per unit:</div>
 								<div class="inputfield">
-									<input type="text" name="judgments_per_unit"
+									<input type="text" class = "textboxInput" name="judgments_per_unit"
 										id="judgments_per_unit" oninput="computePayment()"> <br />
 								</div>
 
 								<div class="labelfield">Maxim judgments per worker:</div>
 								<div class="inputfield">
-									<input type="text" name="max_judgments_per_worker"> <br />
+									<input type="text" class = "textboxInput" name="max_judgments_per_worker"> <br />
 								</div>
 
 								<div class="labelfield">Units per assignment (CF: Units per
 									page):</div>
 								<div class="inputfield">
-									<input type="text" name="units_per_assignment"
+									<input type="text" class = "textboxInput" name="units_per_assignment"
 										oninput="computePayment()" id="units_per_assignment"> <br />
 								</div>
 
 								<div class="labelfield">Payment per assignment (CF: Payment per
 									page) (cents):</div>
 								<div class="inputfield">
-									<input type="text" name="payment" oninput="computePayment()"
+									<input type="text" class = "textboxInput" name="payment" oninput="computePayment()"
 										id="payment"> <br />
 								</div>
 
 								<div class="labelfield">Seconds per unit:</div>
 								<div class="inputfield">
-									<input type="text" name="seconds_per_unit"
+									<input type="text" class = "textboxInput" name="seconds_per_unit"
 										id="seconds_per_unit" oninput="computeTime()"> <br />
 								</div>
 
@@ -328,23 +328,23 @@ echo "</table>";
 
 								<div class="labelfield">Payment per sentence (dollar):</div>
 								<div class="inputfield">
-									<input type="text" name="payment_per_sentence"
+									<input type="text" class = "textboxInput" name="payment_per_sentence"
 										id="payment_per_sentence"> <br />
 								</div>
 								<div class="labelfield">Payment per job (dollar):</div>
 								<div class="inputfield">
-									<input type="text" name="payment_per_job" id="payment_per_job">
+									<input type="text" class = "textboxInput" name="payment_per_job" id="payment_per_job">
 									<br />
 								</div>
 								<div class="labelfield">Seconds per assignment:</div>
 								<div class="inputfield">
-									<input type="text" name="seconds_per_assignment"
+									<input type="text" class = "textboxInput" name="seconds_per_assignment"
 										id="seconds_per_assignment"><br />
 								</div>
 
 								<div class="labelfield">Payment per hour:</div>
 								<div class="inputfield">
-									<input type="text" name="payment_per_hour"
+									<input type="text" class = "textboxInput" name="payment_per_hour"
 										id="payment_per_hour"> <br />
 								</div>
 							</div>
@@ -610,8 +610,19 @@ while($row = mysql_fetch_array($results)){
   
   
   <div id="tabs-7" class = "generaltab" >
-	<h1>Crowdsourcing for Watson</h1>
-	
+  </br>
+	<div class="generalborderframe"  >
+	</br>
+	<a href="http://sciencetoprofitsblog.com/2012/02/15/second-opinions-ibm-watson-crowdsourcing/" target="_blank" ><img
+	src="graphs/icon-watson.jpg" alt="No show" title = "Crowdsourcing for Watson" class = "center" /></a>
+	</br>
+	<a href="http://www.ibm.com/us/en/" target="_blank" ><img
+	src="graphs/IBM.jpg" alt="No show" title = "IBM" class = "center" /></a>
+    </br>	
+	<a href="http://www.vu.nl/en/index.asp" target="_blank" ><img
+	src="graphs/VU.jpg" alt="No show" title = "VU University Amsterdam" class = "center" /></a>
+	</br>
+ </div>
 </div>
   
   </div>
@@ -619,7 +630,7 @@ while($row = mysql_fetch_array($results)){
   <div class="push"></div>
   </div> 
   <div class="footer" >
-	<h5 align="center" >Copyright © 2013 <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-dev' target="_blank" class = 'filelinks' >Crowd-watson-dev</a>. All rights reserved.</h5>
+	<h5 align = "center" class = "copyrightfooter" >Copyright © 2013 <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-dev' target="_blank" class = 'filelinks' >Crowd-watson-dev</a>. All rights reserved.</h5>
 </div>
 		
 		
