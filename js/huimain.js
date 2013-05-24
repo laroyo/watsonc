@@ -208,7 +208,7 @@ $(function() {
 	      }
 	    });
    $( "#uploadedfile" ).click(function() {
-     $( "#dialog-confirm" ).dialog( "open" );
+   $( "#dialog-confirm" ).dialog( "open" );
    });
    
    
@@ -316,10 +316,6 @@ if (Statistics) {
 	  
 	}
 
- $('#toresults').click(function() {  
-	 $("#tabs").tabs('select',3);
-	 return false;
-});
  
  
 $(document).ready(function() {
@@ -343,15 +339,20 @@ $(document).ready(function() {
 	
 	
 	$("#hidecolumns").multiselect({
-		header : "Hide/Show Columns",
+
+		
 		click : function(event, ui) {
+			
 			if (ui.checked) {
 				$("." + ui.value).show();
 			} else {
 				$("." + ui.value).hide();
-			}
-		}
+			}	
+		
+	  }
+	
 	});
+	
     $("#hidecolumns").multiselect("checkAll");
     
     $('td.cChannelsPercentage').load(function() {
@@ -360,6 +361,19 @@ $(document).ready(function() {
             $(this).text($(this).text().substring(0, 10));
         }
     });
+    
+    $('.ui-multiselect-all').click(function() {  
+   	 $("#hidecolumns > option").each(function() {
+   			$("." + this.value).show();
+   		});
+   });
+    
+    
+    $('.ui-multiselect-none').click(function() {  
+   	 $("#hidecolumns > option").each(function() {
+   			$("." + this.value).hide();
+   		});
+   });
     
 });
 	
@@ -377,13 +391,19 @@ $(function() {
 		    showProcessing: true,
 		    headerTemplate : '{content} {icon}',
 		    // initialize zebra striping and filter widgets
-		    widgets: [ "zebra", "filter", "stickyHeaders", "resizable", 'col-reorder', 'scroller'],
+		    widgets: [ "zebra", "filter", "stickyHeaders", "resizable", 'col-reorder'],
 		    
 
 		    // headers: { 5: { sorter: false, filter: false } },
 
 		    widgetOptions : {
-
+		    	
+		      zebra: [
+			              "ui-widget-content even",
+			              "ui-state-default odd"
+			         ],
+			 
+			         
 		      // If there are child rows in the table (rows with class name from "cssChildRow" option)
 		      // and this option is true and a match is found anywhere in the child row, then it will make that row
 		      // visible; default is false
@@ -427,13 +447,7 @@ $(function() {
 		      
 		      stickyHeaders : 'tablesorter-stickyHeader',
 		      
-		      scroller_height : 300,
-		      scroller_barWidth : 17,
-		      scroller_jumpToHeader: true,
-		      scroller_idPrefix : 's_'
-		      
-		      
-
+		     
 		    }
 
 		  });

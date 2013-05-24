@@ -33,7 +33,7 @@
       classes: '',
       checkAllText: 'Check all',
       uncheckAllText: 'Uncheck all',
-      noneSelectedText: 'Select options',
+      noneSelectedText: 'Select columns',
       selectedText: '# Columns Shown',
       selectedList: 0,
       show: null,
@@ -214,7 +214,7 @@
       var o = this.options;
       var $inputs = this.inputs;
       var $checked = $inputs.filter(':checked');
-      var numChecked = $checked.length;
+      var numChecked = $checked.length + 1;
       var value;
 
       if(numChecked === 0) {
