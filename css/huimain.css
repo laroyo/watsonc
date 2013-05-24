@@ -1,4 +1,7 @@
-
+html, body
+{
+	background: #eceadf;
+}
 
 .columnline {
 	color : red;
