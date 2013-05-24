@@ -1,6 +1,17 @@
-html, body
-{
-	background: #eceadf;
+* {
+margin: 0;
+}
+html, body {
+background: #eceadf;
+height: 100%;
+}
+.wrapper {
+min-height: 100%;
+height: auto;
+margin: 0 auto -2em;
+}
+.footer, .push {
+height: 2em;
 }
 
 .columnline {

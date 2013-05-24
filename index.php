@@ -82,7 +82,7 @@ function computePaymentPerHour() {
 
 </head>
 <body>
-	<div id="content">
+	<div class="wrapper" >
 		<div id="tabs">
 			<ul>
 				<li><a href="#tabs-1" >Home</a></li>
@@ -91,6 +91,7 @@ function computePaymentPerHour() {
 				<li><a href="#tabs-4" >Jobs</a></li>
 				<li><a href="#tabs-5" >History</a></li>
 				<li><a href="#tabs-6" >Results</a></li>
+				<li><a href="#tabs-7" >About</a></li>
 			</ul>
 			
 			
@@ -607,7 +608,21 @@ while($row = mysql_fetch_array($results)){
   </div>
   </div>
   
-		</div>
-	</div>
+  
+  <div id="tabs-7" class = "generaltab" >
+	<h1>Crowdsourcing for Watson</h1>
+	
+</div>
+  
+  </div>
+ 
+  <div class="push"></div>
+  </div> 
+  <div class="footer" >
+	<h5 align="center" >Copyright © 2013 <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-dev' target="_blank" class = 'filelinks' >Crowd-watson-dev</a>. All rights reserved.</h5>
+</div>
+		
+		
+		
 </body>
 </html>
