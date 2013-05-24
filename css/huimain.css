@@ -70,16 +70,46 @@ background-color: #cbdfeb;   // #97bfd9
 	font-size: 80%;
 	}
 	
-.ui-tabs .historytab {
-	width: 125%;
+.ui-tabs .generaltab {
+	
+	overflow-x: auto;
+	overflow-y: auto;
 }
+
+/*
+.ui-tabs .historytab {
+	width: auto;
+	overflow-x: block;
+	overflow-y: block;
+}
+
 
 .historytab .ui-tabs-nav  {
 margin: 0;
 padding: .2em .2em 0;
 width: 128%;
 }
+*/
 
-
-
+#scrollUp {
+	bottom: 20px;
+	right: 20px;
+	background: #C0C0C0;
+	color: #fff;
+	font-size: 12px;
+	font-family: sans-serif;
+	text-decoration: none;
+	opacity: .9;
+	padding: 10px 20px;
+	-webkit-border-radius: 16px;
+	-moz-border-radius: 16px;
+	border-radius: 16px;
+	-webkit-transition: background 200ms linear;
+	-moz-transition: background 200ms linear;
+	transition: background 200ms linear;
+	-webkit-backface-visibility: hidden;
+}
+	#scrollUp:hover {
+		background: #808080;
+	}
 

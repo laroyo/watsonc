@@ -26,18 +26,16 @@ include_once 'includes/functions.php';
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
-$(function(){  
 
-		var winHeight = $(window).height();
-		
-		if ( $('#tabs').height() < winHeight )
-		{
-		$("#whateverYourMainTabElementIs");
-		var tabHeight = winHeight - 28;
-		$('#tabs').height(tabHeight);
-        }
-        
-	}); 
+
+
+$(document).ready(function() {
+	var $tabs=$('#tabs').tabs({"fit":true})
+
+	$(window).resize(function() {
+		$('#tabs').tabs('resize')
+	}) });
+
 
 function computePayment()
 {
@@ -140,7 +138,9 @@ function computePaymentPerHour() {
 			
 			
 			<div id="tabs-3" class = "generaltab" >
-	  <div id="accordion">			
+			
+	  <div id="accordion">	
+	 
   <h5>CrowdFlower</h5>
 <div id="tabs-ProcessInput">
 				<div id="preprocessarea" class="borderframe">
