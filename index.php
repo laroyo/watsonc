@@ -21,7 +21,7 @@ include_once 'includes/functions.php';
 <script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.js" type="text/javascript"></script>
 <script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.widgets.js" type="text/javascript"></script>
 <script src="plugins/multiselect/js/jquery.multiselect.js" type="text/javascript"></script>
-<script src="plugins/multiselect/js/jquery.multiselect.min.js" type="text/javascript"></script>
+
 
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
