@@ -3,13 +3,14 @@ Default Theme
 *************/
 /* overall */
 .tablesorter-default {
-	width: auto;
+	width: 1200px;
+	
 	font: 12px/18px Arial, Sans-serif;
 	color: #333;
 	background-color: #fff;
 	border-spacing: 0;
 	margin: 10px 0 15px;
-	text-align: left;
+	text-align: center;
 }
 
 /* header */
@@ -160,7 +161,7 @@ caption {
 }
 /* filters */
 .tablesorter-filter {
-	width: 96%;
+	width: 98%;
 	height: auto;
 	margin: 4px;
 	padding: 4px;
