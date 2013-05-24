@@ -392,8 +392,8 @@ echo "</table>";
 <!--  <button class="search" data-filter-column="10" data-filter-text="2?%">Saved Filters</button> (search the Discount column for "2?%") -->
   <button class="reset" title = "Click to clear all the filter options" >Reset Filters</button> <!-- targetted by the "filter_reset" option -->
   <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JOB IDs" >Analyze</button> 
-<select id="hidecolumns" name="hidecolumns" multiple="multiple" title = "to Hide/Show Columns">
-<option value="cJobId">Job ID (Batch File)</option>
+<select id="hidecolumns" name="hidecolumns" multiple="multiple" title = "Click to hide/show columns">
+<!--<option value="cJobId">Job ID (Batch File)</option>-->
 <option value="cOrigin">Origin</option>
 <!--<option value="cJobTitle">Job Title</option>-->
 <option value="cCreatedDate">Created Date</option>

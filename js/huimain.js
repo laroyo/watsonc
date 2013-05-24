@@ -36,7 +36,7 @@
 			// Defaults
 			var defaults = {
 				scrollName: 'scrollUp', // Element ID
-				topDistance: 200, // Distance from top before showing element (px)
+				topDistance: 80, // Distance from top before showing element (px)
 				topSpeed: 300, // Speed back to top (ms)
 				animation: 'fade', // Fade, slide, none
 				animationInSpeed: 200, // Animation in speed (ms)
@@ -53,7 +53,7 @@
 			$('<a/>', {
 				id: o.scrollName,
 				href: '#top',
-				title: o.scrollText
+			//  title: o.scrollText
 			}).appendTo('body');
 
 			// If not using an image display text
