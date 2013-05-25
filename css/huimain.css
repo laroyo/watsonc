@@ -29,6 +29,16 @@ height: 2em;
 
 .ui-tab-title { position: absolute; left: 20px; top: 15px; }
 
+/* For slide show  */
+
+ #galleria{ 
+    margin-left: 120px;
+	margin-right: 120px;
+	width: 968px; 
+	height: 600px; 
+	background: #eceadf url(/wcs/plugins/jquery-ui/css/pepper-grinder/images/ui-bg_fine-grain_10_eceadf_60x60.png) 50% 50% repeat;
+	}
+
 
 .columnline {
 	color : red;
@@ -62,12 +72,12 @@ height: 2em;
 	height: 84px;
 }
 
-.generalborderframe, .borderframe
+.generalborderframe, .borderframe, .sideframe
 {
 	border: 1px solid #d9d6c4;
 	padding: 20px;
-	margin-left: 120px;
-	margin-right: 120px;
+	margin-left: 150px;
+	margin-right: 150px;
 	width: auto;
 	height: auto;
 	background: white;
@@ -80,6 +90,13 @@ height: 2em;
 .borderframe {	
 	margin-left: 50px;
 	margin-right: 50px;	
+}
+
+.sideframe
+{
+	margin-left: 880px;
+	margin-right: 10px;
+	
 }
 
 .copyrightfooter

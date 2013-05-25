@@ -21,12 +21,19 @@ include_once 'includes/functions.php';
 <script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.js" type="text/javascript"></script>
 <script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.widgets.js" type="text/javascript"></script>
 <script src="plugins/multiselect/js/jquery.multiselect.js" type="text/javascript"></script>
+<script src="plugins/galleria/galleria-1.2.9.min.js" type="text/javascript"></script>
 
 
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
 $(document).ready(function() {
+	
+	 Galleria.loadTheme('plugins/galleria/themes/classic/galleria.classic.min.js');
+     Galleria.run('#galleria');
+	
+	
+	
 	var $tabs=$('#tabs').tabs({"fit":true})
 
 	$(window).resize(function() {
@@ -96,11 +103,39 @@ function computePaymentPerHour() {
 			
 			<div id="tabs-1" class = "generaltab" >
 			</br>
+			   <div id="galleria">
+	            <img src="graphs/crowd-watson/CW01.JPG">
+	            <img src="graphs/crowd-watson/CW02.JPG">
+	            <img src="graphs/crowd-watson/CW03.JPG">
+	            <img src="graphs/crowd-watson/CW04.JPG">
+	            <img src="graphs/crowd-watson/CW05.JPG">
+	            <img src="graphs/crowd-watson/CW06.JPG">
+	            <img src="graphs/crowd-watson/CW07.JPG">
+	            <img src="graphs/crowd-watson/CW08.JPG">
+	            <img src="graphs/crowd-watson/CW09.JPG">
+	            <img src="graphs/crowd-watson/CW10.JPG">
+	            <img src="graphs/crowd-watson/CW11.JPG">
+	            <img src="graphs/crowd-watson/CW12.JPG">
+	            <img src="graphs/crowd-watson/CW13.JPG">
+	            <img src="graphs/crowd-watson/CW14.JPG">
+	            <img src="graphs/crowd-watson/CW15.JPG">
+	            <img src="graphs/crowd-watson/CW16.JPG">
+	            <img src="graphs/crowd-watson/CW17.JPG">
+	            <img src="graphs/crowd-watson/CW18.JPG">
+	            <img src="graphs/crowd-watson/CW19.JPG">
+	            <img src="graphs/crowd-watson/CW20.JPG">
+	            <img src="graphs/crowd-watson/CW21.JPG">
+	            <img src="graphs/crowd-watson/CW22.JPG">
+	            <img src="graphs/crowd-watson/CW23.JPG">
+	        </div>
+	     
+	        </br>
 			<div class="generalborderframe"  >
-				<h1 align="center" >Crowdsourcing for Watson</h1>
+				<h1 align="center" >Module Introduction</h1>
 				</br></br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing" target="_blank" ><img
 					src="graphs/crowdsourcing.jpg" alt="No show" title = "What is Crowdsourcing?" class = "center" /></a>
 			</div>
+			</br>
 			</div>
 			<!-- 
 			
@@ -171,7 +206,7 @@ function computePaymentPerHour() {
 				</form>
 				</div>
 			</div>
-
+			</br>
   </div>
   
   
@@ -355,6 +390,7 @@ echo "</table>";
     <p>Pending</p>
   </div>
   </div>
+  </br>
   </div>
 			
 		
@@ -534,7 +570,7 @@ echo "</div>";
 			</div>
 
 
-
+			</br>
   </div>
 			
 			
@@ -606,23 +642,28 @@ while($row = mysql_fetch_array($results)){
     <p>Pending</p>
   </div>
   </div>
+  </br>
   </div>
   
   
   <div id="tabs-7" class = "generaltab" >
   </br>
 	<div class="generalborderframe"  >
-	</br>
+	
+
 	<a href="http://sciencetoprofitsblog.com/2012/02/15/second-opinions-ibm-watson-crowdsourcing/" target="_blank" ><img
-	src="graphs/icon-watson.jpg" alt="No show" title = "Crowdsourcing for Watson" class = "center" /></a>
-	</br>
+	src="graphs/icon-watson.jpg" alt="No show" title = "Crowdsourcing for Watson" style="width: 9%; height: 9%" /></a>
+
 	<a href="http://www.ibm.com/us/en/" target="_blank" ><img
-	src="graphs/IBM.jpg" alt="No show" title = "IBM" class = "center" /></a>
-    </br>	
+	src="graphs/IBM.jpg" alt="No show" title = "IBM"  style="width: 12%; height: 12%" /></a>
+
 	<a href="http://www.vu.nl/en/index.asp" target="_blank" ><img
-	src="graphs/VU.jpg" alt="No show" title = "VU University Amsterdam" class = "center" /></a>
+	src="graphs/VU.jpg" alt="No show" title = "VU University Amsterdam"  style="width: 21%; height: 21%" /></a>
+		
+	<img src="graphs/crowd-watson/CW23v2.JPG" class = "center" >
 	</br>
  </div>
+ </br>
 </div>
   
   </div>
