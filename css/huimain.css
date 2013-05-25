@@ -85,6 +85,7 @@ height: 2em;
 	border-top-right-radius: 6px;
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
+	box-shadow: 0 0 5px 5px #888;
 }
 
 .borderframe {	
