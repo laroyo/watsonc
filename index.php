@@ -689,7 +689,9 @@ while($row = mysql_fetch_array($results)){
 	Want to join?
 			</br>
 			If you are interested in a MSc, MSc or a PhD project in this context, send you CV and motivation to <a href="mailto:lora.aroyo@vu.nl">lora.aroyo@vu.nl</a>
-			</br></p>
+			</br>
+			</br>
+			Here are some example projects currently running:</p>
 			</br>
 	<img src="graphs/crowd-watson/CW23v2.JPG" class = "center" >
 	</br>
