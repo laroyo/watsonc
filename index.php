@@ -651,15 +651,46 @@ while($row = mysql_fetch_array($results)){
 	<div class="generalborderframe"  >
 	
 
-	<a href="http://sciencetoprofitsblog.com/2012/02/15/second-opinions-ibm-watson-crowdsourcing/" target="_blank" ><img
-	src="graphs/icon-watson.jpg" alt="No show" title = "Crowdsourcing for Watson" style="width: 9%; height: 9%" /></a>
+	<a href="http://www.vu.nl/en/index.asp" <a href="<img
+		src="graphs/VU.jpg" alt="No show" title = "VU University Amsterdam"  style="width: 21%; height: 21%" /></a>
 
 	<a href="http://www.ibm.com/us/en/" target="_blank" ><img
 	src="graphs/IBM.jpg" alt="No show" title = "IBM"  style="width: 12%; height: 12%" /></a>
 
-	<a href="http://www.vu.nl/en/index.asp" target="_blank" ><img
-	src="graphs/VU.jpg" alt="No show" title = "VU University Amsterdam"  style="width: 21%; height: 21%" /></a>
-		
+
+	
+	</br>
+	<p>This project is a collaboration between the VU University Amsterdam and IBM Research, NY.
+	</br>
+	</br>
+	Principle investigators:
+		</br>
+	<a href="http://www.cs.vu.nl/~laroyo/" target="_blank" title = "Professor in the Computer Science department of VU University Amsterdam" class = "filelinks" >Lora Aroyo</a>, VU University Amsterdam
+	</br>
+	<a href="http://researcher.watson.ibm.com/researcher/view.php?person=us-welty" target="_blank" title = "Research Scientist at the IBM T.J. Watson Research Center in New York" class = "filelinks" >Chris Welty</a>, IBM Research, NY
+	</br>
+	</br>
+
+	Project members:
+		</br>
+	<a href="http://nl.linkedin.com/in/dumitracheanca/" target="_blank" class = "filelinks" >Anca Dumitrache</a>
+	</br>
+	<a href="https://plus.google.com/u/0/106755161022646926513/posts" target="_blank" class = "filelinks" >Guillermo Soberon Casado</a>
+	</br>
+	<a href="http://nl.linkedin.com/pub/hui-lin/53/92/b5/" target="_blank" class = "filelinks" >Hui Lin</a>
+	</br>
+	<a href="http://nl.linkedin.com/pub/oana-inel/5a/99/711/" target="_blank" class = "filelinks" >Oana Inel</a>
+	</br>
+	<a href="http://nl.linkedin.com/pub/manfred-overmeen/0/445/567/" title = "Senior IT Specialist at IBM Nederland BV" target="_blank" class = "filelinks" >Manfred Overmeen</a>	
+	</br>
+	<a href="http://nl.linkedin.com/in/rsips/" target="_blank" title = "University Relations Manager at IBM Nederland BV" class = "filelinks" >Robert-Jan Sips</a>
+	</br>
+	</br>
+	Want to join?
+			</br>
+			If you are interested in a MSc, MSc or a PhD project in this context, send you CV and motivation to <a href="mailto:lora.aroyo@vu.nl">lora.aroyo@vu.nl</a>
+			</br></p>
+			</br>
 	<img src="graphs/crowd-watson/CW23v2.JPG" class = "center" >
 	</br>
  </div>
