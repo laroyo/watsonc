@@ -126,6 +126,11 @@ a[href].tdlinks {
 	font: bold;	
 	}
 	
+	a[href].titlelinks {	
+   font: bold;	
+   TEXT-DECORATION: NONE;
+	}
+	
 	a[href].abled {
 	color: blue;
 	font: bold;	

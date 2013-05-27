@@ -27,6 +27,11 @@ include_once 'includes/functions.php';
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
+
+
+
+
+
 $(document).ready(function() {
 	
 	 Galleria.loadTheme('plugins/galleria/themes/classic/galleria.classic.min.js');
@@ -88,11 +93,11 @@ function computePaymentPerHour() {
 <body>
 	<div class="wrapper" >
 		<div id="tabs">
-		<h3 class="ui-tab-title">Crowd-Watson</h3>
+		<h3 class="ui-tab-title"><a href ="http://www.slideshare.net/laroyo/websci2013-harnessing-disagreement-in-crowdsourcing" target="_blank" class = 'titlelinks' title = "WebSci2013 Harnessing Disagreement in Crowdsourcing" >Crowd-Watson</a></h3>
 			<ul>
 				<li><a href="#tabs-1" >Home</a></li>
 			   <!-- <li><a href="#tabs-2">Configurate Raw</a></li> -->
-			    <li><a href="#tabs-3">Process Input</a></li>
+			    <li><a href="#tabs-3">Input</a></li>
 				<li><a href="#tabs-4" >Jobs</a></li>
 				<li><a href="#tabs-5" >History</a></li>
 				<li><a href="#tabs-6" >Results</a></li>
@@ -104,36 +109,24 @@ function computePaymentPerHour() {
 			<div id="tabs-1" class = "generaltab" >
 			</br>
 			   <div id="galleria">
-	            <img src="graphs/crowd-watson/CW01.JPG">
-	            <img src="graphs/crowd-watson/CW02.JPG">
-	            <img src="graphs/crowd-watson/CW03.JPG">
-	            <img src="graphs/crowd-watson/CW04.JPG">
-	            <img src="graphs/crowd-watson/CW05.JPG">
-	            <img src="graphs/crowd-watson/CW06.JPG">
-	            <img src="graphs/crowd-watson/CW07.JPG">
-	            <img src="graphs/crowd-watson/CW08.JPG">
-	            <img src="graphs/crowd-watson/CW09.JPG">
-	            <img src="graphs/crowd-watson/CW10.JPG">
-	            <img src="graphs/crowd-watson/CW11.JPG">
-	            <img src="graphs/crowd-watson/CW12.JPG">
-	            <img src="graphs/crowd-watson/CW13.JPG">
-	            <img src="graphs/crowd-watson/CW14.JPG">
-	            <img src="graphs/crowd-watson/CW15.JPG">
-	            <img src="graphs/crowd-watson/CW16.JPG">
-	            <img src="graphs/crowd-watson/CW17.JPG">
-	            <img src="graphs/crowd-watson/CW18.JPG">
-	            <img src="graphs/crowd-watson/CW19.JPG">
-	            <img src="graphs/crowd-watson/CW20.JPG">
-	            <img src="graphs/crowd-watson/CW21.JPG">
-	            <img src="graphs/crowd-watson/CW22.JPG">
-	            <img src="graphs/crowd-watson/CW23.JPG">
+	            <img src="graphs/crowd-truth/CT01.jpg">
+	            <img src="graphs/crowd-truth/CT02.jpg">
+	            <img src="graphs/crowd-truth/CT03.jpg">
+	            <img src="graphs/crowd-truth/CT04.jpg">
+	            <img src="graphs/crowd-truth/CT05.jpg">
+	            <img src="graphs/crowd-truth/CT06.jpg">
+	            <img src="graphs/crowd-truth/CT07.jpg">
+	            <img src="graphs/crowd-truth/CT08.jpg">
+	            <img src="graphs/crowd-truth/CT09.jpg">
+	            <img src="graphs/crowd-truth/CT10.jpg">
+	            <img src="graphs/crowd-truth/CT11.jpg">
+	            <img src="graphs/crowd-truth/CT12.jpg">
 	        </div>
 	     
 	        </br>
 			<div class="generalborderframe"  >
 				<h1 align="center" >Module Introduction</h1>
-				</br></br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing" target="_blank" ><img
-					src="graphs/crowdsourcing.jpg" alt="No show" title = "What is Crowdsourcing?" class = "center" /></a>
+				</br></br> 
 			</div>
 			</br>
 			</div>
@@ -650,22 +643,24 @@ while($row = mysql_fetch_array($results)){
   </br>
 	<div class="generalborderframe"  >
 	
-
-	<a href="http://www.vu.nl/en/index.asp" <a href="<img
-		src="graphs/VU.jpg" alt="No show" title = "VU University Amsterdam"  style="width: 21%; height: 21%" /></a>
-
+	<a href="http://sciencetoprofitsblog.com/2012/02/15/second-opinions-ibm-watson-crowdsourcing/" target="_blank" ><img
+	src="graphs/icon-watson.jpg" alt="No show" title = "Crowdsourcing for Watson" style="width: 12%; height: 12%"  /></a>
+	
+	
 	<a href="http://www.ibm.com/us/en/" target="_blank" ><img
 	src="graphs/IBM.jpg" alt="No show" title = "IBM"  style="width: 12%; height: 12%" /></a>
-
-
 	
-	</br>
+	<a href="http://www.vu.nl/en/index.asp" target="_blank" ><img
+		src="graphs/VU.jpg" alt="No show" title = "VU University Amsterdam"  style="width: 21%; height: 21%" /></a>
+		</br>
+		</br>
 	<p>This project is a collaboration between the VU University Amsterdam and IBM Research, NY.
 	</br>
 	</br>
 	Principle investigators:
 		</br>
-	<a href="http://www.cs.vu.nl/~laroyo/" target="_blank" title = "Professor in the Computer Science department of VU University Amsterdam" class = "filelinks" >Lora Aroyo</a>, VU University Amsterdam
+	
+	<a href="http://www.cs.vu.nl/~laroyo/" target="_blank" title = "Professor in the Computer Science department of VU University Amsterdam" class = "filelinks" >Lora Aroyo</a>, VU University Amsterdam	
 	</br>
 	<a href="http://researcher.watson.ibm.com/researcher/view.php?person=us-welty" target="_blank" title = "Research Scientist at the IBM T.J. Watson Research Center in New York" class = "filelinks" >Chris Welty</a>, IBM Research, NY
 	</br>
@@ -681,9 +676,9 @@ while($row = mysql_fetch_array($results)){
 	</br>
 	<a href="http://nl.linkedin.com/pub/oana-inel/5a/99/711/" target="_blank" class = "filelinks" >Oana Inel</a>
 	</br>
-	<a href="http://nl.linkedin.com/pub/manfred-overmeen/0/445/567/" title = "Senior IT Specialist at IBM Nederland BV" target="_blank" class = "filelinks" >Manfred Overmeen</a>	
+	<a href="http://nl.linkedin.com/pub/manfred-overmeen/0/445/567/" title = "Senior IT Specialist at IBM Nederland BV" target="_blank" class = "filelinks" >Manfred Overmeen</a>, IBM Nederland BV	
 	</br>
-	<a href="http://nl.linkedin.com/in/rsips/" target="_blank" title = "University Relations Manager at IBM Nederland BV" class = "filelinks" >Robert-Jan Sips</a>
+	<a href="http://nl.linkedin.com/in/rsips/" target="_blank" title = "University Relations Manager at IBM Nederland BV" class = "filelinks" >Robert-Jan Sips</a>, IBM Nederland BV
 	</br>
 	</br>
 	Want to join?
@@ -704,8 +699,10 @@ while($row = mysql_fetch_array($results)){
   <div class="push"></div>
   </div> 
   <div class="footer" >
-	<h5 align = "center" class = "copyrightfooter" >Copyright © 2013 <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-dev' target="_blank" class = 'filelinks' >Crowd-watson-dev</a>. All rights reserved.</h5>
-</div>
+	<h5 align = "center" class = "copyrightfooter" >Copyright © 2013 <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-all' target="_blank" class = 'filelinks' >Crowd-watson-all</a>. All rights reserved.</h5>
+
+<h5 align = "center" class = "copyrightfooter" >| <a href = '#tabs-7'  id = "tofive" class = 'filelinks' >About</a> | Terms & Conditions | Privacy Policy |</h5>
+	</div>
 		
 		
 		
