@@ -180,6 +180,8 @@ $(document).ready(function() {
 
 	
 $(function() {
+	
+	// Pop-up dialog - Select a file from the server
 	 $( "#dialog-confirm" ).dialog({
 		  autoOpen: false,
 	      resizable: true,
@@ -211,8 +213,33 @@ $(function() {
    $( "#dialog-confirm" ).dialog( "open" );
    });
    
+  
    
-    
+   // Pop-up dialog - Block Spammers
+   $( "#dialog-blockspammers" ).dialog({
+		  autoOpen: false,
+	      resizable: true,
+	      height:600,
+	      width:1000,
+	      modal: true,
+	      buttons: {
+	          "Block": function() {
+	          $( this ).dialog( "close" );
+	          
+	          },
+	        Cancel: function() {
+	          $( this ).dialog( "close" );
+	        }
+	      }
+	    });
+     $("#blockspammers").click(function(){	 
+    	 $( "#dialog-blockspammers" ).dialog( "open" );	 
+     });
+     
+     
+     
+     
+     
    $('#passjobid').click(function() {
    	    
  var arr = [];    

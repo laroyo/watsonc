@@ -417,7 +417,16 @@ echo "</table>";
               }
              ?>
 				
-				
+			
+             
+             
+             
+             <div id = "dialog-blockspammers" title = "Block Spammers" >
+            <!-- Load data from Database --!>
+             
+             
+             
+             </div>
 <!--  <button class="search" data-filter-column="10" data-filter-text="2?%">Saved Filters</button> (search the Discount column for "2?%") -->
   <button class="reset" title = "Click to clear all the filter options" >Reset Filters</button> <!-- targetted by the "filter_reset" option -->
   <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JOB IDs" >Analyze</button> 
@@ -540,8 +549,8 @@ while($row = mysql_fetch_array($history)){
 		echo "<td style ='font-size: 80%' class='cMinTimePerJob'>$min_time_unitworker</td>";
 		echo "<td style ='font-size: 80%' class='cMaxTimePerJob'>$max_time_unitworker</td>";
 		echo "<td style ='font-size: 80%' class='cNumberFilteredSentences'>$no_filtered_sentences</td>";
-		echo "<td style ='font-size: 80%' class='cTotalNumberofWorkers'>$no_workers</td>";
-		echo "<td style ='font-size: 80%' class='cNumberFilteredWorkers'>$no_filtered_workers</td>";
+		echo "<td style ='font-size: 80%' class='cTotalNumberofWorkers' >$no_workers</td>";
+		echo "<td style ='font-size: 80%' class='cNumberFilteredWorkers'><button id = 'blockspammers' >$no_filtered_workers</button></td>";
         echo "<td style ='font-size: 80%' class='cStatus' title = '$job_id' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$resultsfile_id' class = '$checkbox_check' >$status</a></td>";
         echo "<td style ='font-size: 80%' class='cActions' title = '$job_id' >
         <select $status_change class= 'cActions changeStatus'>
