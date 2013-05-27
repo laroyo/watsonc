@@ -550,7 +550,7 @@ while($row = mysql_fetch_array($history)){
 		echo "<td style ='font-size: 80%' class='cMaxTimePerJob'>$max_time_unitworker</td>";
 		echo "<td style ='font-size: 80%' class='cNumberFilteredSentences'>$no_filtered_sentences</td>";
 		echo "<td style ='font-size: 80%' class='cTotalNumberofWorkers' >$no_workers</td>";
-		echo "<td style ='font-size: 80%' class='cNumberFilteredWorkers'><button id = 'blockspammers' >$no_filtered_workers</button></td>";
+		echo "<td style ='font-size: 80%' class='cNumberFilteredWorkers'><button class = 'blockspammers' >$no_filtered_workers</button></td>";
         echo "<td style ='font-size: 80%' class='cStatus' title = '$job_id' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$resultsfile_id' class = '$checkbox_check' >$status</a></td>";
         echo "<td style ='font-size: 80%' class='cActions' title = '$job_id' >
         <select $status_change class= 'cActions changeStatus'>

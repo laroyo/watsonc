@@ -232,7 +232,7 @@ $(function() {
 	        }
 	      }
 	    });
-     $("#blockspammers").click(function(){	 
+     $(".blockspammers").click(function(){	 
     	 $( "#dialog-blockspammers" ).dialog( "open" );	 
      });
      
