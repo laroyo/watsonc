@@ -24,11 +24,12 @@ height: 2em;
 /* floating right inverts the order of the <li> ! */
 /*.ui-tabs .ui-tabs-nav li { float: right !important; }*/ 
 
-.ui-tabs .ui-tabs-nav { height: 2.35em; text-align: right; }
-.ui-tabs .ui-tabs-nav li { display: inline-block; float: none; margin:0; }
+.ui-tabs .ui-tabs-nav { height: 2.35em; text-align: right;  }
+.ui-tabs .ui-tabs-nav li { display: inline-block; float: none; margin:0; box-shadow: -5px -5px 5px #888; }
 
 .ui-tab-title { position: absolute; left: 20px; top: 15px; }
 
+.ui-widget-header {box-shadow: 0 0 5px 5px #888;}
 /* For slide show  */
 
  #galleria{ 
@@ -76,8 +77,8 @@ height: 2em;
 {
 	border: 1px solid #d9d6c4;
 	padding: 20px;
-	margin-left: 150px;
-	margin-right: 150px;
+	margin-left: 80px;
+	margin-right: 80px;
 	width: auto;
 	height: auto;
 	background: white;

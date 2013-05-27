@@ -108,6 +108,11 @@ function computePaymentPerHour() {
 			
 			<div id="tabs-1" class = "generaltab" >
 			</br>
+			<div class="generalborderframe"  >
+				<h1 align="center" >Module Introduction</h1>
+				</br></br> 
+			</div>
+			</br>
 			   <div id="galleria">
 	            <img src="graphs/crowd-truth/CT01.jpg">
 	            <img src="graphs/crowd-truth/CT02.jpg">
@@ -122,12 +127,6 @@ function computePaymentPerHour() {
 	            <img src="graphs/crowd-truth/CT11.jpg">
 	            <img src="graphs/crowd-truth/CT12.jpg">
 	        </div>
-	     
-	        </br>
-			<div class="generalborderframe"  >
-				<h1 align="center" >Module Introduction</h1>
-				</br></br> 
-			</div>
 			</br>
 			</div>
 			<!-- 
