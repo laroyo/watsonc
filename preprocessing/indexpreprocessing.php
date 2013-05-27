@@ -225,7 +225,7 @@ if ($textFilesAddr == "") {
 			$comment = $_POST['files_comment'];
 			$fileFilter = $filters[$keyFolder];
 
-			$query="INSERT INTO `one_filter_file`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `createdby`) 
+			$query="INSERT INTO `one_file_filter`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `created_by`) 
 	    	            VALUES ('".$fileid."','".$preprocFileId."','".$fileFilter."','".$comment."','".$_SERVER['REMOTE_USER']."')";
         		        mysql_query($query) or dieError("function: one_filter_file<br/>".$query."<br/>".mysql_error());
 		}
@@ -246,7 +246,7 @@ if ($textFilesAddr == "") {
 			$comment = $_POST['files_comment'];
 			$fileFilter = $filters[$keyFolder];
 
-			$query="INSERT INTO `one_filter_file`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `createdby`) 
+			$query="INSERT INTO `one_file_filter`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `created_by`) 
 	    	            VALUES ('".$fileid."','".$preprocFileId."','".$fileFilter."','".$comment."','".$_SERVER['REMOTE_USER']."')";
         		        mysql_query($query) or dieError("function: one_filter_file<br/>".$query."<br/>".mysql_error());
 		}
@@ -267,7 +267,7 @@ if ($textFilesAddr == "") {
 			$comment = $_POST['files_comment'];
 			$fileFilter = $filters[$keyFolder];
 
-			$query="INSERT INTO `one_filter_file`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `createdby`) 
+			$query="INSERT INTO `one_file_filter`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `created_by`) 
 	    	            VALUES ('".$fileid."','".$preprocFileId."','".$fileFilter."','".$comment."','".$_SERVER['REMOTE_USER']."')";
         		        mysql_query($query) or dieError("function: one_filter_file<br/>".$query."<br/>".mysql_error());
 		}
@@ -422,30 +422,31 @@ if(isset($_POST['noscause']) && strlen(trim($_POST['noscause'])) != 0) {
 	array_push($sentNo, $_POST["noscause"]);
 	array_push($filesNo, getRelationFileName($dirName, "cause"));
 }
-if(isset($_POST['nosdiagnose']) && strlen(trim($_POST['nosdiagnose'])) != 0) {
-	array_push($sentNo, $_POST["nosdiagnose"]);
-	array_push($filesNo, getRelationFileName($dirName, "diagnose"));
-}
-if(isset($_POST['noslocation']) && strlen(trim($_POST['noslocation'])) != 0) {
-	array_push($sentNo, $_POST["noslocation"]);
-	array_push($filesNo, getRelationFileName($dirName, "location"));
-}
-if(isset($_POST['nosprevent']) && strlen(trim($_POST['nosprevent'])) != 0) {
-	array_push($sentNo, $_POST["nosprevent"]);
-	array_push($filesNo, getRelationFileName($dirName, "prevent"));
-}
-if(isset($_POST['nostreat']) && strlen(trim($_POST['nostreat'])) != 0) {
-	array_push($sentNo, $_POST["nostreat"]);
-	array_push($filesNo, getRelationFileName($dirName, "treat"));
-}
 if(isset($_POST['noscontra']) && strlen(trim($_POST['noscontra'])) != 0) {
 	array_push($sentNo, $_POST["noscontra"]);
 	array_push($filesNo, getRelationFileName($dirName, "contra"));
+}
+if(isset($_POST['nosdiagnose']) && strlen(trim($_POST['nosdiagnose'])) != 0) {
+        array_push($sentNo, $_POST["nosdiagnose"]);
+        array_push($filesNo, getRelationFileName($dirName, "diagnose"));
+}
+if(isset($_POST['noslocation']) && strlen(trim($_POST['noslocation'])) != 0) {
+        array_push($sentNo, $_POST["noslocation"]);
+        array_push($filesNo, getRelationFileName($dirName, "location"));
+}
+if(isset($_POST['nosprevent']) && strlen(trim($_POST['nosprevent'])) != 0) {
+        array_push($sentNo, $_POST["nosprevent"]);
+        array_push($filesNo, getRelationFileName($dirName, "prevent"));
 }
 if(isset($_POST['nossymptom']) && strlen(trim($_POST['nossymptom'])) != 0) {
 	array_push($sentNo, $_POST["nossymptom"]);
 	array_push($filesNo, getRelationFileName($dirName, "symptom"));
 }
+if(isset($_POST['nostreat']) && strlen(trim($_POST['nostreat'])) != 0) {
+        array_push($sentNo, $_POST["nostreat"]);
+        array_push($filesNo, getRelationFileName($dirName, "treat"));
+}
+
 
 if (!is_dir($filesdir.'Experiments/'.$timestamp)) {
     	if (!mkdir($filesdir.'Experiments/'.$timestamp, 0777, true)) {
@@ -477,12 +478,9 @@ for ($i = 0; $i < count($sentNo); $i ++) {
 	$execCode .= $sentNo[$i]." ".$filesdir."AppliedFilters/".$timestamp."/".$appliedFilter."/".$filesNo[$i]." ";
 }
 
-echo $execCode;
 $result = shell_exec($execCode);
-echo $result."----";
 
 $storageCSV = $filesdir."Experiments/".$timestamp."/".$appliedFilter;
-echo $fileName;
 $fileid = storeCSVFile($fileName, $storageCSV);
 $batch_size = getLines($fileid) - 2;
 $filters = str_replace("-", ", ", $appliedFilter); 

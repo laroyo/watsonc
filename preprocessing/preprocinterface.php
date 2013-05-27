@@ -77,8 +77,8 @@ function checkForFilters3() {
 		<input type="text" id="nosdiagnose" name="nosdiagnose" size="2">  Diagnose <br />  
 		<input type="text" id="noslocation" name="noslocation" size="2">  Location <br />
 		<input type="text" id="nosprevent" name="nosprevent" size="2">  Prevent <br />
-		<input type="text" id="nostreat" name="nostreat" size="2">  Treat <br />
-		<input type="text" id="nossymptom" name="nossymptom" size="2">  Symptom <br /> 
+		<input type="text" id="nostreat" name="nostreat" size="2">  Symptom <br />
+		<input type="text" id="nossymptom" name="nossymptom" size="2">  Treat <br /> 
 
 <!--
 	Create the job file: <br />
