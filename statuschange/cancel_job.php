@@ -1,5 +1,10 @@
 <?php
+
 include_once '../includes/dbinfo.php';
+include_once '/wcs/crowdflower/extractinfo.php';  
+include_once '../includes/functions.php'; 
+
+
 $content_type = "application/json";
 $api_key = "c6b735ba497e64428c6c61b488759583298c2cf3";
 //$api_key = "b5e3b32b4d29d45c16dc09274e099f731237e35f";
@@ -40,10 +45,15 @@ if($response_array["state"] == "paused" || $response_array["state"] == "running"
 	$cancel_response = exec($cancel_job);
 	$cancel_response_array = json_decode($cancel_response);
 
+	
 	if (array_key_exists("success", $cancel_response_array)) {
 		echo "The job was canceled";
-    		//  update the database
-		$updateDB = mysql_query("Update history_table Set status = '$status' Where job_id = '$job_id' ") or mysql_error();
+		
+    //  get results file
+	//    getResults($job_id);
+    //  update the database
+    	$getruntime = updateRuntime($job_id);
+		$updateDB = mysql_query("Update history_table Set run_time = '$getruntime', status = '$status', status_change = 'disabled', checkbox_check = 'abled' Where job_id = '$job_id' ") or mysql_error();
 	}
 }
 else {

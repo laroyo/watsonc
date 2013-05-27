@@ -1,3 +1,45 @@
+/* Sticky footer */
+* {
+margin: 0;
+}
+html, body {
+background: #eceadf url(/wcs/plugins/jquery-ui/css/pepper-grinder/images/ui-bg_fine-grain_10_eceadf_60x60.png) 50% 50% repeat;
+height: 100%;
+}
+.wrapper {
+min-height: 100%;
+height: auto;
+margin: 0 auto -2em;
+}
+.footer, .push {
+height: 2em;
+}
+
+/* Remove the boarder of tabs  */
+.ui-widget-content { border: none;}
+
+/* Indicate title with tabs  */
+#tabs { position: relative; }
+
+/* floating right inverts the order of the <li> ! */
+/*.ui-tabs .ui-tabs-nav li { float: right !important; }*/ 
+
+.ui-tabs .ui-tabs-nav { height: 2.35em; text-align: right; }
+.ui-tabs .ui-tabs-nav li { display: inline-block; float: none; margin:0; }
+
+.ui-tab-title { position: absolute; left: 20px; top: 15px; }
+
+/* For slide show  */
+
+ #galleria{ 
+    margin-left: 120px;
+	margin-right: 120px;
+	width: 968px; 
+	height: 600px; 
+	background: #eceadf url(/wcs/plugins/jquery-ui/css/pepper-grinder/images/ui-bg_fine-grain_10_eceadf_60x60.png) 50% 50% repeat;
+	}
+
+
 .columnline {
 	color : red;
 }
@@ -7,9 +49,9 @@
 }
 
 .labelfield {
-	padding-left: 20px;
+	padding-left: 10px;
 	float: left;
-	width: 550px;
+	width: 480px;
 }
 
 .inputfield {
@@ -18,21 +60,60 @@
 }
 
 .textboxInput{
-	margin: 2px;
+	margin-top: 0.48px;
+	margin-bottom: 0.48px;
 	width: 375px;
 }
 
 .commentboxInput{
-	margin: 2px; 
+	margin-top: 0.48px;
+	margin-bottom: 0.48px;
 	width: 375px; 
 	height: 84px;
 }
 
-.borderframe {
-	border:2px double white;
-	padding: 10px;
+.generalborderframe, .borderframe, .sideframe
+{
+	border: 1px solid #d9d6c4;
+	padding: 20px;
+	margin-left: 150px;
+	margin-right: 150px;
 	width: auto;
 	height: auto;
+	background: white;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+	box-shadow: 0 0 5px 5px #888;
+}
+
+.borderframe {	
+	margin-left: 50px;
+	margin-right: 50px;	
+}
+
+.sideframe
+{
+	margin-left: 880px;
+	margin-right: 10px;
+	
+}
+
+.copyrightfooter
+{
+	font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;
+}
+
+img.center { display: block; margin-left: auto; margin-right: auto; }
+
+table.tablesorter
+{
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+	box-shadow: 0 0 5px 5px #888;
 }
 
 a[href].tdlinks {
@@ -43,6 +124,11 @@ a[href].tdlinks {
 	a[href].filelinks {
 	color: blue;
 	font: bold;	
+	}
+	
+	a[href].titlelinks {	
+   font: bold;	
+   TEXT-DECORATION: NONE;
 	}
 	
 	a[href].abled {
@@ -57,307 +143,55 @@ a[href].tdlinks {
 	}
 	
 	table#resultstable {
-	width: 60%;
+	width: auto;
 	
 	}
 textarea:focus, input:focus
 {
 background-color: #cbdfeb;   // #97bfd9
 }
-#smasize {
-	font-size: 80%;
+
+	
+.ui-tabs .generaltab {
+	
+	overflow-x: auto;
+	overflow-y: auto;
+}
+
+/*
+.ui-tabs .historytab {
+	width: auto;
+	overflow-x: block;
+	overflow-y: block;
+}
+
+
+.historytab .ui-tabs-nav  {
+margin: 0;
+padding: .2em .2em 0;
+width: 128%;
+}
+*/
+
+#scrollUp {
+	bottom: 20px;
+	right: 20px;
+	background: #C0C0C0;
+	color: #fff;
+	font-size: 12px;
+	font-family: sans-serif;
+	text-decoration: none;
+	opacity: .9;
+	padding: 10px 20px;
+	-webkit-border-radius: 16px;
+	-moz-border-radius: 16px;
+	border-radius: 16px;
+	-webkit-transition: background 200ms linear;
+	-moz-transition: background 200ms linear;
+	transition: background 200ms linear;
+	-webkit-backface-visibility: hidden;
+}
+	#scrollUp:hover {
+		background: #808080;
 	}
-	
-	
-	/* pager wrapper, div */
-.pager {
-  padding: 5px;
-}
-/* pager wrapper, in thead/tfoot */
-td.pager {
-  background-color: #e6eeee;
-}
-/* pager navigation arrows */
-.pager img {
-  vertical-align: middle;
-  margin-right: 2px;
-}
-/* pager output text */
-.pager .pagedisplay {
-  font-size: 11px;
-  padding: 0 5px 0 5px;
-  width: 50px;
-  text-align: center;
-}
 
-/*** loading ajax indeterminate progress indicator ***/
-#tablesorterPagerLoading {
-  background: rgba(255,255,255,0.8) url(icons/loading.gif) center center no-repeat;
-  position: absolute;
-  z-index: 1000;
-}
-
-/*** css used when "updateArrows" option is true ***/
-/* the pager itself gets a disabled class when the number of rows is less than the size */
-.pager.disabled {
-  display: none;
-}
-/* hide or fade out pager arrows when the first or last row is visible */
-.pager img.disabled {
-  /* visibility: hidden */
-  opacity: 0.5;
-  filter: alpha(opacity=50);
-}
-
-
-
-
-
-/*#target { padding: 5px; border: 1px solid #000; width:200px; float:right }*/
-
-/*td.cJobId{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}	
-td.cOrigin{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cJobTitle{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}		
-td.cCreatedDate{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}		
-td.cCreatedBy{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}	
-td.cNumberOfSentences{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}	
-td.cTypeofUnits{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}	
-td.cTemplate{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cMaxJudgmentPerWorker{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cUnitsPerAssignment{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cUnitsPerJob{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}	
-td.cJudgmentsPerUnit{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}	
-td.cJudgmentsPerJob{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cSecondsPerUnit{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}	
-td.cSecondsPerAssignment{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cPaymentPerUnit{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cPaymentPerAssignment{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cTotalPaymentPerUnit{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cTotalPaymentPerJob{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cPaymentPerHour{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cChannelUsed{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}		
-td.cChannelsPercentage{		width: auto; 
-
-display:block;
-overflow:hidden;
-height: 55px;
-
-}
-td.cComments{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cJobJudgmentsMade{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cJobCompletion{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cRunTime{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}	
-td.cAverageTimePerJob{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cMinTimePerJob{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cMaxTimePerJob{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cNumberFilteredSentences{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cTotalNumberofWorkers{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cNumberFilteredWorkers{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cStatus{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}	
-td.cActions{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-td.cJobIDLinktoOrigin{		width: 20em; 
-
-
-overflow:hidden;
-height: 30px;
-
-}
-.tablesorter-default {width: auto;}  */

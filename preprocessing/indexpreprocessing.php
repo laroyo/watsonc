@@ -32,7 +32,7 @@ function storeCSVFile($filefieldname, $storageFolder) {
         $mime_type = mime_content_type($storageFolder."/".$filefieldname);
         $filesize = filesize($storageFolder."/".$filefieldname);
         $query="INSERT INTO `file_storage`(`original_name`, `storage_path`, `mime_type`, `filesize`, `createdby`) 
-                VALUES ('".$original_name."','".$storage_path."','".$mime_type."',".$filesize.",'".$_SERVER['REMOTE_USER']."')";
+                VALUES ('".$original_name."','".$storage_path."','".$mime_type."','".$filesize."','".$_SERVER['REMOTE_USER']."')";
                 mysql_query($query) or dieError("function: storeCSVFile<br/>".$query."<br/>".mysql_error());
         return mysql_insert_id();
 }
@@ -46,6 +46,16 @@ function getFileRelation($fileName) {
 	}
 	return "none";
 }
+
+function getRelationFileName($dirName, $relationName) {
+	$filesFromDir = getAllFilesFromDirectory($dirName);
+	foreach($filesFromDir as $file) {
+		if(strpos($file, $relationName) !== false) {
+			return $file;
+		}
+	}
+	return null;
+} 
 
 function getAllFilesFromDirectory($dirName) {
 	$files = array();
@@ -215,7 +225,7 @@ if ($textFilesAddr == "") {
 			$comment = $_POST['files_comment'];
 			$fileFilter = $filters[$keyFolder];
 
-			$query="INSERT INTO `one_filter_file`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `createdby`) 
+			$query="INSERT INTO `one_file_filter`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `created_by`) 
 	    	            VALUES ('".$fileid."','".$preprocFileId."','".$fileFilter."','".$comment."','".$_SERVER['REMOTE_USER']."')";
         		        mysql_query($query) or dieError("function: one_filter_file<br/>".$query."<br/>".mysql_error());
 		}
@@ -236,7 +246,7 @@ if ($textFilesAddr == "") {
 			$comment = $_POST['files_comment'];
 			$fileFilter = $filters[$keyFolder];
 
-			$query="INSERT INTO `one_filter_file`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `createdby`) 
+			$query="INSERT INTO `one_file_filter`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `created_by`) 
 	    	            VALUES ('".$fileid."','".$preprocFileId."','".$fileFilter."','".$comment."','".$_SERVER['REMOTE_USER']."')";
         		        mysql_query($query) or dieError("function: one_filter_file<br/>".$query."<br/>".mysql_error());
 		}
@@ -257,7 +267,7 @@ if ($textFilesAddr == "") {
 			$comment = $_POST['files_comment'];
 			$fileFilter = $filters[$keyFolder];
 
-			$query="INSERT INTO `one_filter_file`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `createdby`) 
+			$query="INSERT INTO `one_file_filter`(`file_id`, `preprocessing_file_id`, `filter`, `comment`, `created_by`) 
 	    	            VALUES ('".$fileid."','".$preprocFileId."','".$fileFilter."','".$comment."','".$_SERVER['REMOTE_USER']."')";
         		        mysql_query($query) or dieError("function: one_filter_file<br/>".$query."<br/>".mysql_error());
 		}
@@ -405,7 +415,38 @@ if (!is_dir($filesdir."AppliedFilters/".$timestamp."/".$appliedFilter)) {
 }
 
 // create the job files
-$noSentences = $_POST["nosentences"];
+$dirName = $filesdir."AppliedFilters/".$timestamp."/".$appliedFilter;
+$sentNo = array();
+$filesNo = array();
+if(isset($_POST['noscause']) && strlen(trim($_POST['noscause'])) != 0) {
+	array_push($sentNo, $_POST["noscause"]);
+	array_push($filesNo, getRelationFileName($dirName, "cause"));
+}
+if(isset($_POST['noscontra']) && strlen(trim($_POST['noscontra'])) != 0) {
+	array_push($sentNo, $_POST["noscontra"]);
+	array_push($filesNo, getRelationFileName($dirName, "contra"));
+}
+if(isset($_POST['nosdiagnose']) && strlen(trim($_POST['nosdiagnose'])) != 0) {
+        array_push($sentNo, $_POST["nosdiagnose"]);
+        array_push($filesNo, getRelationFileName($dirName, "diagnose"));
+}
+if(isset($_POST['noslocation']) && strlen(trim($_POST['noslocation'])) != 0) {
+        array_push($sentNo, $_POST["noslocation"]);
+        array_push($filesNo, getRelationFileName($dirName, "location"));
+}
+if(isset($_POST['nosprevent']) && strlen(trim($_POST['nosprevent'])) != 0) {
+        array_push($sentNo, $_POST["nosprevent"]);
+        array_push($filesNo, getRelationFileName($dirName, "prevent"));
+}
+if(isset($_POST['nossymptom']) && strlen(trim($_POST['nossymptom'])) != 0) {
+	array_push($sentNo, $_POST["nossymptom"]);
+	array_push($filesNo, getRelationFileName($dirName, "symptom"));
+}
+if(isset($_POST['nostreat']) && strlen(trim($_POST['nostreat'])) != 0) {
+        array_push($sentNo, $_POST["nostreat"]);
+        array_push($filesNo, getRelationFileName($dirName, "treat"));
+}
+
 
 if (!is_dir($filesdir.'Experiments/'.$timestamp)) {
     	if (!mkdir($filesdir.'Experiments/'.$timestamp, 0777, true)) {
@@ -431,9 +472,13 @@ foreach (glob($filesdir."Experiments/".$timestamp."/".$appliedFilter."/*.csv") a
 
 $batchIndex = $index + 1;
 $fileName = $timestampJob."_".$timestamp."_".$appliedFilter."_batch".$batchIndex.".csv";
+$execCode = "/usr/bin/java -jar JobFileCreation.jar ".$filesdir."Experiments/".$timestamp."/".$appliedFilter."/".$fileName." "; 
 
+for ($i = 0; $i < count($sentNo); $i ++) {
+	$execCode .= $sentNo[$i]." ".$filesdir."AppliedFilters/".$timestamp."/".$appliedFilter."/".$filesNo[$i]." ";
+}
 
-shell_exec("java -jar ".$jardir."JobFileCreation.jar ".$noSentences." ".$filesdir."AppliedFilters/".$timestamp."/".$appliedFilter." ".$filesdir."Experiments/".$timestamp."/".$appliedFilter."/".$fileName);
+$result = shell_exec($execCode);
 
 $storageCSV = $filesdir."Experiments/".$timestamp."/".$appliedFilter;
 $fileid = storeCSVFile($fileName, $storageCSV);
@@ -459,7 +504,7 @@ if (file_exists($file)) {
     flush();
     readfile($file);
     exit;
-} 
+}
 
 //header("Location: preprocinterface.php");
 //header("Location: ../index.php");

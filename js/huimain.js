@@ -23,7 +23,81 @@
 	 
  }
  
+ 
+ $(function () {
+	    $.scrollUp();
+	});
+ 
+ 
+ (function($) {
+
+		$.scrollUp = function (options) {
+
+			// Defaults
+			var defaults = {
+				scrollName: 'scrollUp', // Element ID
+				topDistance: 80, // Distance from top before showing element (px)
+				topSpeed: 300, // Speed back to top (ms)
+				animation: 'fade', // Fade, slide, none
+				animationInSpeed: 200, // Animation in speed (ms)
+				animationOutSpeed: 200, // Animation out speed (ms)
+				scrollText: 'Back to top', // Text for element
+				scrollImg: false, // Set true to use image
+				activeOverlay: false // Set CSS color to display scrollUp active point, e.g '#00FFFF'
+			};
+
+			var o = $.extend({}, defaults, options),
+				scrollId = '#' + o.scrollName;
+
+			// Create element
+			$('<a/>', {
+				id: o.scrollName,
+				href: '#top',
+			//  title: o.scrollText
+			}).appendTo('body');
+
+			// If not using an image display text
+			if (!o.scrollImg) {
+				$(scrollId).text(o.scrollText);
+			}
+
+			// Minium CSS to make the magic happen
+			$(scrollId).css({'display':'none','position': 'fixed','z-index': '2147483647'});
+
+			// Active point overlay
+			if (o.activeOverlay) {
+				$("body").append("<div id='"+ o.scrollName +"-active'></div>");
+				$(scrollId+"-active").css({ 'position': 'absolute', 'top': o.topDistance+'px', 'width': '100%', 'border-top': '1px dotted '+o.activeOverlay, 'z-index': '2147483647' });
+			}
+
+			// Scroll function
+			$(window).scroll(function(){	
+				switch (o.animation) {
+					case "fade":
+						$( ($(window).scrollTop() > o.topDistance) ? $(scrollId).fadeIn(o.animationInSpeed) : $(scrollId).fadeOut(o.animationOutSpeed) );
+						break;
+					case "slide":
+						$( ($(window).scrollTop() > o.topDistance) ? $(scrollId).slideDown(o.animationInSpeed) : $(scrollId).slideUp(o.animationOutSpeed) );
+						break;
+					default:
+						$( ($(window).scrollTop() > o.topDistance) ? $(scrollId).show(0) : $(scrollId).hide(0) );
+				}
+			});
+
+			// To the top
+			$(scrollId).click( function(event) {
+				$('html, body').animate({scrollTop:0}, o.topSpeed);
+				event.preventDefault();
+			});
+
+		};
+	})(jQuery);
+
+ 
+ 
 $(document).ready(function() {
+	
+	
 	$("#statisticsarea").load("/wcs/dataproc/genAnalysisFiles.php");
 	$("#preprocessarea").load("/wcs/preprocessing/preprocinterface.php");
 		
@@ -100,10 +174,8 @@ $(document).ready(function() {
     }
     });
     $( "#tabs" ).tabs();	
+    
 });
-
-
-
 
 
 	
@@ -117,10 +189,18 @@ $(function() {
 	      buttons: {
 	          "Confirm": function() {
 	          $( this ).dialog( "close" );
+	          if ($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(1, 2).text().length == 0 )
+	        	  {
+	        	      alert("Please select a file!");
+	        	      $( "#dialog-confirm" ).dialog( "open" );
+	        	  }
+	          else
+	        	  {
 	          alert($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(1, 2).text() + ' is selected!');	
 	          $( "#fileid" ).val($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(0, 1).text());
 	          $("#sentences" ).val($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(3, 4).text());
 	          $("label[for='uploadedfile']").text($('input:radio[name=radiofile]:checked', this).closest('tr').children().slice(1, 2).text());  
+	        	  }
 	          },
 	        Cancel: function() {
 	          $( this ).dialog( "close" );
@@ -128,7 +208,7 @@ $(function() {
 	      }
 	    });
    $( "#uploadedfile" ).click(function() {
-     $( "#dialog-confirm" ).dialog( "open" );
+   $( "#dialog-confirm" ).dialog( "open" );
    });
    
    
@@ -142,7 +222,7 @@ $(function() {
      arr.push(this.value);    
  });    
                      
- $("#testjobidarray").val(arr);
+// $("#testjobidarray").val(arr);
  
 /* var xmlRequest = $.ajax({
 	   	   type: 'POST',
@@ -236,10 +316,6 @@ if (Statistics) {
 	  
 	}
 
- $('#toresults').click(function() {  
-	 $("#tabs").tabs('select',3);
-	 return false;
-});
  
  
 $(document).ready(function() {
@@ -263,15 +339,20 @@ $(document).ready(function() {
 	
 	
 	$("#hidecolumns").multiselect({
-		header : "Hide/Show Columns",
+
+		
 		click : function(event, ui) {
+			
 			if (ui.checked) {
 				$("." + ui.value).show();
 			} else {
 				$("." + ui.value).hide();
-			}
-		}
+			}	
+		
+	  }
+	
 	});
+	
     $("#hidecolumns").multiselect("checkAll");
     
     $('td.cChannelsPercentage').load(function() {
@@ -281,6 +362,19 @@ $(document).ready(function() {
         }
     });
     
+    $('.ui-multiselect-all').click(function() {  
+   	 $("#hidecolumns > option").each(function() {
+   			$("." + this.value).show();
+   		});
+   });
+    
+    
+    $('.ui-multiselect-none').click(function() {  
+   	 $("#hidecolumns > option").each(function() {
+   			$("." + this.value).hide();
+   		});
+   });
+    
 });
 	
 	
@@ -289,75 +383,79 @@ $(function() {
 	
 	  // call the tablesorter plugin
 	  $("table.tablesorter").tablesorter({
-	    theme: 'default',
+		    theme: 'default',
 
-	    // hidden filter input/selects will resize the columns, so try to minimize the change
-	    widthFixed : true,
+		    // hidden filter input/selects will resize the columns, so try to minimize the change
+		    widthFixed : true,
 
-	    showProcessing: true,
-	    headerTemplate : '{content} {icon}',
-	    // initialize zebra striping and filter widgets
-	    widgets: [ "zebra", "filter", "stickyHeaders", "resizable", 'col-reorder'],
-	    
+		    showProcessing: true,
+		    headerTemplate : '{content} {icon}',
+		    // initialize zebra striping and filter widgets
+		    widgets: [ "zebra", "filter", "stickyHeaders", "resizable", 'col-reorder'],
+		    
 
-	    // headers: { 5: { sorter: false, filter: false } },
+		    // headers: { 5: { sorter: false, filter: false } },
 
-	    widgetOptions : {
+		    widgetOptions : {
+		    	
+		      zebra: [
+			              "ui-widget-content even",
+			              "ui-state-default odd"
+			         ],
+			 
+			         
+		      // If there are child rows in the table (rows with class name from "cssChildRow" option)
+		      // and this option is true and a match is found anywhere in the child row, then it will make that row
+		      // visible; default is false
+		      filter_childRows : true,
 
-	      // If there are child rows in the table (rows with class name from "cssChildRow" option)
-	      // and this option is true and a match is found anywhere in the child row, then it will make that row
-	      // visible; default is false
-	      filter_childRows : true,
+		      // if true, a filter will be added to the top of each table column;
+		      // disabled by using -> headers: { 1: { filter: false } } OR add class="filter-false"
+		      // if you set this to false, make sure you perform a search using the second method below
+		      filter_columnFilters : true,
+		     
+		      // css class applied to the table row containing the filters & the inputs within that row
+		      filter_cssFilter : 'tablesorter-filter',
 
-	      // if true, a filter will be added to the top of each table column;
-	      // disabled by using -> headers: { 1: { filter: false } } OR add class="filter-false"
-	      // if you set this to false, make sure you perform a search using the second method below
-	      filter_columnFilters : true,
-	     
-	      // css class applied to the table row containing the filters & the inputs within that row
-	      filter_cssFilter : 'tablesorter-filter',
+		      // add custom filter functions using this option
+		      // see the filter widget custom demo for more specifics on how to use this option
+		      filter_functions : null,
 
-	      // add custom filter functions using this option
-	      // see the filter widget custom demo for more specifics on how to use this option
-	      filter_functions : null,
+		      // if true, filters are collapsed initially, but can be revealed by hovering over the grey bar immediately
+		      // below the header row. Additionally, tabbing through the document will open the filter row when an input gets focus
+		      filter_hideFilters : false,
 
-	      // if true, filters are collapsed initially, but can be revealed by hovering over the grey bar immediately
-	      // below the header row. Additionally, tabbing through the document will open the filter row when an input gets focus
-	      filter_hideFilters : false,
+		      // Set this option to false to make the searches case sensitive
+		      filter_ignoreCase : true,
 
-	      // Set this option to false to make the searches case sensitive
-	      filter_ignoreCase : true,
+		      // jQuery selector string of an element used to reset the filters
+		      filter_reset : 'button.reset',
 
-	      // jQuery selector string of an element used to reset the filters
-	      filter_reset : 'button.reset',
+		      // Delay in milliseconds before the filter widget starts searching; This option prevents searching for
+		      // every character while typing and should make searching large tables faster.
+		      filter_searchDelay : 300,
 
-	      // Delay in milliseconds before the filter widget starts searching; This option prevents searching for
-	      // every character while typing and should make searching large tables faster.
-	      filter_searchDelay : 300,
+		      // Set this option to true to use the filter to find text from the start of the column
+		      // So typing in "a" will find "albert" but not "frank", both have a's; default is false
+		      filter_startsWith : false,
 
-	      // Set this option to true to use the filter to find text from the start of the column
-	      // So typing in "a" will find "albert" but not "frank", both have a's; default is false
-	      filter_startsWith : false,
+		      // Filter using parsed content for ALL columns
+		      // be careful on using this on date columns as the date is parsed and stored as time in seconds
+		      filter_useParsedData : false,
+		      
+		      resizable_addLastColumn : true,
+		      
+		      stickyHeaders : 'tablesorter-stickyHeader',
+		      
+		     
+		    }
 
-	      // Filter using parsed content for ALL columns
-	      // be careful on using this on date columns as the date is parsed and stored as time in seconds
-	      filter_useParsedData : false,
-	      
-	      resizable_addLastColumn : true,
-	      
-	      stickyHeaders : 'tablesorter-stickyHeader',
-	      
-	      scroller_height : 200,
-	      scroller_barWidth : 17,
-	      scroller_jumpToHeader: true,
-	      scroller_idPrefix : 's_'
-	      
-	      
-
-	    }
-
-	  });
+		  });
 	  
+	  
+	  
+	
+		
 	  addClassesToFilterRow();
 	  
 

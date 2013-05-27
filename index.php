@@ -11,43 +11,40 @@ include_once 'includes/functions.php';
 <title>Crowd-Watson</title>
 <!-- Style sheets  -->
 <link href="plugins/jquery-ui/css/pepper-grinder/jquery-ui-1.10.2.custom.css" rel="stylesheet">
-<link href="plugins/jquery.layout-latest/css/layout-default-latest.css" rel="stylesheet">
 <link href="plugins/Mottie-tablesorter/css/theme.default.css" rel="stylesheet" type="text/css" />	
 <link href="plugins/multiselect/css/jquery.multiselect.css" rel="stylesheet" type="text/css" />	
-<link href="plugins/jquery.fixheadertable-2.0/css/base.css" rel="stylesheet" type="text/css" />	
+
 <link href="css/huimain.css" rel="stylesheet">
 <!-- js libraries  -->
 <script src="plugins/jquery-ui/js/jquery-1.9.1.js"></script>
 <script src="plugins/jquery-ui/js/jquery-ui-1.10.2.custom.js"></script>
-<script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.min.js" type="text/javascript"></script>
-<script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.widgets.min.js" type="text/javascript"></script>
+<script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.js" type="text/javascript"></script>
+<script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.widgets.js" type="text/javascript"></script>
 <script src="plugins/multiselect/js/jquery.multiselect.js" type="text/javascript"></script>
-<script src="plugins/multiselect/js/jquery.multiselect.min.js" type="text/javascript"></script>
-<script src="plugins/jquery.layout-latest/js/jquery.layout-latest.js" type="text/javascript"></script>
-<script src="plugins/jquery.layout-latest/js/jquery.layout-latest.min.js" type="text/javascript"></script>
-<script src="plugins/jquery.fixheadertable-2.0/javascript/jquery.fixheadertable.min.js" type="text/javascript"></script>
-<script src="plugins/jquery.fixheadertable-2.0/javascript/jquery.fixheadertable.js" type="text/javascript"></script>
+<script src="plugins/galleria/galleria-1.2.9.min.js" type="text/javascript"></script>
+
+
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
+
+
+
+
+
 $(document).ready(function() {
-    $('.historytable').fixheadertable({
-    	 caption  : 'History', 
-    	    height   : 300, 
-    	    width    : 1180, 
-    	    minWidth : 1300,
-    	    colratio : [65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65],
-    	  //  rowratio : [65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65],
-    	    zebra       : true,
-    	   // sortable    : true,
-    	   // sortedColId : 3, 
-    	   // sortType    : ['integer', 'string', 'string', 'string', 'string', 'date'],
-    	   // dateFormat  : 'm/d/Y',
-    	    pager       : true,
-    	    rowsPerPage : 10,
-    	   // resizeCol	: true
-    });
-});
+	
+	 Galleria.loadTheme('plugins/galleria/themes/classic/galleria.classic.min.js');
+     Galleria.run('#galleria');
+	
+	
+	
+	var $tabs=$('#tabs').tabs({"fit":true})
+
+	$(window).resize(function() {
+		$('#tabs').tabs('resize')
+	}) });
+
 
 function computePayment()
 {
@@ -94,28 +91,48 @@ function computePaymentPerHour() {
 
 </head>
 <body>
-	<div id="content">
-		<div id="tabs" class="ui-layout-center">
+	<div class="wrapper" >
+		<div id="tabs">
+		<h3 class="ui-tab-title"><a href ="http://www.slideshare.net/laroyo/websci2013-harnessing-disagreement-in-crowdsourcing" target="_blank" class = 'titlelinks' title = "WebSci2013 Harnessing Disagreement in Crowdsourcing" >Crowd-Watson</a></h3>
 			<ul>
 				<li><a href="#tabs-1" >Home</a></li>
 			   <!-- <li><a href="#tabs-2">Configurate Raw</a></li> -->
-			    <li><a href="#tabs-3">Process Input</a></li>
+			    <li><a href="#tabs-3">Input</a></li>
 				<li><a href="#tabs-4" >Jobs</a></li>
 				<li><a href="#tabs-5" >History</a></li>
 				<li><a href="#tabs-6" >Results</a></li>
+				<li><a href="#tabs-7" >About</a></li>
 			</ul>
 			
 			
-			 <DIV class="ui-layout-content">
-			<div id="tabs-1" >
-				<h1>Crowd-Watson</h1>
-				<br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing" target="_blank" ><img
-					src="graphs/crowdsourcing.jpg" alt="No show" title = "What is Crowdsourcing?" /></a>
-			</div>
 			
+			<div id="tabs-1" class = "generaltab" >
+			</br>
+			   <div id="galleria">
+	            <img src="graphs/crowd-truth/CT01.jpg">
+	            <img src="graphs/crowd-truth/CT02.jpg">
+	            <img src="graphs/crowd-truth/CT03.jpg">
+	            <img src="graphs/crowd-truth/CT04.jpg">
+	            <img src="graphs/crowd-truth/CT05.jpg">
+	            <img src="graphs/crowd-truth/CT06.jpg">
+	            <img src="graphs/crowd-truth/CT07.jpg">
+	            <img src="graphs/crowd-truth/CT08.jpg">
+	            <img src="graphs/crowd-truth/CT09.jpg">
+	            <img src="graphs/crowd-truth/CT10.jpg">
+	            <img src="graphs/crowd-truth/CT11.jpg">
+	            <img src="graphs/crowd-truth/CT12.jpg">
+	        </div>
+	     
+	        </br>
+			<div class="generalborderframe"  >
+				<h1 align="center" >Module Introduction</h1>
+				</br></br> 
+			</div>
+			</br>
+			</div>
 			<!-- 
 			
-			<div id="tabs-2">
+			<div id="tabs-2" class = "generaltab" >
 				<div id="accordion">
   <h5>CrowdFlower</h5>
   <div id="tabs-Raw">	
@@ -149,24 +166,45 @@ function computePaymentPerHour() {
 			 -->
 			
 			
-			<div id="tabs-3">
-	  <div id="accordion">			
+			<div id="tabs-3" class = "generaltab" >
+			
+	  <div id="accordion">	
+	 
   <h5>CrowdFlower</h5>
 <div id="tabs-ProcessInput">
 				<div id="preprocessarea" class="borderframe">
 				</div>
 			</div>
 			<h5>Games</h5>
-  <div>
-    <p>Pending</p>
-  </div>
+			<div id="tabs-Raw">	
+			<form enctype="multipart/form-data" action="services/uploadRaw.php" method="POST">
+				<div class="borderframe"  >
+					<div class="labelfield">Choose a RAW file to upload:</div>
+					<div class="inputfield">
+						<input name="rawuploadedfile" type="file" />
+					</div>
+					<div class="labelfield">Seed releation</div>
+					<div class="inputfield">
+						<input type="text" name="title" class="textboxInput" />
+					</div>
+					<div class="labelfield" >Comments:</div>
+					<div class="inputfield"><input type="text" name="raw_comment" class = 
+                               "commentboxInput"/></div>
+                    <div class="labelfield">&nbsp;</div>
+					<div class="inputfield">
+						<input type="submit" value="Submit"
+							title="Click Submit to upload raw file" />
+					</div>
+					</div>
+				</form>
+				</div>
 			</div>
-
+			</br>
   </div>
   
   
   
-			<div id="tabs-4">
+			<div id="tabs-4" class = "generaltab" >
 			<div id="accordion">
 
   <h5>CrowdFlower</h5>
@@ -232,37 +270,37 @@ echo "</table>";
 								</div>
 								<div class="labelfield">Job title:</div>
 								<div class="inputfield">
-									<input type="text" name="title"> <br />
+									<input type="text" class = "textboxInput" name="title"> <br />
 								</div>
 
 								<div class="labelfield">Judgments per unit:</div>
 								<div class="inputfield">
-									<input type="text" name="judgments_per_unit"
+									<input type="text" class = "textboxInput" name="judgments_per_unit"
 										id="judgments_per_unit" oninput="computePayment()"> <br />
 								</div>
 
 								<div class="labelfield">Maxim judgments per worker:</div>
 								<div class="inputfield">
-									<input type="text" name="max_judgments_per_worker"> <br />
+									<input type="text" class = "textboxInput" name="max_judgments_per_worker"> <br />
 								</div>
 
 								<div class="labelfield">Units per assignment (CF: Units per
 									page):</div>
 								<div class="inputfield">
-									<input type="text" name="units_per_assignment"
+									<input type="text" class = "textboxInput" name="units_per_assignment"
 										oninput="computePayment()" id="units_per_assignment"> <br />
 								</div>
 
 								<div class="labelfield">Payment per assignment (CF: Payment per
 									page) (cents):</div>
 								<div class="inputfield">
-									<input type="text" name="payment" oninput="computePayment()"
+									<input type="text" class = "textboxInput" name="payment" oninput="computePayment()"
 										id="payment"> <br />
 								</div>
 
 								<div class="labelfield">Seconds per unit:</div>
 								<div class="inputfield">
-									<input type="text" name="seconds_per_unit"
+									<input type="text" class = "textboxInput" name="seconds_per_unit"
 										id="seconds_per_unit" oninput="computeTime()"> <br />
 								</div>
 
@@ -276,7 +314,7 @@ echo "</table>";
 								<div class="inputfield">
 									<input type="radio" name="template" value="t1" checked>
 
-									Relations with definitions and with extra questions required <br />
+									Relations with definitions and extra questions required <br />
 								</div>
 
 								<div class="labelfield">&nbsp;</div>
@@ -288,7 +326,7 @@ echo "</table>";
 								<div class="labelfield">&nbsp;</div>
 								<div class="inputfield">
 									<input type="radio" name="template" value="t3"> Relations
-									without definitions but with extra questions required <br />
+									without definitions and extra questions required <br />
 								</div>
 
 								<div class="labelfield">&nbsp;</div>
@@ -318,23 +356,23 @@ echo "</table>";
 
 								<div class="labelfield">Payment per sentence (dollar):</div>
 								<div class="inputfield">
-									<input type="text" name="payment_per_sentence"
+									<input type="text" class = "textboxInput" name="payment_per_sentence"
 										id="payment_per_sentence"> <br />
 								</div>
 								<div class="labelfield">Payment per job (dollar):</div>
 								<div class="inputfield">
-									<input type="text" name="payment_per_job" id="payment_per_job">
+									<input type="text" class = "textboxInput" name="payment_per_job" id="payment_per_job">
 									<br />
 								</div>
 								<div class="labelfield">Seconds per assignment:</div>
 								<div class="inputfield">
-									<input type="text" name="seconds_per_assignment"
+									<input type="text" class = "textboxInput" name="seconds_per_assignment"
 										id="seconds_per_assignment"><br />
 								</div>
 
 								<div class="labelfield">Payment per hour:</div>
 								<div class="inputfield">
-									<input type="text" name="payment_per_hour"
+									<input type="text" class = "textboxInput" name="payment_per_hour"
 										id="payment_per_hour"> <br />
 								</div>
 							</div>
@@ -345,14 +383,12 @@ echo "</table>";
     <p>Pending</p>
   </div>
   </div>
+  </br>
   </div>
 			
 		
 			
-			<div id="tabs-5">
-			<div id="no-accordion">
-
-  <!--<h5>CrowdFlower</h5>-->
+			<div id="tabs-5" class = "historytab" >
 <div>
 				
 				<?php 	
@@ -383,11 +419,11 @@ echo "</table>";
              ?>
 				
 				
-<!--  <button class="search" data-filter-column="10" data-filter-text="2?%">Saved Search</button> (search the Discount column for "2?%") -->
+<!--  <button class="search" data-filter-column="10" data-filter-text="2?%">Saved Filters</button> (search the Discount column for "2?%") -->
   <button class="reset" title = "Click to clear all the filter options" >Reset Filters</button> <!-- targetted by the "filter_reset" option -->
-  <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JobIDs" >Analyze</button> 
-<select id="hidecolumns" name="hidecolumns" multiple="multiple" title = "to Hide/Show Columns">
-<option value="cJobId">Job ID (Batch File)</option>
+  <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JOB IDs" >Analyze</button> 
+<select id="hidecolumns" name="hidecolumns" multiple="multiple" title = "Click to hide/show columns">
+<!--<option value="cJobId">Job ID (Batch File)</option>-->
 <option value="cOrigin">Origin</option>
 <!--<option value="cJobTitle">Job Title</option>-->
 <option value="cCreatedDate">Created Date</option>
@@ -427,12 +463,12 @@ echo "</table>";
   <br>
 <?php
 $history = mysql_query("SELECT * FROM  `history_table` ORDER BY created_date DESC");
-//echo "<div id='testing'>";
+echo "<div id='historytableContainer'>";
 echo "<table id='historytable' class='tablesorter'>";
 echo "<thead>"; //thead tag is required for using tablesorter
 echo "<tr>";
 //echo "<th  ><input type='checkbox' id='checkboxjob' name ='job_ids[]'/>All</th>";
-echo "<th class = 'filter-false' ></th>";
+echo "<th class = 'filter-false sorter-false' ></th>";
 echo "<th title = 'Job ID - Click to download Batch File' class='cJobId'>JobID</th>";
 echo "<th title = 'Origin' class='cOrigin'>Orig</th>";
 //echo "<th title = 'Job Title' class='cJobTitle'>JT</th>";
@@ -478,11 +514,11 @@ while($row = mysql_fetch_array($history)){
         echo "<td style ='font-size: 80%' class='cJobId' title = '$job_title' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
 		echo "<td style ='font-size: 80%' class='cOrigin'>$origin</td>";
   //    echo "<td style ='font-size: 80%' class='cJobTitle' title = '$job_title' >".substr($job_title,0, 6)."</td>";
-        echo "<td style ='font-size: 80%' class='cCreatedDate' title = '$created_date' >".substr($created_date,2, 8)."</td>";
-        echo "<td style ='font-size: 80%' class='cCreatedBy'>$created_by</td>";
-        echo "<td style ='font-size: 80%' class='cNumberOfSentences'>$nr_sentences_file</td>";
-        echo "<td style ='font-size: 80%' class='cTypeofUnits' title = '$type_of_units' >".substr($type_of_units,0, 6)."</td>";
-        echo "<td style ='font-size: 80%' class='cTemplate' title = '$template_info' >$template</td>";
+	    echo "<td style ='font-size: 80%' class='cCreatedDate' title = '$created_date' >".substr($created_date,2, 8)."</td>";
+	    echo "<td style ='font-size: 80%' class='cCreatedBy'>$created_by</td>";
+	    echo "<td style ='font-size: 80%' class='cNumberOfSentences'>$nr_sentences_file</td>";
+	    echo "<td style ='font-size: 80%' class='cTypeofUnits' title = '$type_of_units' >".substr($type_of_units,0, 6)."</td>";
+	    echo "<td style ='font-size: 80%' class='cTemplate' title = '$template_info' >$template</td>";
         echo "<td style ='font-size: 80%' class='cMaxJudgmentPerWorker'>$max_judgments_per_worker</td>";
         echo "<td style ='font-size: 80%' class='cUnitsPerAssignment'>$units_per_assignment</td>";
         echo "<td style ='font-size: 80%' class='cUnitsPerJob'>$units_per_job</td>";
@@ -507,7 +543,7 @@ while($row = mysql_fetch_array($history)){
 		echo "<td style ='font-size: 80%' class='cNumberFilteredSentences'>$no_filtered_sentences</td>";
 		echo "<td style ='font-size: 80%' class='cTotalNumberofWorkers'>$no_workers</td>";
 		echo "<td style ='font-size: 80%' class='cNumberFilteredWorkers'>$no_filtered_workers</td>";
-        echo "<td style ='font-size: 80%' class='cStatus'><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$resultsfile_id' class = '$checkbox_check' >$status</a></td>";
+        echo "<td style ='font-size: 80%' class='cStatus' title = '$job_id' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$resultsfile_id' class = '$checkbox_check' >$status</a></td>";
         echo "<td style ='font-size: 80%' class='cActions' title = '$job_id' >
         <select $status_change class= 'cActions changeStatus'>
         <option value='ChangeStatus'>-Change-</option>
@@ -522,17 +558,17 @@ while($row = mysql_fetch_array($history)){
 
 echo "</tbody>";
 echo "</table>";
-//echo "</div>";
+echo "</div>";
 ?>
 			</div>
 
 
-</div>
+			</br>
   </div>
 			
 			
 			
-				<div id="tabs-6">
+				<div id="tabs-6" class = "generaltab" >
 				<div id="accordion">
 
   <h5>CrowdFlower</h5>
@@ -599,9 +635,76 @@ while($row = mysql_fetch_array($results)){
     <p>Pending</p>
   </div>
   </div>
+  </br>
   </div>
-  </DIV>
-		</div>
+  
+  
+  <div id="tabs-7" class = "generaltab" >
+  </br>
+	<div class="generalborderframe"  >
+	
+	<a href="http://sciencetoprofitsblog.com/2012/02/15/second-opinions-ibm-watson-crowdsourcing/" target="_blank" ><img
+	src="graphs/icon-watson.jpg" alt="No show" title = "Crowdsourcing for Watson" style="width: 12%; height: 12%"  /></a>
+	
+	
+	<a href="http://www.ibm.com/us/en/" target="_blank" ><img
+	src="graphs/IBM.jpg" alt="No show" title = "IBM"  style="width: 12%; height: 12%" /></a>
+	
+	<a href="http://www.vu.nl/en/index.asp" target="_blank" ><img
+		src="graphs/VU.jpg" alt="No show" title = "VU University Amsterdam"  style="width: 21%; height: 21%" /></a>
+		</br>
+		</br>
+	<p>This project is a collaboration between the VU University Amsterdam and IBM Research, NY.
+	</br>
+	</br>
+	Principle investigators:
+		</br>
+	
+	<a href="http://www.cs.vu.nl/~laroyo/" target="_blank" title = "Professor in the Computer Science department of VU University Amsterdam" class = "filelinks" >Lora Aroyo</a>, VU University Amsterdam	
+	</br>
+	<a href="http://researcher.watson.ibm.com/researcher/view.php?person=us-welty" target="_blank" title = "Research Scientist at the IBM T.J. Watson Research Center in New York" class = "filelinks" >Chris Welty</a>, IBM Research, NY
+	</br>
+	</br>
+
+	Project members:
+		</br>
+	<a href="http://nl.linkedin.com/in/dumitracheanca/" target="_blank" class = "filelinks" >Anca Dumitrache</a>
+	</br>
+	<a href="https://plus.google.com/u/0/106755161022646926513/posts" target="_blank" class = "filelinks" >Guillermo Soberon Casado</a>
+	</br>
+	<a href="http://nl.linkedin.com/pub/hui-lin/53/92/b5/" target="_blank" class = "filelinks" >Hui Lin</a>
+	</br>
+	<a href="http://nl.linkedin.com/pub/oana-inel/5a/99/711/" target="_blank" class = "filelinks" >Oana Inel</a>
+	</br>
+	<a href="http://nl.linkedin.com/pub/manfred-overmeen/0/445/567/" title = "Senior IT Specialist at IBM Nederland BV" target="_blank" class = "filelinks" >Manfred Overmeen</a>, IBM Nederland BV	
+	</br>
+	<a href="http://nl.linkedin.com/in/rsips/" target="_blank" title = "University Relations Manager at IBM Nederland BV" class = "filelinks" >Robert-Jan Sips</a>, IBM Nederland BV
+	</br>
+	</br>
+	Want to join?
+			</br>
+			If you are interested in a MSc, MSc or a PhD project in this context, send you CV and motivation to <a href="mailto:lora.aroyo@vu.nl">lora.aroyo@vu.nl</a>
+			</br>
+			</br>
+			Here are some example projects currently running:</p>
+			</br>
+	<img src="graphs/crowd-watson/CW23v2.JPG" class = "center" >
+	</br>
+ </div>
+ </br>
+</div>
+  
+  </div>
+ 
+  <div class="push"></div>
+  </div> 
+  <div class="footer" >
+	<h5 align = "center" class = "copyrightfooter" >Copyright © 2013 <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-all' target="_blank" class = 'filelinks' >Crowd-watson-all</a>. All rights reserved.</h5>
+
+<h5 align = "center" class = "copyrightfooter" >| <a href = '#tabs-7'  id = "tofive" class = 'filelinks' >About</a> | Terms & Conditions | Privacy Policy |</h5>
 	</div>
+		
+		
+		
 </body>
 </html>
