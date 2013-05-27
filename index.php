@@ -699,9 +699,9 @@ while($row = mysql_fetch_array($results)){
   <div class="push"></div>
   </div> 
   <div class="footer" >
-	<h5 align = "center" class = "copyrightfooter" >Copyright © 2013 <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-all' target="_blank" class = 'filelinks' >Crowd-watson-all</a>. All rights reserved.</h5>
+	<h5 align = "center" class = "copyrightfooter" >Copyright © 2013 <a href = 'http://crowd-watson.nl/wcs/' target="_blank" class = 'filelinks' title = "http://crowd-watson.nl/wcs/" >Crowd-Watson</a>. All rights reserved.</h5>
 
-<h5 align = "center" class = "copyrightfooter" >| <a href = '#tabs-7'  id = "tofive" class = 'filelinks' >About</a> | Terms & Conditions | Privacy Policy |</h5>
+<h5 align = "center" class = "copyrightfooter" >| <a href = '#tabs-7'  id = "tofive" class = 'filelinks' >About</a> | <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-all' target="_blank" class = 'filelinks' title = "Crowd-watson-all" >Contact</a> | Terms & Conditions | Privacy Policy |</h5>
 	</div>
 		
 		
