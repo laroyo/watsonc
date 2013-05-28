@@ -7,6 +7,10 @@
   $( "#tabs" ).tabs();
 }
 
+ 
+ 
+
+ 
  function addClassesToFilterRow(){
 	 var table = $("#historytable");
 	 var headerRows = $(table).find(".tablesorter-headerRow").children();
@@ -149,6 +153,7 @@ $(document).ready(function() {
     
     });
     $( "#tabs" ).tabs();	
+    
     $(".takeAction").change(function(){ 
     	
     alert($("option:selected", this).text() +"  " + $(this).closest('tr').children().slice(1,2).text());
@@ -234,6 +239,18 @@ $(function() {
 	    });
      $(".blockspammers").click(function(){	 
     	 $( "#dialog-blockspammers" ).dialog( "open" );	 
+    	 $("#spamblockjobid").val($(this).closest('tr').children().slice(1, 2).text());
+    	 var xmlRequest = $.ajax({
+  	   	   type: 'POST',
+  	       data: ({'job_id': $("#spamblockjobid").val() }),
+  	       url: '/wcs/services/getSpammers.php'
+  	   	});
+  	   	 
+  	xmlRequest.done( function(data) {
+  		alert("OK");
+  		   $("#spammerfound").val(data);
+  		  
+  	}); 
      });
      
      
@@ -354,13 +371,13 @@ $(document).ready(function() {
 
 	});
 
-//	$("button").button().click(function(event) {
-//		event.preventDefault();
-//	});
+	//$("button").button().click(function(event) {
+	//	event.preventDefault();
+	//});
 
 	$("div#accordion").accordion({
 		collapsible : true,
-		heightStyle : "content"
+		heightStyle : "content",
 	});
 
 	

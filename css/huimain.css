@@ -46,8 +46,8 @@ height: 2em;
 /* For slide show  */
 
  #galleria{ 
-    margin-left: 120px;
-	margin-right: 120px;
+    margin-left: auto;
+	margin-right: auto;
 	width: 968px; 
 	height: 600px; 
 	background: #eceadf url(/wcs/plugins/jquery-ui/css/pepper-grinder/images/ui-bg_fine-grain_10_eceadf_60x60.png) 50% 50% repeat;
@@ -86,6 +86,12 @@ height: 2em;
 	margin-bottom: 0.48px;
 	width: 375px; 
 	height: 84px;
+}
+
+#spammerfound{
+	
+	 width: 600px;
+	 
 }
 
 .generalborderframe, .borderframe, .sideframe

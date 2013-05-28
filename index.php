@@ -22,13 +22,18 @@ include_once 'includes/functions.php';
 <script src="plugins/Mottie-tablesorter/js/jquery.tablesorter.widgets.js" type="text/javascript"></script>
 <script src="plugins/multiselect/js/jquery.multiselect.js" type="text/javascript"></script>
 <script src="plugins/galleria/galleria-1.2.9.min.js" type="text/javascript"></script>
-
+<script src="plugins/waypoints.js" type="text/javascript"></script>
 
 <script src="js/huimain.js" type="text/javascript"></script>
 <script language="javascript">
 
 
-
+function getselectedjobid()
+{
+	 
+	 var selectedjobid = document.getElementById(spamblockjobid).value;
+	 return selectedjobid;
+}
 
 
 
@@ -37,13 +42,7 @@ $(document).ready(function() {
 	 Galleria.loadTheme('plugins/galleria/themes/classic/galleria.classic.min.js');
      Galleria.run('#galleria');
 	
-	
-	
-	var $tabs=$('#tabs').tabs({"fit":true})
-
-	$(window).resize(function() {
-		$('#tabs').tabs('resize')
-	}) });
+ });
 
 
 function computePayment()
@@ -421,12 +420,14 @@ echo "</table>";
              
              
              
-             <div id = "dialog-blockspammers" title = "Block Spammers" >
+            <div id = "dialog-blockspammers" title = "Block Spammers" >
             <!-- Load data from Database --!>
+            </br>
+            Selected Job ID: <input type="text" id = "spamblockjobid" disabled /> 
+            </br>
+     Spammers Found: <input type="text" id = "spammerfound" disabled /> 
              
-             
-             
-             </div>
+            </div>
 <!--  <button class="search" data-filter-column="10" data-filter-text="2?%">Saved Filters</button> (search the Discount column for "2?%") -->
   <button class="reset" title = "Click to clear all the filter options" >Reset Filters</button> <!-- targetted by the "filter_reset" option -->
   <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JOB IDs" >Analyze</button> 
@@ -550,7 +551,7 @@ while($row = mysql_fetch_array($history)){
 		echo "<td style ='font-size: 80%' class='cMaxTimePerJob'>$max_time_unitworker</td>";
 		echo "<td style ='font-size: 80%' class='cNumberFilteredSentences'>$no_filtered_sentences</td>";
 		echo "<td style ='font-size: 80%' class='cTotalNumberofWorkers' >$no_workers</td>";
-		echo "<td style ='font-size: 80%' class='cNumberFilteredWorkers'><button class = 'blockspammers' >$no_filtered_workers</button></td>";
+		echo "<td style ='font-size: 80%' class='cNumberFilteredWorkers'><button class = 'blockspammers' title = '$job_id' >$no_filtered_workers</button></td>";
         echo "<td style ='font-size: 80%' class='cStatus' title = '$job_id' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$resultsfile_id' class = '$checkbox_check' >$status</a></td>";
         echo "<td style ='font-size: 80%' class='cActions' title = '$job_id' >
         <select $status_change class= 'cActions changeStatus'>
@@ -696,7 +697,7 @@ while($row = mysql_fetch_array($results)){
 			</br>
 			Here are some example projects currently running:</p>
 			</br>
-	<img src="graphs/crowd-watson/CW23v2.JPG" class = "center" >
+	<img src="graphs/crowd-watson/CW23v2.JPG" class = "center" style="width: 65%; height: 65%" >
 	</br>
  </div>
  </br>
