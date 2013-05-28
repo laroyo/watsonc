@@ -1,6 +1,7 @@
 /* Sticky footer */
 * {
 margin: 0;
+outline: none;
 }
 html, body {
 background: #eceadf url(/wcs/plugins/jquery-ui/css/pepper-grinder/images/ui-bg_fine-grain_10_eceadf_60x60.png) 50% 50% repeat;
@@ -30,6 +31,18 @@ height: 2em;
 .ui-tab-title { position: absolute; left: 20px; top: 15px; }
 
 .ui-widget-header {box-shadow: 0 0 5px 5px #888;}
+
+ li a {
+    outline-color: transparent;
+}
+
+
+
+.ui-widget { font-family: Trebuchet MS, Tahoma, Verdana,
+ Arial, sans-serif; font-size: 16px; }
+ 
+
+
 /* For slide show  */
 
  #galleria{ 
@@ -56,8 +69,10 @@ height: 2em;
 }
 
 .inputfield {
-	
-
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
 }
 
 .textboxInput{
@@ -147,9 +162,14 @@ a[href].tdlinks {
 	width: auto;
 	
 	}
+	
+	textarea, input[type=text]
+	{
+	border: 1px solid #ccc;
+	}
 textarea:focus, input:focus
 {
-background-color: #cbdfeb;   // #97bfd9
+background-color: #e4e4e4;   // #97bfd9
 }
 
 	
