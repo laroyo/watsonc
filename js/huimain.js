@@ -241,21 +241,32 @@ $(function() {
     	 $( "#dialog-blockspammers" ).dialog( "open" );	 
     	 $("#spamblockjobid").val($(this).closest('tr').children().slice(1, 2).text());
     	 var xmlRequest = $.ajax({
-  	   	   type: 'POST',
-  	       data: ({'job_id': $("#spamblockjobid").val() }),
-  	       url: '/wcs/services/getSpammers.php'
-  	   	});
-  	   	 
-  	xmlRequest.done( function(data) {
-  	
-  		   $("#spammerfound").val(data);
-  		  
-  	}); 
+  	     type: 'POST',
+  	     data: ({'job_id': $("#spamblockjobid").val() }),
+  	     url: '/services/getSpammers.php'
+  	 });
+  	 
+  	 xmlRequest.done( function(data) {
+	     var tbl = document.getElementById("spammerfound"); 	    	    	     
+
+	     var obj = jQuery.parseJSON(data);
+	     var keys = Object.keys(obj[0]); 
+
+	     for (i = 0; i < obj.length; i++){
+		 var row = document.createElement("tr");
+		 for (j = 0; j < keys.length; j++){
+		     
+		     var cell = document.createElement("td");    
+		     var cellText = document.createTextNode(obj[i][keys[j]]); 
+	    	     
+		     cell.appendChild(cellText);
+		     row.appendChild(cell);		     
+		 }
+		 tbl.appendChild(row);
+	     }
+             tbl.setAttribute("border", "1");
+  	 }); 
      });
-     
-     
-     
-     
      
    $('#passjobid').click(function() {
    	    

@@ -1,22 +1,19 @@
 <?php
 
-require_once('includes/dbinfo.php'); 
+//require_once('includes/dbinfo.php'); 
 
 function getSetId($job_ids,$indiv=FALSE){
   $res = NULL; 
   if($indiv){    
     $query = "SELECT set_id from analysis_sets where members in (". implode($job_ids,','). ")"; 
-    //print($query); 
     $rs = mysql_query($query);
     
     while($row = mysql_fetch_assoc($rs)){
-      //var_dump($row); 
       $res[]  = $row['set_id']; 
     }
     return $res;
   } else {
     $query = "SELECT set_id FROM `analysis_sets` WHERE members = '" . json_encode($job_ids). "'";     
-    //print("---> " . $query . "\n"); 
     $res = mysql_query($query);
     $row = mysql_fetch_assoc($res); 
 
@@ -76,8 +73,6 @@ function getAvgWorkerMetricsSet($set_id, $filter=NULL){
  **/
 function getAvgWorkerMetricsJob($job_id, $filter=NULL){
   $set_id = getSetId(array($job_id)); 
-  //print('--->set_id : '. $set_id . "<br>\n"); 
-  //print("getting worker metrics for job $set_id"); 
   return getAvgWorkerMetricsSet($set_id, $filter); 
 }
 
@@ -195,12 +190,65 @@ function getTaskCompletionTimes(){
   return $res;   
 }
 
-function getAvgTaskCompletionTimes($worker_id){
+function getWorkerTaskCompletionTimes($job_id){
+  $qres = simpleQuery("select unit_id,worker_id,(UNIX_TIMESTAMP(created_at)-UNIX_TIMESTAMP(started_at)) as time from cflower_results where job_id = $job_id group by unit_id,worker_id order by worker_id asc,unit_id asc");
+  $worker_id = null; 
+  
+  foreach($qres as $row){
+    if($row['worker_id'] != $worker_id)      
+      $worker_id = $row['worker_id'];
 
-  $avgTaskCompTimes = simpleQuery("select unit_id,UNIX_TIMESTAMP(created_at)-UNIX_TIMESTAMP(started_at) as time from cflower_results where unit_id in worker_units"); 
-  simpleQuery("select unit_id,created_at from cflower_results where unit_id in (select unit_id from cflower_results where worker_id = $worker_id",con); 
+    $res[$worker_id][$row['unit_id']] = $row['time']; 
+  }
+  return $res; 
 }
 
+function getLqc($job_id){
+
+  $query =   "select filter,a.worker_id from filtered_workers a left join (select worker_id,count(*) as count from filtered_workers b where set_id = $job_id 
+ group by worker_id) b on a.worker_id = b.worker_id where set_id = 196309 order by count desc, worker_id asc,filter asc";
+  
+  $lqc = simpleQuery($query); 
+
+  $filtlabels =  array("contribution_filter", "none_other", "rand_text", "rep_response", "rep_text");  
+  
+  $filters = array(); 
+  foreach($lqc as $row){
+    if($row['worker_id'] != $worker_id){
+      $worker_id  = $row['worker_id'];
+
+      $filters[$worker_id] = array();
+
+      foreach($filtlabels as $key){
+	$filters[$worker_id][$key] = False;
+      }   
+    }
+    if($row['filter'] == NULL || $row['filter'] == 'NULL')
+      $filters[$worker_id]['contribution_filter']  = True; 
+    else
+      $filters[$worker_id][$row['filter']]  = True; 
+  }
+  return $filters;
+}
+
+/**
+ * Returns the results of $query as an array. Each array entry corresponds to a row. 
+ **/
+function simpleQuery($query){
+
+  //echo $query; 
+  $rs = mysql_query($query); 
+ 
+  while($row = mysql_fetch_assoc($rs)){       
+    $res[] = $row;     
+  }  
+  return $res; 
+}
+
+/**
+ * Returns the results of $query as an associative array [$key => $value]
+ * Both $key and $value should be attributes in the query (usually: columns on the queried table). 
+ **/
 function queryKeyValue($query, $key, $value){
 
   $rs = mysql_query($query); 
@@ -210,16 +258,25 @@ function queryKeyValue($query, $key, $value){
   return $res; 
 }
 
-function simpleQuery($query){
-
-  //echo $query; 
+/**
+ * 
+ **/
+function queryKeyList($query, $key){
+  
   $rs = mysql_query($query); 
-  while($row = mysql_fetch_assoc($rs)){       
-    $res[] = $row;     
+  while($row = mysql_fetch_assoc($rs)){
+    $k = $row[$key]; 
+    unset($row[$key]); 
+    $res[$k] = $row; 
   }  
   return $res; 
 }
 
+/**
+ * Returns the results of $query as a list. Each entry of the list is a single value (instead of a row). 
+ * Used, for instance, to obtain a list of keys (object id's), or a list of values ("all the cosine values for a job")
+ * To prevent misuse, the query shouldn't contain more than 1 attribute: select <attribute> from <table>; 
+ **/
 function queryList($query){
   $rs = mysql_query($query); 
   while($row = mysql_fetch_assoc($rs)){       
@@ -233,7 +290,6 @@ function queryList($query){
   }  
   return $res; 
 }
-
 
 
 ?>

@@ -424,10 +424,18 @@ echo "</table>";
             <!-- Load data from Database --!>
             </br>
             Selected Job ID: <input type="text" id = "spamblockjobid" disabled /> 
-            </br>
-     Spammers Found: <input type="text" id = "spammerfound" disabled /> 
+            </br>				  
+            Spammers Found: <div >
+	    <table id ="spammerfound">
+            <td>Worker ID</td><td> Agr </td><td><span title='Difference between agreement of worker and average agreement of the job workers'>Rel[1]</span></td>
+            <td> Cos </td><td><span title='Worker-Sentence Score: Sentence Clarity - Cosine'>Rel[2]</span></td>
+            <td> Annot/Sent</td><td><span title='avg(#Annot/Sentence[Set]) - #Annot/Sentence[Worker]'>Rel[3]</span></td>
+           <td><span ='Average task completion time of the worker'>Avg Time</span></td>
+           <td><span title='avg(Task completion time[Set]) - avg(Task Completion Time[Worker])'>Rel[4]</span></td>
+	   <td>Filters</td><td> Channel</td></tr></table>
+	   </div>
+ </div>
              
-            </div>
 <!--  <button class="search" data-filter-column="10" data-filter-text="2?%">Saved Filters</button> (search the Discount column for "2?%") -->
   <button class="reset" title = "Click to clear all the filter options" >Reset Filters</button> <!-- targetted by the "filter_reset" option -->
   <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JOB IDs" >Analyze</button> 
