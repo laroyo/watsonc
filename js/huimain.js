@@ -247,7 +247,7 @@ $(function() {
   	   	});
   	   	 
   	xmlRequest.done( function(data) {
-  		alert("OK");
+  	
   		   $("#spammerfound").val(data);
   		  
   	}); 
