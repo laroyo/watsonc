@@ -243,7 +243,7 @@ $(function() {
     	 var xmlRequest = $.ajax({
   	     type: 'POST',
   	     data: ({'job_id': $("#spamblockjobid").val() }),
-  	     url: '/services/getSpammers.php'
+  	     url: '/wcs/services/getSpammers.php'
   	 });
   	 
   	 xmlRequest.done( function(data) {
