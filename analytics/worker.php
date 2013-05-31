@@ -33,7 +33,6 @@ function addData($name, $data, $xy=NULL){
   return $obj;      
 }
 
-
 $worker_sentences = queryList("select distinct(unit_id) from cflower_results where worker_id = $worker_id order by unit_id asc");
 
 $sent_clarity = simpleQuery("select unit_id,clarity from sent_clarity where unit_id in (". implode($worker_sentences,',') .")");
@@ -44,7 +43,10 @@ $workerSentenceScores = simpleQuery("select worker_id,score from workerSentenceS
 $taskCompTimes = simpleQuery("select unit_id,UNIX_TIMESTAMP(created_at)-UNIX_TIMESTAMP(started_at) as time from cflower_results where worker_id = $worker_id
 order by unit_id asc"); 
 
-$avgCompTimes = simpleQuery("select unit_id,avg(UNIX_TIMESTAMP(created_at)-UNIX_TIMESTAMP(started_at)) as time from cflower_results where unit_id in (select unit_id from cflower_results where worker_id = $worker_id) group by unit_id order by unit_id asc");
+
+$avgCompTimes = simpleQuery("select * from (select unit_id from cflower_results where worker_id = $worker_id) a left join
+(select unit_id,avg(UNIX_TIMESTAMP(created_at)-UNIX_TIMESTAMP(started_at)) as time from cflower_results group by unit_id order by unit_id asc) b 
+on a.unit_id = b.unit_id");
 
 //$agrSentRelation = simpleQuery("select unit_id,clarity from rel_clarity where unit_id in (". .")"); 
 
@@ -78,12 +80,11 @@ function getMaxArray($array, $key){
 }
 
 $maxTime = getMaxArray($taskCompTimes, 'time'); 
-
 ?>
 <!DOCTYPE html>
 <meta charset="utf-8">
 
-<link href="/css/nv.d3.css" rel="stylesheet" type="text/css">
+<link href="/wcs/css/nv.d3.css" rel="stylesheet" type="text/css">
 <style>
 
 body {
@@ -126,12 +127,12 @@ text {
     <svg></svg>
   </div>
 
-<script src="/js/d3.v2.js"></script>
-<script src="/js/nv.d3.js"></script>
-<script src="/js/tooltip.js"></script>
-<script src="/js/utils.js"></script>
-<script src="/js/legend.js"></script>
-<script src="/js/axis.js"></script>
+<script src="/wcs/js/d3.v2.js"></script>
+<script src="/wcs/js/nv.d3.js"></script>
+<script src="/wcs/js/tooltip.js"></script>
+<script src="/wcs/js/utils.js"></script>
+<script src="/wcs/js/legend.js"></script>
+<script src="/wcs/js/axis.js"></script>
 <script> 
 <?php
 
@@ -142,7 +143,7 @@ text {
 
 ?> 
 </script>
-<script src="/js/lineChart.js"></script>
+<script src="/wcs/js/lineChart.js"></script>
 <script>
   addLineChart('#two_graphs svg', two_graphs); 
   addLineChart('#combined svg', data); 
