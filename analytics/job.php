@@ -14,7 +14,7 @@ $matrix = getPivotTable($job_id);
 <!DOCTYPE html>
 <meta charset="utf-8">
 
-<link href="/css/nv.d3.css" rel="stylesheet" type="text/css">
+<link href="/wcs/css/nv.d3.css" rel="stylesheet" type="text/css">
 <style>
 
 body {
@@ -78,13 +78,13 @@ echo "];</script>";
 ?>
 
 
-<script src="/js/d3.v2.js"></script>
-<script src="/js/nv.d3.js"></script>
-<script src="/js/tooltip.js"></script>
-<script src="/js/utils.js"></script>
-<script src="/js/legend.js"></script>
-<script src="/js/axis.js"></script>
-<script src="/js/multiBar.js"></script>
-<script src="/js/multiBarChart.js"></script>
-<script src="/js/job_analytics.js"></script>
-<script src="/js/compTimes.js"></script>
+<script src="/wcs/js/d3.v2.js"></script>
+<script src="/wcs/js/nv.d3.js"></script>
+<script src="/wcs/js/tooltip.js"></script>
+<script src="/wcs/js/utils.js"></script>
+<script src="/wcs/js/legend.js"></script>
+<script src="/wcs/js/axis.js"></script>
+<script src="/wcs/js/multiBar.js"></script>
+<script src="/wcs/js/multiBarChart.js"></script>
+<script src="/wcs/js/job_analytics.js"></script>
+<script src="/wcs/js/compTimes.js"></script>
