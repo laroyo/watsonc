@@ -123,6 +123,8 @@ function storeContentInFile($file_info, $content,$createdby) {
 	$row[6] = mysql_real_escape_string($row[6]);
 	$row[7] = date("Y-m-d H:i:s",strtotime($row[7])); 
 	$row[8] = date("Y-m-d H:i:s",strtotime($row[8])); 
+	$row[9] = mysql_real_escape_string($row[9]);
+	$row[10] = mysql_real_escape_string($row[10]);
 	$row[11] = mysql_real_escape_string($row[11]);
 	for($i = 0; $i < sizeof($row); $i++){
 	  $row[$i] = trim($row[$i]); 
@@ -131,7 +133,7 @@ function storeContentInFile($file_info, $content,$createdby) {
 	array_unshift($row,$job_id); 
 	$sql = vsprintf($q, $row);            
       
-	mysql_query($sql) or dieError("function: storeFile<br/>\n".$sql."<br/>\n".mysql_error());
+	mysql_query($sql) or dieError("function: storeContentInFile<br/>\n".$sql."<br/>\n".mysql_error());
 	$inserted += mysql_affected_rows();
       }
       $nline++; 
