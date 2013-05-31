@@ -4,11 +4,12 @@ require_once('dataproc.inc');
 
 if(isset($_GET['job_id'])){
   $job_id = $_GET['job_id'];  
-  $matrix = getPivotTable($job_id); 
-} else {
+
+} else if (isset($_GET['test'])){
   $job_id = 179229; 
 }
 
+$matrix = getPivotTable($job_id); 
 ?>
 <!DOCTYPE html>
 <meta charset="utf-8">
@@ -57,6 +58,25 @@ text {
   <div id="overview">
     <svg></svg>
   </div>
+<?php
+    
+$matrix = getPivotTable($job_id); 
+echo "<script>var sents = [";
+  foreach($matrix as $sentence_id => $relations){
+    echo '{"sentence_id": '. $sentence_id. ',';
+    foreach($relations as $key => $value){
+      echo '"'.$key.'":' . $value ;
+      if($key != 'NONE')
+       echo ","; 
+    }
+    echo '}';
+    
+    if($sentence_id != end(array_keys($matrix)))
+      echo ",";
+  }
+echo "];</script>";
+?>
+
 
 <script src="/js/d3.v2.js"></script>
 <script src="/js/nv.d3.js"></script>
