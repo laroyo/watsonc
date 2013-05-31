@@ -1,6 +1,7 @@
 <?php
 
 require_once('dbinfo.php'); 
+require_once('envars.php');
  
 function getSetId($job_ids,$indiv=FALSE){
   $res = NULL; 
@@ -53,7 +54,7 @@ function getPivotTable($job_id){
   
   $matrix = array(); 
   
-  for ($i = 0; $i < sizeof($dec->rownames); $i){
+  for ($i = 0; $i < sizeof($dec->rownames); $i++){
     $vector = array(); 
     
     foreach ($rels as $rel){
