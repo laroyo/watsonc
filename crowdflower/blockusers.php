@@ -1,6 +1,13 @@
 <?php
-include_once '../includes/dbinfo.php';
+
+//include_once '/var/www/html/wcs/includes/dbinfo.php';
 include_once '../includes/functions.php';
+
+$host = 'localhost'; // Host name Normally 'LocalHost'
+$user = 'watsoncs'; // MySQL login username
+$pass = 'Tre2akEf'; // MySQL login password
+$database = 'watsoncs'; // Database name
+
 /* useful functions for printing the results from the web server */
 function objectToArray($obj) {
 	if (is_object($obj)) {
@@ -39,20 +46,30 @@ function blockSpamWorkers($job_id, $reason, $spam_workers) {
 
 		$response = json_decode(curl_exec($ch));
 		$info = curl_getinfo($ch);
+		//echo $info;
+		//echo $response;
 		$array = objectToArray($response);
 		$keys = array_keys($array);
 		if ($keys[0] == "error") {
 			$responseString .= "An error occurred when blocking contributor $worker_id! ";
 		}
 		else if ($keys[0] == "warning") {
-			$responseString .= "Contributor $worker_id has already been flagged! ";
+			$responseString .= "Contributor $worker_id has already been flagged! "; 	
 		}
 		else if ($keys[0] == "success") { 
 			$responseString .= "Contributor $worker_id flagged! ";  
+$host = 'localhost'; // Host name Normally 'LocalHost'
+$user = 'watsoncs'; // MySQL login username
+$pass = 'Tre2akEf'; // MySQL login password
+$database = 'watsoncs'; // Database name
+
+
+$con=mysql_connect($host, $user, $pass) or die("Couldn't make connection.");
+mysql_select_db($database, $con)  or die("Couldn't select database");
 			
 			// update blocked_workers table
-			$insertSQL = "INSERT INTO blocked_workers (worker_id, job_id, reason, created_by) 
-				      VALUES ( '$worker_id', '$job_id', '$reason', '{$_SERVER["REMOTE_USER"]}')";
+			$insertSQL = "INSERT INTO blocked_workers (worker_id, job_id, reason, created_by) VALUES ( '$worker_id', '$job_id', '$reason', '{$_SERVER["REMOTE_USER"]}')";
+//			echo $insertSQL;
 			if (!mysql_query($insertSQL, $con))
 			{
 				die('Error: ' . mysql_error());
@@ -62,8 +79,10 @@ function blockSpamWorkers($job_id, $reason, $spam_workers) {
 	return $responseString;
 }
 
-$job_id = $_POST["jobId"];
+$job_id = $_POST["spamblockjobid"];
+//echo $job_id;
 $reason = $_POST["reason"];
+//echo $reason;
 $spam_workers = $_POST["workerId"];
 $scriptResponse = blockSpamWorkers($job_id, $reason, $spam_workers);
 echo $scriptResponse;

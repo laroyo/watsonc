@@ -229,9 +229,32 @@ $(function() {
 	      modal: true,
 	      buttons: {
 	          "Block": function() {
-	          $( this ).dialog( "close" );
-	          
-	          },
+	//		$( this ).dialog( "close" );
+	
+	//	alert("ok");
+	//		$('#myform').bind('submit', function (event) {
+	//	event.preventDefault();
+	//	var reason = document.getElementById("reason").value;
+	//	if (reason.length < 25) {
+	//		alert("The reason should have at least 25 characters!");
+	//		return ;
+	//	}
+	//	else {
+			$.ajax({
+				type:'POST',
+    				url:'/wcs/crowdflower/blockusers.php',
+				datatype: 'text',
+    				data: $("#myform").serialize(),
+				success: function() {
+  //  					window.location.reload(true);
+				}
+			}).done(function( msg ) {
+  				 alert(msg);
+			});
+	//	}
+//	});
+//	return false;
+      		},
 	        Cancel: function() {
 	          $( this ).dialog( "close" );
 	        }
@@ -247,20 +270,42 @@ $(function() {
   	 });
   	 
   	 xmlRequest.done( function(data) {
-	     var tbl = document.getElementById("spammerfound"); 	    	    	     
-
+		 $("#spammerfound").children().remove();
+		 var tbl = document.getElementById("spammerfound"); 	    	    	     
+	     
 	     var obj = jQuery.parseJSON(data);
 	     var keys = Object.keys(obj[0]); 
 
 	     for (i = 0; i < obj.length; i++){
 		 var row = document.createElement("tr");
 		 for (j = 0; j < keys.length; j++){
-		     
-		     var cell = document.createElement("td");    
-		     var cellText = document.createTextNode(obj[i][keys[j]]); 
+			if(j == 0) {
+				var cell = document.createElement("td");
+				var labelValue = obj[i][keys[j]];
+                   	   	var checkbox = document.createElement("input"); 
+                      		checkbox.setAttribute("type", "checkbox");
+                      		checkbox.setAttribute("name", "workerId[]");
+                      		checkbox.setAttribute("value", labelValue);
+                     		cell.appendChild(checkbox);
+
+		     		 var label= document.createElement("label");
+                     		 label.htmlFor = labelValue;
+                      		 label.appendChild(document.createTextNode(labelValue));
+
+				cell.appendChild(label);
+				cell.appendChild(document.createElement("br")); 	     
+		   //  var cell = document.createElement("td");    
+		   //  var cellText = document.createTextNode(obj[i][keys[j]]); 
 	    	     
-		     cell.appendChild(cellText);
-		     row.appendChild(cell);		     
+		   //  cell.appendChild(cellText);
+			     	row.appendChild(cell);		 
+			}
+			else {
+				var cell = document.createElement("td");    
+                   		var cellText = document.createTextNode(obj[i][keys[j]]); 
+				cell.appendChild(cellText);
+                                row.appendChild(cell);
+			}    
 		 }
 		 tbl.appendChild(row);
 	     }
