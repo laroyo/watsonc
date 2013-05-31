@@ -1,8 +1,10 @@
 <?php
 
+require_once('dataproc/dataproc.inc'); 
+
 if(isset($_GET['job_id'])){
-  $job_id = $_GET['job_id']; 
-  //$job_ids = getJobsInSet($set_id);  
+  $job_id = $_GET['job_id'];  
+  $matrix = getPivotTable($job_id); 
 } else {
   $job_id = 179229; 
 }

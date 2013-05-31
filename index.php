@@ -99,18 +99,13 @@ function computePaymentPerHour() {
 			    <li><a href="#tabs-3">Input</a></li>
 				<li><a href="#tabs-4" >Jobs</a></li>
 				<li><a href="#tabs-5" >History</a></li>
-				<li><a href="#tabs-6" >Results</a></li>
+			   <!-- <li><a href="#tabs-6" >Results</a></li> -->
 				<li><a href="#tabs-7" >About</a></li>
 			</ul>
 			
 			
 			
 			<div id="tabs-1" class = "generaltab" >
-			</br>
-			<div class="generalborderframe"  >
-				<h1 align="center" >Module Introduction</h1>
-				</br></br> 
-			</div>
 			</br>
 			   <div id="galleria">
 	            <img src="graphs/crowd-truth/CT01.jpg">
@@ -127,6 +122,15 @@ function computePaymentPerHour() {
 	            <img src="graphs/crowd-truth/CT12.jpg">
 	        </div>
 			</br>
+			<div class="generalborderframe"  >
+			<!--<h1 align="center">Module Introduction</h1>-->
+				<h1 align="center">Crowdsourcing for Watson</h1>
+				<br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing" target="_blank" ><img
+					src="graphs/crowdsourcing.jpg" alt="No show" class = "center" title = "What is Crowdsourcing?" /></a>
+				</br> 
+			</div>
+			</br>
+	
 			</div>
 			<!-- 
 			
@@ -210,7 +214,7 @@ function computePaymentPerHour() {
 				
 			
 				<div id="dialog-confirm" title="Select a file from the server">
-				<button class="reset" title = "Click to clear all the filter options" >Reset Search</button> <!-- targetted by the "filter_reset" option -->
+				<button class="reset" title = "Click to clear all the filter options" >Reset Filters</button> <!-- targetted by the "filter_reset" option -->
 <br>
   <?php
 
@@ -423,7 +427,9 @@ echo "</table>";
             <div id = "dialog-blockspammers" title = "Block Spammers" >
             <!-- Load data from Database --!>
             </br>
-            Selected Job ID: <input type="text" id = "spamblockjobid" disabled /> 
+            <form id="myform" class="myform" method="post" name="myform">
+	    Reason: <input type="text" name="reason" id="reason" size="100"> <br/>
+	    Selected Job ID: <input type="text" name="spamblockjobid" id = "spamblockjobid" readonly="true" /> 
             </br>				  
             Spammers Found: <div >
 	    <table id ="spammerfound">
@@ -433,6 +439,8 @@ echo "</table>";
            <td><span ='Average task completion time of the worker'>Avg Time</span></td>
            <td><span title='avg(Task completion time[Set]) - avg(Task Completion Time[Worker])'>Rel[4]</span></td>
 	   <td>Filters</td><td> Channel</td></tr></table>
+	   </form>
+	   <div style="display:none;" id="answer" name="answer">  </div>
 	   </div>
  </div>
              
@@ -584,7 +592,7 @@ echo "</div>";
   </div>
 			
 			
-			
+          <!-- 
 				<div id="tabs-6" class = "generaltab" >
 				<div id="accordion">
 
@@ -654,6 +662,8 @@ while($row = mysql_fetch_array($results)){
   </div>
   </br>
   </div>
+  --!>
+ 
   
   
   <div id="tabs-7" class = "generaltab" >
