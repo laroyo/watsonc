@@ -1,13 +1,10 @@
 <?php
 
-require_once('dataproc/dataproc.inc'); 
+require_once('dataproc.inc'); 
 
 if(isset($_GET['worker_id'])){
   $worker_id = $_GET['worker_id'];
-  //$job_ids = getJobsInSet($set_id);  
-} else {
-  //FIXME: for testing. 
-  //$worker_id = 17137154; 
+} else if (isset($_GET['test'])){ 
   $worker_id = 17132979; 
 }
 
@@ -76,22 +73,17 @@ function getMaxArray($array, $key){
   }
   
   $elems  = array_map('ret', $array); 
-  /* echo "getMaxArray";  */
-  /* var_dump($elems);  */
   return max($elems); 
 
 }
 
 $maxTime = getMaxArray($taskCompTimes, 'time'); 
 
-//var_dump($wsScore); 
-
-
 ?>
 <!DOCTYPE html>
 <meta charset="utf-8">
 
-<link href="css/nv.d3.css" rel="stylesheet" type="text/css">
+<link href="/css/nv.d3.css" rel="stylesheet" type="text/css">
 <style>
 
 body {
@@ -134,12 +126,12 @@ text {
     <svg></svg>
   </div>
 
-<script src="js/d3.v2.js"></script>
-<script src="js/nv.d3.js"></script>
-<script src="js/tooltip.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/legend.js"></script>
-<script src="js/axis.js"></script>
+<script src="/js/d3.v2.js"></script>
+<script src="/js/nv.d3.js"></script>
+<script src="/js/tooltip.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/legend.js"></script>
+<script src="/js/axis.js"></script>
 <script> 
 <?php
 
@@ -150,7 +142,7 @@ text {
 
 ?> 
 </script>
-<script src="js/lineChart.js"></script>
+<script src="/js/lineChart.js"></script>
 <script>
   addLineChart('#two_graphs svg', two_graphs); 
   addLineChart('#combined svg', data); 

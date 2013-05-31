@@ -1,8 +1,9 @@
 <?php
+
 if(isset($_GET['relation_id'])){
-  $relation_id = $_GET['relation_id']; 
-  //$job_ids = getJobsInSet($set_id);  
+  $relation_id = $_GET['relation_id'];   
 }
+
 $relations = array('D'=> "RelName",'S'=> "Symptom",'C'=> "RelName",'M'=> "RelName",'L'=> "RelName",'AW'=> "RelName",'P'=> "RelName",'SE'=> "RelName",'IA'=> "RelName",'PO'=> "RelName",'T' => 'Treats','CI'=> "RelName", 'OTH'=> "RelName", "NONE");
 ?>
 <!DOCTYPE html>
@@ -13,11 +14,11 @@ $relations = array('D'=> "RelName",'S'=> "Symptom",'C'=> "RelName",'M'=> "RelNam
 <h3> Sentences labelled with relation <?= $relations[$relation_id] ?></h3>
 <table>
 <tr><td>Sentence ID</td><td>Agr</td><td> Num Labels</td><td>2nd Relation</td></tr>
-<tr><td><a ref="sentenceAnalytics.php?sentence_id=265614956">265614956</a></td><td>0.0</td><td>0</td><td><a href="relationAnalytics.php?relation=S">Symptom</a></td></tr>
+<tr><td><a ref="/analytics/sentence.php?sentence_id=265614956">265614956</a></td><td>0.0</td><td>0</td><td><a href="analytics/relation.php?relation=S">Symptom</a></td></tr>
 </table>
 
 <h3>Relation Metrics</h3>
-<p><span title="is a pairwise conditional probability that if relation $R_{i}$ is annotated in a sentence, relation $R_{j}$ is as well.  Information about relation similarity is used in training and evaluation, as it roughly indicates how confusable the linguistic expression of two relations are.  This would indicate, for example, that relation co-learning \cite{Mitchell paper on co-learning} would not work for similar relations."><b>Relation similarity</b></span></p> 
+<p><span title="is a pairwise conditional probability that if relation $R_{i}$ is annotated in a sentence, relation $R_{j}$ is as well.  Information about relation similarity is used in training and evaluation, as it roughly indicates how confusable the linguistic expression of two relations are.  This would indicate, for example, that relation co-learning [cite: Mitchell paper on co-learning] would not work for similar relations."><b>Relation similarity</b></span></p> 
 
 <p><span title="is defined for each relation as the max relation similarity for the relation.  If a relation is very clear, then it will have a low score.  Since techniques like relation co-learning have proven effective, it may be a useful property of a set of relations to exclude ambiguous relations from the set."><b>Relation ambiguity</b></span> </p>
 

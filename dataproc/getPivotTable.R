@@ -1,8 +1,9 @@
 #!/usr/bin/Rscript
-source('envars.R')
-source('lib/db.R')
-source('lib/simplify.R')
 
+source('/var/www/html/wcs/dataproc/envars.R')
+
+source(paste(libpath,'/db.R',sep=''),chdir=TRUE)
+source(paste(libpath,'/simplify.R',sep=''),chdir=TRUE)
 
 args <- commandArgs(trailingOnly = TRUE)
 

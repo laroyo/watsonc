@@ -1,7 +1,8 @@
 <?php
 
-//require_once('includes/dbinfo.php'); 
-
+require_once('dbinfo.php'); 
+require_once('envars.php');
+ 
 function getSetId($job_ids,$indiv=FALSE){
   $res = NULL; 
   if($indiv){    
@@ -39,6 +40,32 @@ function getFilteredSentences($set_id){
        $res[]  = $row; 
      }    
   return $res; 
+}
+
+/**
+ * Returns the pivot table for the annotations of a job. 
+ **/
+function getPivotTable($job_id){
+  
+  $worker_res = exec('/usr/bin/Rscript '. BASE_PATH .'/dataproc/getPivotTable.R '. $job_id);  
+  $dec = json_decode($worker_res);
+
+  $rels = array('D','S','C','M','L','AW','P','SE','IA','PO','T','CI','OTH','NONE'); 
+  
+  $matrix = array(); 
+  
+  for ($i = 0; $i < sizeof($dec->rownames); $i++){
+    $vector = array(); 
+    
+    foreach ($rels as $rel){
+      $vect = $dec->matrix->$rel;
+      $vector[$rel] = $vect[$i];
+    }
+    $matrix[$dec->rownames[$i]] = $vector;
+    unset($vector);
+  }
+  
+  return($matrix);
 }
 
 /**

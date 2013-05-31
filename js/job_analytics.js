@@ -41,7 +41,7 @@ nv.addGraph(function() {
     nv.utils.windowResize(chart.update);
     d3.selectAll(".nv-bar").on("click", function (d) {
 	//alert(d.x+" "+d.y+" "+d.y0 + " "+ d.series+" "+d.size+" "+d.y1);
-	window.open("sentenceAnalytics.php?sentence_id="+d.x,"_self");
+	window.open("/analytics/sentence.php?sentence_id="+d.x,"_self");
     });
     return chart;
 });

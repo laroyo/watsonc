@@ -1,8 +1,8 @@
 <?php
 if(isset($_GET['sentence_id'])){
   $sentence_id = $_GET['sentence_id']; 
-  //$job_ids = getJobsInSet($set_id);  
 }
+
 ?>
 <!DOCTYPE html>
 <meta charset="utf-8">
@@ -10,7 +10,7 @@ if(isset($_GET['sentence_id'])){
 <h2>Sentence Analytics for sentence <?= $sentence_id ?></h2>
 <table>
 <tr><td>Job ID</td><td>Agr</td><td> Num Labels</td><td>Relation</td></tr>
-<tr><td><a href="job_analytics.php?job_id=179229">179229</td><td>0.0</td><td>0</td><td><a href="relationAnalytics.php?relation_id=T">Treats</a></td></tr>
+<tr><td><a href="/analytics/job.php?job_id=179229">179229</td><td>0.0</td><td>0</td><td><a href="/analytics/relation.php?relation_id=T">Treats</a></td></tr>
 </table>
 
 <p><span alt=" is the core crowd truth metric for relation extraction.  It is measured for each relation on each sentence as the cosine of the unit vector for the relation with the sentence vector.  The relation score is used for training and evaluation of the relation extraction system, it is viewed as the probability that the sentence expresses the relation.  This is a fundamental shift from the traditional approach, in which sentences are simply labelled as expressing, or not, the relation, and presents new challenges for the evaluation metric and especially for training"><b>Sentence-relation score</b></span> 0.0</p>
