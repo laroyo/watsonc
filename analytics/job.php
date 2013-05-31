@@ -3,9 +3,22 @@
 require_once('dataproc.inc'); 
 
 if(isset($_GET['job_id'])){
-  $job_id = $_GET['job_id'];  
+  $job_id = $_GET['job_id'];    
+} 
 
-} else if (isset($_GET['test'])){
+if(isset($_GET['set_id'])){
+  $set_id = $_GET['set_id'];    
+} 
+
+if (isset($_POST['job_ids'])){
+
+  $job_ids = array_map('intval', $_POST['job_ids']); 
+  sort($job_ids); 
+
+  $set_id  = getSetId($job_ids); 
+} 
+
+if (isset($_GET['test'])){  
   $job_id = 179229; 
 }
 
@@ -47,7 +60,7 @@ text {
 
 </style>
 <body>
-<h2>Job Analytics for job <?= $job_id ?></h2>
+<h2>Job Analytics for job <?php echo($job_id); ?></h2>
 
 <h3>Sentence labels</h3>
   <div id="chart1">

@@ -106,7 +106,7 @@ text {
 
 </style>
 <body>
-<h2>Worker Analytics for worker <? echo($worker_id); ?></h2>
+<h2>Worker Analytics for worker <?php echo($worker_id); ?></h2>
 
 <h3> Sentences: </h3>
   Number of annotated sentences: <? echo(sizeof($worker_sentences)); ?><br>
