@@ -1,6 +1,6 @@
 <?php
 
-require_once('dataproc/dataproc.inc'); 
+require_once('dataproc.inc'); 
 
 if(isset($_GET['job_id'])){
   $job_id = $_GET['job_id'];  
@@ -13,7 +13,7 @@ if(isset($_GET['job_id'])){
 <!DOCTYPE html>
 <meta charset="utf-8">
 
-<link href="css/nv.d3.css" rel="stylesheet" type="text/css">
+<link href="/css/nv.d3.css" rel="stylesheet" type="text/css">
 <style>
 
 body {
@@ -58,13 +58,13 @@ text {
     <svg></svg>
   </div>
 
-<script src="js/d3.v2.js"></script>
-<script src="js/nv.d3.js"></script>
-<script src="js/tooltip.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/legend.js"></script>
-<script src="js/axis.js"></script>
-<script src="js/multiBar.js"></script>
-<script src="js/multiBarChart.js"></script>
-<script src="js/job_analytics.js"></script>
-<script src="js/compTimes.js"></script>
+<script src="/js/d3.v2.js"></script>
+<script src="/js/nv.d3.js"></script>
+<script src="/js/tooltip.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/legend.js"></script>
+<script src="/js/axis.js"></script>
+<script src="/js/multiBar.js"></script>
+<script src="/js/multiBarChart.js"></script>
+<script src="/js/job_analytics.js"></script>
+<script src="/js/compTimes.js"></script>
