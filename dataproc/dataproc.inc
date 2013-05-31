@@ -206,7 +206,7 @@ function getWorkerTaskCompletionTimes($job_id){
 function getLqc($job_id){
 
   $query =   "select filter,a.worker_id from filtered_workers a left join (select worker_id,count(*) as count from filtered_workers b where set_id = $job_id 
- group by worker_id) b on a.worker_id = b.worker_id where set_id = 196309 order by count desc, worker_id asc,filter asc";
+ group by worker_id) b on a.worker_id = b.worker_id where set_id = $job_id order by count desc, worker_id asc,filter asc";
   
   $lqc = simpleQuery($query); 
 
