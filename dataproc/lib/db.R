@@ -48,21 +48,12 @@ createSet <- function(job_ids){
   return(id)
 }
 
-saveWorkerMetrics <- function(set_id, filter, workerMetrics){
-  numRows <- dim(workerMetrics)[1]
-  for (i in seq(1,numRows)){
-    row <- workerMetrics[i,]
-    
-    if(filter != 'NULL'){
-      query <- sprintf("insert into  worker_metrics (set_id, worker_id, filter, numSents, cos, agreement,annotSentence) values (%s, %s,'%s', %s, %s, %s,%s)",
-                       set_id,rownames(workerMetrics)[i], filter,row$numSent, row$cos, row$agr, row$annotSentence);
-    } else {
-      query <- sprintf("insert into  worker_metrics (set_id, worker_id, numSents, cos, agreement,annotSentence) values (%s, %s,%s, %s, %s,%s)",
-                       set_id,rownames(workerMetrics)[i], row$numSent, row$cos, row$agr, row$annotSentence);
-    }
-    
+saveWorkerMetrics <- function(dframe,set_id){
+  for(worker_id in row.names(dframe)){
+    row <- dframe[worker_id,]
+    query <- sprintf("insert into  worker_metrics (set_id, worker_id, filter, numSents, cos, agreement,annotSentence) values (%s, %s,NULL, %s, %s, %s,%s)",                      set_id,worker_id, row$numSent, row$cos, row$agr, row$annotSentence);
     rs <- dbSendQuery(con, query)
-  } 
+  }
 }
 
 getWorkerMetrics <- function(set_id){
@@ -105,10 +96,42 @@ getTaskCompletionTimes <- function(job_id, df=FALSE){
   }
 } 
 
-
-getSecondsPerUnit <- function(job_id){
-  
-  query <- sprintf("select seconds_per_unit  from history_table where job_id = %s", job_id)
-  return(dbGetQuery(con, query)[1,1])
-  
+insertSentClarity <- function(sentClarity){
+  for (i in seq(1:length(sentClarity))){
+    query <- sprintf("insert into sent_clarity (unit_id,clarity) values (%s,%s)", names(sentClarity[i]), sentClarity[i]);
+    dbGetQuery(con,query)    
+  }
 }
+
+selectWorkerSentenceScore <- function(worker_id){
+  query <- sprintf("select unit_id,score from workerSentenceScore where worker_id = %s", worker_id)
+  return (dbGetQuery(con,query))  
+}
+
+insertWorkerSentenceScore <- function(workerSentenceScore,workerSentenceCosine){
+  for (i in seq(1:dim(workerSentenceScore)[1])){
+    for (j in seq(1:dim(workerSentenceScore)[2])){
+      if(!is.na(workerSentenceScore[i,j])){        
+        query <- sprintf("insert into workerSentenceScore (worker_id,unit_id,cos,score) values (%s,%s,%s,%s)", rownames(workerSentenceScore)[i],
+                         colnames(workerSentenceScore)[j],workerSentenceCosine[i,j], workerSentenceScore[i,j]);
+        dbGetQuery(con,query)            
+      }
+    }    
+  }    
+}
+
+insertWorkerRelationScore <- function(workerRelScore){
+    for (i in seq(1:dim(workerRelScore)[1])){
+      for (j in seq(1:dim(workerRelScore)[2])){
+        if(!is.na(workerRelScore[i,j]) & workerRelScore[i,j] > 0){
+          print(colnames(workerRelScore)[j])
+          print(rownames(workerRelScore)[i])
+          print(workerRelScore[i,j])
+          query <- sprintf("insert into workerRelationScore (worker_id,relation,score) values (%s,'%s',%s)", rownames(workerRelScore)[i],
+                           colnames(workerRelScore)[j],workerRelScore[i,j]);
+          dbGetQuery(con,query)            
+          
+        }
+      }
+    }
+  }
