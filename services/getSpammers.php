@@ -4,7 +4,6 @@ include_once '../includes/functions.php';
 include_once '../dataproc/dataproc.inc';
 
 $job_id    = $_POST['job_id'];
-
 	/* $sql = "SELECT worker_ids */
         /*     		FROM  filtered_workers   */
         /*     		Where set_id = '$job_id'"; */
@@ -28,8 +27,14 @@ $workerSentScore = queryKeyList("select * from workerSentenceScore where worker_
 $cos = array(); 
 $score = array(); 
 foreach($workerSentScore as $worker_id => $row){    
-  $cos[$worker_id] += $row['cos'];
-  $score[$worker_id] += $row['score'];
+  if(!isset($cos["" .$worker_id]))
+    $cos["".$worker_id] = 0; 
+
+  if(!isset($score["" .$worker_id]))
+    $score["".$worker_id] = 0; 
+
+  $cos["" .$worker_id] += $row['cos'];
+  $score["".$worker_id] += $row['score'];
 }
 
 $avgTimes = queryKeyValue("select unit_id,avg(UNIX_TIMESTAMP(created_at)-UNIX_TIMESTAMP(started_at)) as time from cflower_results where job_id = $job_id group by unit_id order by unit_id asc",'unit_id', 'time');
