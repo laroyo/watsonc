@@ -453,22 +453,22 @@ echo "</table>";
 <!--<option value="cJobTitle">Job Title</option>-->
 <option value="cCreatedDate">Created Date</option>
 <option value="cCreatedBy">Created By</option>
-<option value="cNumberOfSentences">Number of Sentences</option>
+<option value="cNumberofSentences">Number of Sentences</option>
 <option value="cTypeofUnits">Type of Units</option>
 <option value="cTemplate">Template</option>
-<option value="cMaxJudgmentPerWorker">Max Judgment Per Worker</option>
+<option value="cMaxJudgmentsPerWorker">Max Judgments Per Worker</option>
 <option value="cUnitsPerAssignment">Units Per Assignment</option>
 <option value="cUnitsPerJob">Units Per Job</option>
 <option value="cJudgmentsPerUnit">Judgments Per Unit</option>
 <option value="cJudgmentsPerJob">Judgments Per Job</option>
 <option value="cSecondsPerUnit">Seconds Per Unit</option>
 <option value="cSecondsPerAssignment">Seconds Per Assignment</option>
-<option value="cPaymentPerUnit">Payment Per Unit</option>
-<option value="cPaymentPerAssignment">Payment Per Assignment</option>
-<option value="cTotalPaymentPerUnit">Total Payment Per Unit</option>
-<option value="cTotalPaymentPerJob">Total Payment Per Job</option>
-<option value="cPaymentPerHour">Payment Per Hour</option>
-<option value="cChannelUsed">Channel Used</option>
+<option value="cPaymentsPerUnit">Payments Per Unit</option>
+<option value="cPaymentsPerAssignment">Payments Per Assignment</option>
+<option value="cTotalPaymentsPerUnit">Total Payments Per Unit</option>
+<option value="cTotalPaymentsPerJob">Total Payments Per Job</option>
+<option value="cPaymentsPerHour">Payments Per Hour</option>
+<option value="cChannelsUsed">Channels Used</option>
 <option value="cChannelsPercentage">Channels Percentage</option>
 <option value="cComments" >Comments</option>
 <option value="cJobJudgmentsMade">Job Judgments Made</option>
@@ -477,9 +477,9 @@ echo "</table>";
 <option value="cAverageTimePerJob">Average Time Per Job</option>
 <option value="cMinTimePerJob">Min Time Per Job</option>
 <option value="cMaxTimePerJob">Max Time Per Job</option>
-<option value="cNumberFilteredSentences">Number Filtered Sentences</option>
+<option value="cNumberofFilteredSentences">Number of Filtered Sentences</option>
 <option value="cTotalNumberofWorkers">Total Number of Workers</option>
-<option value="cNumberFilteredWorkers">Number Filtered Workers</option>
+<option value="cNumberofFilteredWorkers">Number of Filtered Workers</option>
 <option value="cStatus">Status (Results File)</option>
 <option value="cActions">Actions</option>
 <!--<option value="cJobIDLinktoOrigin">Job ID (Origin)</option>-->
@@ -499,33 +499,33 @@ echo "<th title = 'Origin' class='cOrigin'>Orig</th>";
 //echo "<th title = 'Job Title' class='cJobTitle'>JT</th>";
 echo "<th title = 'Created Date' class='cCreatedDate'>Date</th>";
 echo "<th title = 'Created By' class='cCreatedBy'>Creater</th>";
-echo "<th title = 'Number of Sentences'  class='cNumberOfSentences' >#S</th>";
+echo "<th title = 'Number of Sentences'  class='cNumberofSentences' >#S</th>";
 echo "<th title = 'Type of Units' class='cTypeofUnits'>TypeU</th>";
 echo "<th title = 'Template' class='cTemplate'>Tmpl</th>";
-echo "<th title = 'Max Judgment Per Worker' class='cMaxJudgmentPerWorker'>Max J/W</th>";
+echo "<th title = 'Max Judgments Per Worker' class='cMaxJudgmentsPerWorker'>Max J/W</th>";
 echo "<th title = 'Units Per Assignment' class='cUnitsPerAssignment'>U/A</th>";
 echo "<th title = 'Units Per Job' class='cUnitsPerJob'>U/Job</th>";
 echo "<th title = 'Judgments Per Unit' class='cJudgmentsPerUnit'>J/U</th>";
 echo "<th title = 'Judgments Per Job' class='cJudgmentsPerJob'>J/Job</th>";
 echo "<th title = 'Seconds Per Unit' class='cSecondsPerUnit'>s/U</th>";
 echo "<th title = 'Seconds Per Assignment' class='cSecondsPerAssignment'>s/A</th>";
-echo "<th title = 'Payment Per Unit' class='cPaymentPerUnit'>P/U</th>";
-echo "<th title = 'Payment Per Assignment' class='cPaymentPerAssignment'>P/A</th>";
-echo "<th title = 'Total Payment Per Unit' class='cTotalPaymentPerUnit'>TotalP/U</th>";
-echo "<th title = 'Total Payment Per Job' class='cTotalPaymentPerJob'>TotalP/Job</th>";
-echo "<th title = 'Payment Per Hour' class='cPaymentPerHour'>P/H</th>";
-echo "<th title = 'Channel Used' class='cChannelUsed'>Chnl</th>";
+echo "<th title = 'Payments Per Unit' class='cPaymentsPerUnit'>P/U</th>";
+echo "<th title = 'Payments Per Assignment' class='cPaymentsPerAssignment'>P/A</th>";
+echo "<th title = 'Total Payments Per Unit' class='cTotalPaymentsPerUnit'>TotalP/U</th>";
+echo "<th title = 'Total Payments Per Job' class='cTotalPaymentsPerJob'>TotalP/Job</th>";
+echo "<th title = 'Payments Per Hour' class='cPaymentsPerHour'>P/H</th>";
+echo "<th title = 'Channels Used' class='cChannelsUsed'>Chnl</th>";
 echo "<th title = 'Channels Percentage' class='cChannelsPercentage'>Chnl%</th>";
 echo "<th title = 'Comments'  class='cComments'>Cmt</th>";
 echo "<th title = 'Job Judgments Made' class='cJobJudgmentsMade'>JobJ</th>";
 echo "<th title = 'Job Completion' class='cJobCompletion'>JobC</th>";
-echo "<th title = 'Run Time' class='cRunTime'>RT</th>";
+echo "<th title = 'Run Time' class='cRunTime'>RunT</th>";
 echo "<th title = 'Average Time Per Job' class='cAverageTimePerJob'>Ave T/Job</th>";
 echo "<th title = 'Min Time Per Job' class='cMinTimePerJob'>Min T/J</th>";
 echo "<th title = 'Max Time Per Job' class='cMaxTimePerJob'>Max T/J</th>";
-echo "<th title = 'Number Filtered Sentences' class='cNumberFilteredSentences'>FS</th>";
+echo "<th title = 'Number of Filtered Sentences' class='cNumberofFilteredSentences'>FS</th>";
 echo "<th title = 'Total Number of Workers' class='cTotalNumberofWorkers'>TotalW</th>";
-echo "<th title = 'Number Filtered Workers' class='cNumberFilteredWorkers'>FW</th>";
+echo "<th title = 'Number of Filtered Workers' class='cNumberofFilteredWorkers'>FW</th>";
 echo "<th title = 'Status - Click to download Results File' class='cStatus'>Status</th>";
 echo "<th title = 'Actions' class='cActions'>Actions</th>";
 //echo "<th title = 'Job ID - Link to Origin' class='cJobIDLinktoOrigin'>JI</th>";
@@ -541,33 +541,33 @@ while($row = mysql_fetch_array($history)){
   //    echo "<td style ='font-size: 80%' class='cJobTitle' title = '$job_title' >".substr($job_title,0, 6)."</td>";
 	    echo "<td style ='font-size: 80%' class='cCreatedDate' title = '$created_date' >".substr($created_date,2, 8)."</td>";
 	    echo "<td style ='font-size: 80%' class='cCreatedBy'>$created_by</td>";
-	    echo "<td style ='font-size: 80%' class='cNumberOfSentences'>$nr_sentences_file</td>";
+	    echo "<td style ='font-size: 80%' class='cNumberofSentences'>$nr_sentences_file</td>";
 	    echo "<td style ='font-size: 80%' class='cTypeofUnits' title = '$type_of_units' >".substr($type_of_units,0, 6)."</td>";
 	    echo "<td style ='font-size: 80%' class='cTemplate' title = '$template_info' >$template</td>";
-        echo "<td style ='font-size: 80%' class='cMaxJudgmentPerWorker'>$max_judgments_per_worker</td>";
+        echo "<td style ='font-size: 80%' class='cMaxJudgmentsPerWorker'>$max_judgments_per_worker</td>";
         echo "<td style ='font-size: 80%' class='cUnitsPerAssignment'>$units_per_assignment</td>";
         echo "<td style ='font-size: 80%' class='cUnitsPerJob'>$units_per_job</td>";
         echo "<td style ='font-size: 80%' class='cJudgmentsPerUnit'>$judgments_per_unit</td>";
         echo "<td style ='font-size: 80%' class='cJudgmentsPerJob'>$judgments_per_job</td>";
         echo "<td style ='font-size: 80%' class='cSecondsPerUnit'>$seconds_per_unit</td>";
         echo "<td style ='font-size: 80%' class='cSecondsPerAssignment'>$seconds_per_assignment</td>";
-        echo "<td style ='font-size: 80%' class='cPaymentPerUnit'>$payment_per_unit</td>";
-        echo "<td style ='font-size: 80%' class='cPaymentPerAssignment'>$payment_per_assignment</td>";
-        echo "<td style ='font-size: 80%' class='cTotalPaymentPerUnit'>$total_payment_per_unit</td>";
-        echo "<td style ='font-size: 80%' class='cTotalPaymentPerJob'>$total_payment_per_job</td>";
-        echo "<td style ='font-size: 80%' class='cPaymentPerHour'>$payment_per_hour</td>";
-        echo "<td style ='font-size: 80%' class='cChannelUsed'>$channels_used</td>";
+        echo "<td style ='font-size: 80%' class='cPaymentsPerUnit'>$payment_per_unit</td>";
+        echo "<td style ='font-size: 80%' class='cPaymentsPerAssignment'>$payment_per_assignment</td>";
+        echo "<td style ='font-size: 80%' class='cTotalPaymentsPerUnit'>$total_payment_per_unit</td>";
+        echo "<td style ='font-size: 80%' class='cTotalPaymentsPerJob'>$total_payment_per_job</td>";
+        echo "<td style ='font-size: 80%' class='cPaymentsPerHour'>$payment_per_hour</td>";
+        echo "<td style ='font-size: 80%' class='cChannelsUsed'>$channels_used</td>";
 		echo "<td style ='font-size: 80%' class='cChannelsPercentage cssChildRow' title = '$channels_percentage' >".substr($channels_percentage,0, 6)."</td>";
         echo "<td style ='font-size: 80%' class='cComments'>$job_comments</td>";
         echo "<td style ='font-size: 80%' class='cJobJudgmentsMade'>$job_judgments_made</td>";
         echo "<td style ='font-size: 80%' class='cJobCompletion'>$job_completion</td>";
-        echo "<td style ='font-size: 80%' class='cRunTime' title = '$run_time' >".substr($run_time,0, 6)."</td>";
+        echo "<td style ='font-size: 80%' class='cRunTime' title = '$run_time' >$run_time</td>";
 		echo "<td style ='font-size: 80%' class='cAverageTimePerJob'>$avg_time_unitworker</td>";
 		echo "<td style ='font-size: 80%' class='cMinTimePerJob'>$min_time_unitworker</td>";
 		echo "<td style ='font-size: 80%' class='cMaxTimePerJob'>$max_time_unitworker</td>";
-		echo "<td style ='font-size: 80%' class='cNumberFilteredSentences'>$no_filtered_sentences</td>";
+		echo "<td style ='font-size: 80%' class='cNumberofFilteredSentences'>$no_filtered_sentences</td>";
 		echo "<td style ='font-size: 80%' class='cTotalNumberofWorkers' >$no_workers</td>";
-		echo "<td style ='font-size: 80%' class='cNumberFilteredWorkers'><button class = 'blockspammers' title = '$job_id' $checkbox_check >$no_filtered_workers</button></td>";
+		echo "<td style ='font-size: 80%' class='cNumberofFilteredWorkers'><button class = 'blockspammers' title = '$job_id' $checkbox_check >$no_filtered_workers</button></td>";
         echo "<td style ='font-size: 80%' class='cStatus' title = '$job_id' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$resultsfile_id' class = '$checkbox_check' >$status</a></td>";
         echo "<td style ='font-size: 80%' class='cActions' title = '$job_id' >
         <select $status_change class= 'cActions changeStatus'>
