@@ -20,9 +20,9 @@ echo urlencode("<p>In the sentence:&#160;<strong><em>\"</em></strong>
 <cml:checkbox label=\"[IS_A]\" value=\"[IS_A]\" title=\"IS_A: A relation that indicates that one of the terms is more specific variation of the other, e.g. migraine is a kind of headache.\"/>
 <cml:checkbox label=\"[PART_OF]\" value=\"[PART_OF]\" title=\"PART_OF: An anatomical or structural sub-component, e.g. the left ventrical is part of the heart.\"/>
 <cml:checkbox label=\"[OTHER]\" value=\"[OTHER]\" title=\"OTHER: The words are related, but not by any of the above relations.\"/>
-<cml:checkbox label=\"[NONE]\" title=\"NONE: There is no relation between those words in this sentence\"/> 
+<cml:checkbox label=\"[NONE]\" value=\"[NONE]\" title=\"NONE: There is no relation between those words in this sentence\"/> 
 </cml:checkboxes>
-
+<cml:text label=\"Selected relations\" class=\"relations\" name=\"relations\" instructions=\"These are the relations that you selected.\" validates=\"required\"/>
 
 <cml:textarea label=\"STEP 2a: Copy &amp; Paste ONLY the words from the SENTENCE that express the RELATION you selected in STEP1\" class=\"\" instructions=\"Copy &amp; Paste from the sentence ONLY the words that express the RELATION you have selected in STEP1. DO NOT copy the whole sentence.\" validates=\"required\" default=\"Answer N/A if you selected [NONE] in STEP 1. DO NOT copy the whole sentence.\"/>
         <cml:textarea label=\"STEP 2b: If you selected [NONE] in STEP 1, explain why\" class=\"\" instructions=\"If you think there is a relation between those two words, but it is different than any of the relations in STEP 1, then type the relation here.   If you think there is no relation between those terms, explain why do you think it is.\" default=\"Answer N/A if you have selected a relation in STEP 1 other than [NONE].\" validates=\"required\"/>");

@@ -2,8 +2,8 @@
 include_once '../includes/dbinfo.php';
 include_once '../includes/functions.php';
 $content_type = "application/json";
-$api_key = "c6b735ba497e64428c6c61b488759583298c2cf3";
-//$api_key = "b5e3b32b4d29d45c16dc09274e099f731237e35f";
+//$api_key = "c6b735ba497e64428c6c61b488759583298c2cf3";
+$api_key = "b5e3b32b4d29d45c16dc09274e099f731237e35f";
 
 $url = "http://api.crowdflower.com/v1/jobs.json?key=".$api_key;
 $uploadDirectory = "Files/";
@@ -85,6 +85,12 @@ else {
 	fclose($fh);
 	$data["instructions"] = htmlspecialchars_decode(htmlspecialchars($theData)); 
 }
+
+$myJS = "jsRelations";
+$fh = fopen($myJS, 'r');
+$theData = fread($fh, filesize($myJS));
+fclose($fh);
+$data["js"] = htmlspecialchars_decode(htmlspecialchars($theData));
 
 /* create the job with the specified settings */
 $ch = curl_init();
