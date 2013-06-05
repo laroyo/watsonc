@@ -232,16 +232,17 @@ function getWorkerTaskCompletionTimes($job_id){
 
 function getLqc($job_id){
 
-  $query =   "select filter,a.worker_id from filtered_workers a left join (select worker_id,count(*) as count from filtered_workers b where set_id = $job_id 
+  $query =   "select filter,a.worker_id as worker_id from filtered_workers a left join (select worker_id,count(*) as count from filtered_workers b where set_id = $job_id 
  group by worker_id) b on a.worker_id = b.worker_id where set_id = $job_id order by count desc, worker_id asc,filter asc";
   
   $lqc = simpleQuery($query); 
 
   $filtlabels =  array("contribution_filter", "none_other", "rand_text", "rep_response", "rep_text");  
-  
+    
   $filters = array(); 
+  $worker_id = null; 
   foreach($lqc as $row){
-    if($row['worker_id'] != $worker_id){
+      if($row['worker_id'] != $worker_id){
       $worker_id  = $row['worker_id'];
 
       $filters[$worker_id] = array();
