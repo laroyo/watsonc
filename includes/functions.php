@@ -152,20 +152,17 @@ function storeContentInFile($file_info, $content,$createdby) {
   }
   
   // Store results file path to history table
-  
-  if($filesize > 0){
   	
   	$getresultsfile_id =   mysql_query("select id from file_storage where original_name = '$original_name' ") or die(mysql_error());	
-		list($resultsfile_id) = mysql_fetch_row($getresultsfile_id);
-  
-  	$query="Update history_table set resultsfile_id = '$resultsfile_id' WHERE job_id = '$job_id'";
+	$resultsfile_ids = array();
+	while( $row = mysql_fetch_row($getresultsfile_id))
+  {
+    $resultsfile_ids[] = $row['id'];
+  }
+	
+  	$query="Update history_table set resultsfile_id = '$resultsfile_ids[0]' WHERE job_id = '$job_id'";
   	mysql_query($query) or dieError("function: storeContentInFile<br/>".$query."<br/>".mysql_error());
-  	return mysql_insert_id();
-  	} else{
-  		return null;
-  	}
-  
-  
+  	
 }
 
 /**
@@ -229,10 +226,9 @@ function updateRuntime($job_id)
 		$days += 1;
 		$hours = 0;
 	}
-	$run_time = $days." days ".$hours." hours";
+	$run_time = $days."d ".$hours."h";
 	
 	return $run_time;
-	
 }
 
 
