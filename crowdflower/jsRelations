@@ -1,0 +1,19 @@
+inputText = document.getElementsByClassName('relations validates-required relations validates');
+inputElements = document.getElementsByTagName('input');
+
+window.onload = function() {
+  inputText[0].readOnly = true;
+}
+
+for(i=0; i<15; ++i) {
+  inputElements[i].onclick=function() {
+    if(this.checked) {
+      inputText[0].value += this.value + " ";
+    }
+    else {
+      newValue = inputText[0].value.replace(this.value + " ", "");
+      inputText[0].value = newValue;
+      newValue = "";
+    }
+  }
+}
