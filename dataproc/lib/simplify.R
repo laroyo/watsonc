@@ -281,5 +281,16 @@ zeroDiagonal <- function(df){
   return(df)         
 }
 
+correctMisspells <- function(text){
+  #Accepted alternative ways to write N/A
+  misspells <- c('na', 'n/a', 'N/a', 'NA','N.a','naa', 'Na')
+  
+  if(text %in% misspells){
+    text <- 'N/A'    
+  }
+  return(text)
+}
+
+
 
 

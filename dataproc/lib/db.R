@@ -135,3 +135,14 @@ insertWorkerRelationScore <- function(workerRelScore){
       }
     }
   }
+
+saveFilteredWorkers <- function(set.id,worker.ids, filter){
+  for(worker.id in worker.ids){
+    if(is.null(filter))
+      query <- sprintf("insert into filtered_workers (set_id,filter,worker_id) values (%s,NULL,%s)", set.id,worker.id)
+    else
+      query <- sprintf("insert into filtered_workers (set_id,filter,worker_id) values (%s,'%s',%s)", set.id,filter,worker.id)
+
+    dbSendQuery(con,query)                
+  }  
+}

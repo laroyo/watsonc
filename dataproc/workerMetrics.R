@@ -29,9 +29,6 @@ if(length(args) > 0){
 file_id <- -1
 
 raw_data <- getJob(job_id)
-if("" %in% unique(raw_data$relation)){
-  raw_data <- raw_data[raw_data$relation!="",]
-}
 
 if(dim(raw_data)[1] == 0){
   cat('JOB_NOT_FOUND')
@@ -95,24 +92,14 @@ if(dim(raw_data)[1] == 0){
     agrValues <- agreement(filt)
     cosValues <- cosMeasure(filt)
     #sentRelScoreValues <- sentRelScoreMeasure(filt)
+
+    if(f == 'NULL'){
+      saveWorkerMetrics(cbind(agrValues, cosValues,annotSentence), job_id)
+    }
     
     #df <- data.frame(row.names=filtWorkers,numSents=numSent, cos=cosValues, agr=agrValues, annotSentence=(numAnnot/numSent))
     df <- cbind(numSent,cosValues, agrValues,annotSentence)
 
-    if(f == 'NULL'){
-      saveWorkerMetrics(df,job_id)
-
-	  sentRelDf <- sentRelScoreMeasure(raw_data)
-	  sClarity <- sentenceClarity(sentRelDf)
-	  rClarity <- relationClarity(sentRelDf)  
-  
-	  workerSentCos <- workerSentenceCosTable(raw_data)
-	  workerSentScore <- workerSentenceScoreTable(raw_data, workerSentCos, sClarity)            
-	  workerRelScore <- workerRelationScore(raw_data, rClarity, workerSentCos)
-
-	  insertWorkerSentenceScore(workerSentScore, workerSentCos)
-    }
-    
     # Add empty values for filtered out workers
     # missingworkers <- setdiff(worker_ids,filtWorkers)
     # emptyCol <-  rep(0,length(missingworkers))
@@ -174,10 +161,41 @@ if(dim(raw_data)[1] == 0){
   
   wb.new <- loadWorkbook(paste(path,fname,sep='/'), create = TRUE)
 
+  sentRelDf <- sentRelScoreMeasure(raw_data)
+  sClarity <- sentenceClarity(sentRelDf)
+  rClarity <- relationClarity(sentRelDf)  
+  
+  workerSentCos <- workerSentenceCosTable(raw_data)
+  workerSentScore <- workerSentenceScoreTable(raw_data, workerSentCos, sClarity)            
+  workerRelScore <- workerRelationScore(raw_data, rClarity, workerSentCos)
+  
   ## createSheet(wb.new, name = "pivot-worker")
   ## writeOutputHeaders(wb.new,"pivot-worker")
 
   ## writeWorksheet(wb.new,data=cbind(out,spamFilterOutput[rownames(out),],spam=sf[rownames(out),]),sheet=1,startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
+  
+  query <- sprintf("select worker_id, relation,explanation,selected_words,sentence from cflower_results where job_id = %s", job_id)
+  res <- dbGetQuery(con,query)
+  
+
+  res$selected_words <- apply(res[,'selected_words',drop=FALSE],1,FUN=correctMisspells)
+  res$explanation <- apply(res[,'explanation',drop=FALSE],1,FUN=correctMisspells)
+  
+  oth.non <- res[intersect(grep('OTHER|NONE',res$relation),grep('\n',res$relation)),]
+
+  filtWorkers <- list()
+  filtWorkers[['none_other']] <- noneOther(oth.non)
+  filtWorkers[['rep_response']] <- repeatedResponse(res)
+  filValWords <- validWords(res)
+  filtWorkers[['valid_words']] <- sort(unique(filValWords$worker_id))
+  filtWorkers[['rep_text']] <- repeatedText(job_id,'both')
+  
+
+  for (filter in names(filtWorkers)){
+    saveFilteredWorkers(job_id, filtWorkers[[filter]], filter)    
+  }
+  saveFilteredWorkers(job_id, spamLabels, NULL)
+
   
   createSheet(wb.new, name = "singleton-workers-removed")
   
