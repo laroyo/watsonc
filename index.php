@@ -432,13 +432,8 @@ echo "</table>";
 	    Selected Job ID: <input type="text" name="spamblockjobid" id = "spamblockjobid" readonly="true" /> 
             </br>				  
             Spammers Found: <div >
-	    <table id ="spammerfound">
-            <td>Worker ID</td><td> Agr </td><td><span title='Difference between agreement of worker and average agreement of the job workers'>Rel[1]</span></td>
-            <td> Cos </td><td><span title='Worker-Sentence Score: Sentence Clarity - Cosine'>Rel[2]</span></td>
-            <td> Annot/Sent</td><td><span title='avg(#Annot/Sentence[Set]) - #Annot/Sentence[Worker]'>Rel[3]</span></td>
-           <td><span ='Average task completion time of the worker'>Avg Time</span></td>
-           <td><span title='avg(Task completion time[Set]) - avg(Task Completion Time[Worker])'>Rel[4]</span></td>
-	   <td>Filters</td><td> Channel</td></tr></table>
+	    <table id ="spammerfound" border='1' style='width: 100%'>
+            </table>
 	   </form>
 	   <div style="display:none;" id="answer" name="answer">  </div>
 	   </div>

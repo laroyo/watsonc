@@ -8,7 +8,38 @@
 }
 
  
- 
+function addTableHeaders(table){
+    var fields = [
+	{'label':'ID', 'alt': 'Worker ID'}, 
+	{'label': 'Agr', 'alt': "Worker-worker Agreement"}, 
+	{'label': 'Agr. Diff','alt': 'Difference between agreement of worker and average agreement of the job workers'},
+	{'label': 'Cos', 'alt' : 'Cosine'}, 
+	{'label': 'W-S Score', 'alt' : 'Worker-Sentence Score: Sentence Clarity - Cosine'},     
+	{'label': 'Annot/Sent', 'alt': 'Annotations per Sentence'}, 
+	{'label': 'Avg. Annot/Sent', 'alt': 'avg(#Annot/Sentence[Set]) - #Annot/Sentence[Worker]'}, 
+	{'label': 'Avg. Time', 'alt': 'Average task completion time of the worker (for all the tasks she has completed)'}, 
+	{'label': 'Diff Avg. Time', 'alt': 'avg(Task completion time[Set]) - avg(Task Completion Time[Worker])'}, 
+	{'label': 'Filters', 'alt': 'Filters that have identified the worker as a possible spammer' }, 
+	{'label': 'Channel'}
+    ];
+   
+    var row = document.createElement("tr");
+    for(i=0; i<fields.length; i++){	
+	var cell = document.createElement("td");	   
+	if(fields[i].alt){
+
+	    var elem = document.createElement("span");	   
+	    elem.setAttribute('title', fields[i].alt)
+	    var cellText = document.createTextNode(fields[i].label); 	
+	    elem.appendChild(cellText)
+	} else {
+	    var elem = document.createTextNode(fields[i].label); 		    
+	}
+	cell.appendChild(elem)
+	row.appendChild(cell)	    
+    }
+    table.appendChild(row)
+} 
 
  
  function addClassesToFilterRow(){
@@ -273,39 +304,58 @@ $(function() {
 		 $("#spammerfound").children().remove();
 		 var tbl = document.getElementById("spammerfound"); 	    	    	     
 	     
+	     addTableHeaders(tbl);
+	     
 	     var obj = jQuery.parseJSON(data);
 	     var keys = Object.keys(obj[0]); 
 
 	     for (i = 0; i < obj.length; i++){
 		 var row = document.createElement("tr");
 		 for (j = 0; j < keys.length; j++){
-			if(j == 0) {
-				var cell = document.createElement("td");
-				var labelValue = obj[i][keys[j]];
-                   	   	var checkbox = document.createElement("input"); 
-                      		checkbox.setAttribute("type", "checkbox");
-                      		checkbox.setAttribute("name", "workerId[]");
-                      		checkbox.setAttribute("value", labelValue);
-                     		cell.appendChild(checkbox);
+		     if(j == 0) {
+			 var cell = document.createElement("td");
+			 var labelValue = obj[i][keys[j]];
+                   	 var checkbox = document.createElement("input"); 
+                      	 checkbox.setAttribute("type", "checkbox");
+                      	 checkbox.setAttribute("name", "workerId[]");
+                      	 checkbox.setAttribute("value", labelValue);
+                     	 cell.appendChild(checkbox);
+			 
+		     	 var link = document.createElement("a");
+                     	 link.setAttribute('href', '/wcs/analytics/worker.php?worker_id='+labelValue)
+                     	 link.setAttribute('target', '_blank')
+                      	 link.appendChild(document.createTextNode(labelValue));
+			 
+			 cell.appendChild(link);
+			 cell.appendChild(document.createElement("br")); 	     
+			 row.appendChild(cell);		 
+		     }
+		     else {
+			 var cell = document.createElement("td");    
 
-		     		 var label= document.createElement("label");
-                     		 label.htmlFor = labelValue;
-                      		 label.appendChild(document.createTextNode(labelValue));
+			 var abbr = new Array();
+			 abbr['CF'] = 'Content Filter';
+			 abbr['NO'] = "None Other";
+			 abbr['RT'] = "Repeated text";
+			 abbr['RR'] = "Repeated response";
+			 abbr['RND'] = "Random text";
+			 abbr['NR'] = "No relation";			 			 
+			 
+			 if(keys[j] == 'filters'){
+			     for(k = 0; k < obj[i][keys[j]].length; k++){
+				 var filter = document.createElement("span");				 
+				 var filterCode = obj[i][keys[j]][k];
+				 filter.appendChild(document.createTextNode(filterCode+' '));				 
+				 filter.setAttribute('title', abbr[filterCode]);
+				 cell.appendChild(filter);
+			     }			     
+			 } else {
 
-				cell.appendChild(label);
-				cell.appendChild(document.createElement("br")); 	     
-		   //  var cell = document.createElement("td");    
-		   //  var cellText = document.createTextNode(obj[i][keys[j]]); 
-	    	     
-		   //  cell.appendChild(cellText);
-			     	row.appendChild(cell);		 
-			}
-			else {
-				var cell = document.createElement("td");    
-                   		var cellText = document.createTextNode(obj[i][keys[j]]); 
-				cell.appendChild(cellText);
-                                row.appendChild(cell);
-			}    
+                   	     var cellText = document.createTextNode(obj[i][keys[j]]); 
+			     cell.appendChild(cellText);
+			 }
+                         row.appendChild(cell);
+		     }    
 		 }
 		 tbl.appendChild(row);
 	     }

@@ -10,7 +10,7 @@ $job_id    = $_POST['job_id'];
 	/* $result = mysql_query($sql) or die('Error, query failed'); */
 	/* list($worker_ids) =  mysql_fetch_array($result); */
 
-$abbr = array('contribution_filter' => 'CF', 'none_other' => 'NO', 'rep_text' => 'RT', 'rep_response' => 'RT', 'rand_text' => 'RND','no_relation' => 'NO_REL'); 
+$abbr = array('contribution_filter' => 'CF', 'none_other' => 'NO', 'rep_text' => 'RT', 'rep_response' => 'RT', 'rand_text' => 'RND','no_relation' => 'NR'); 
 
 
 $channels = queryKeyValue("select worker_id,external_type from cflower_results where job_id =  $job_id group by worker_id order by worker_id asc",'worker_id','external_type');
@@ -68,12 +68,13 @@ foreach($lqc as $worker_id => $filters){
   
   
   $filt = ''; 
+  $sel_filters = array();
   foreach($filters as $key => $value){
     if($value)
-      $filt .= $abbr[$key] . ",";
+      $sel_filters[] = $abbr[$key]; 
   }
 
-  $obj["filters"] = $filt;
+  $obj["filters"] = $sel_filters;
   $obj["channel"]  = $channels[$worker_id];
 
   $res[] = $obj; 
