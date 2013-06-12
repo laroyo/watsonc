@@ -54,7 +54,7 @@ validateWords <- function(text,sentence){
   if(!is.null(sentence))
     sent.words <- strsplit(sentence, ' +')[[1]]
   
-  for (ch in c('\\[','\\]','-','_','\\.',',','\\n', '\\(','\\)', '\'')){
+  for (ch in c('\\[','\\]','-','_','\\.',',','\\n', '\\(','\\)', '\'', '\"', '&')){
     text <- gsub(ch,' ',text,ignore.case=TRUE)    
   }
   #Trim (initial/final white spaces not replaced by strsplit)
