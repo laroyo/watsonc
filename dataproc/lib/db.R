@@ -25,13 +25,6 @@ insertFiltWorkers <- function(set_id, file_id, filter, filteredWorkers){
   return(dbGetQuery(con, query))  
 }
 
-updateResults <- function(job_id, numFiltSentences, numFiltWorkers){
-  
-  query <- sprintf("update results_table set number_filtered_sentences = %s, number_filtered_workers = %s where job_id = %s" , numFiltSentences,
-                   numFiltWorkers,job_id)  
-  return(dbGetQuery(con, query))  
-}
-
 saveFileMetadata <- function(filename, path,mime_type, filesize, creator){
   query <- sprintf("insert into file_storage (original_name,storage_path,mime_type,filesize,createdby) values ('%s', '%s', '%s',%s,'%s')",filename, path,mime_type,filesize,creator)
   #print(query)

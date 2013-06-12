@@ -221,8 +221,8 @@ $(function() {
 	 $( "#dialog-confirm" ).dialog({
 		  autoOpen: false,
 	      resizable: true,
-	      height:600,
-	      width:1000,
+	      height:650,
+	      width:1245,
 	      modal: true,
 	      buttons: {
 	          "Confirm": function() {
@@ -297,7 +297,7 @@ $(function() {
     	 var xmlRequest = $.ajax({
   	     type: 'POST',
   	     data: ({'job_id': $("#spamblockjobid").val() }),
-  	     url: '/wcs/services/getSpammers.php'
+  	     url: '/services/getSpammers.php'
   	 });
   	 
   	 xmlRequest.done( function(data) {
@@ -338,7 +338,7 @@ $(function() {
 			 abbr['NO'] = "None Other";
 			 abbr['RT'] = "Repeated text";
 			 abbr['RR'] = "Repeated response";
-			 abbr['RND'] = "Random text";
+			 abbr['NVW'] = "No valid words";
 			 abbr['NR'] = "No relation";			 			 
 			 
 			 if(keys[j] == 'filters'){

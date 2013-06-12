@@ -2,7 +2,7 @@
 ## Read file 90-sents-all-batches-GS-sentsv3.csv and applies the filters. 
 ## The filter output is the same as 90-sents-all-batches-CS-sentsv3.csv (Dropbox/data/CF-Results-processed/)
 
-source('envars.R')
+source('/var/www/html/wcs/dataproc/envars.R')
 library(XLConnect)
 
 source(paste(libpath,'/db.R',sep=''),chdir=TRUE)
@@ -94,7 +94,7 @@ if(dim(raw_data)[1] == 0){
     #sentRelScoreValues <- sentRelScoreMeasure(filt)
 
     if(f == 'NULL'){
-      saveWorkerMetrics(cbind(agrValues, cosValues,annotSentence), job_id)
+      saveWorkerMetrics(cbind(agrValues, cosValues,annotSentence,numSent), job_id)
     }
     
     #df <- data.frame(row.names=filtWorkers,numSents=numSent, cos=cosValues, agr=agrValues, annotSentence=(numAnnot/numSent))
@@ -146,15 +146,7 @@ if(dim(raw_data)[1] == 0){
   #Combine spamFilterOutput. 
   sf <- as.data.frame(rowSums(spamFilterOutput > 0) > 1)
   colnames(sf) = 'label'
-  spamLabels <- rownames(sf[sf$label==TRUE,,drop=FALSE])
-
-  #FIXME: modify insertFiltWorkers for new table format. 
-  #insertFiltWorkers(job_id,file_id, '[cos,annotSentence,agr]',spamLabels)
-
-  numFilteredSentences <- length(unlist(discarded))
-  numFilteredWorkers <- length(spamLabels)
-  
-  updateResults(job_id, numFilteredSentences, numFilteredWorkers)  
+  spamLabels <- rownames(sf[sf$label==TRUE,,drop=FALSE])  
 
   fname <- getFileName(job_id,fileTypes[['workerMetrics']])
   path <- getFilePath(job_id, folderTypes[['analysisFiles']])
@@ -190,12 +182,19 @@ if(dim(raw_data)[1] == 0){
   filtWorkers[['valid_words']] <- sort(unique(filValWords$worker_id))
   filtWorkers[['rep_text']] <- repeatedText(job_id,'both')
   
-
   for (filter in names(filtWorkers)){
     saveFilteredWorkers(job_id, filtWorkers[[filter]], filter)    
   }
   saveFilteredWorkers(job_id, spamLabels, NULL)
 
+  numFilteredSentences <- length(unlist(discarded)) 
+
+  numWorkers <- length(unique(raw_data$worker_id))
+  numFilteredWorkers <- length(union(spamLabels, unique(unlist(filtWorkers))))
+
+  query <- sprintf("update history_table set no_workers = %s, no_filtered_workers = %s where job_id = %s", numWorkers, numFilteredWorkers, job_id)
+  rs <- dbSendQuery(con, query)
+  
   
   createSheet(wb.new, name = "singleton-workers-removed")
   

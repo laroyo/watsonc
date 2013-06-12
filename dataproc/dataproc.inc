@@ -237,7 +237,7 @@ function getLqc($job_id){
   
   $lqc = simpleQuery($query); 
 
-  $filtlabels =  array("contribution_filter", "none_other", "rand_text", "rep_response", "rep_text");  
+  $filtlabels =  array("contribution_filter", "none_other", "no_valid_words", "rep_response", "rep_text");  
     
   $filters = array(); 
   $worker_id = null; 
