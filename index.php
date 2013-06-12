@@ -92,15 +92,15 @@ function computePaymentPerHour() {
 <body>
 	<div class="wrapper" >
 		<div id="tabs">
-		<h3 class="ui-tab-title"><a href ="http://www.slideshare.net/laroyo/websci2013-harnessing-disagreement-in-crowdsourcing" target="_blank" class = 'titlelinks' title = "WebSci2013 Harnessing Disagreement in Crowdsourcing" >Crowd-Watson</a></h3>
+		<h3 class="ui-tab-title"><img src='/wcs/graphs/icon-watson.jpg' width="14" height="14" /> <a href ="http://www.slideshare.net/laroyo/websci2013-harnessing-disagreement-in-crowdsourcing" target="_blank" class = 'titlelinks' title = "WebSci2013 Harnessing Disagreement in Crowdsourcing" >Crowd-Watson</a></h3>
 			<ul>
-				<li><a href="#tabs-1" >Home</a></li>
+				<li><a href="#tabs-1" ><span class="ui-icon ui-icon-home" style="display:inline-block"></span>Home</a></li>
 			   <!-- <li><a href="#tabs-2">Configurate Raw</a></li> -->
-			    <li><a href="#tabs-3">Input</a></li>
-				<li><a href="#tabs-4" >Jobs</a></li>
-				<li><a href="#tabs-5" >History</a></li>
+			    <li><a href="#tabs-3"><span class="ui-icon ui-icon-refresh" style="display:inline-block"></span>Input</a></li>
+				<li><a href="#tabs-4" ><span class="ui-icon ui-icon-cart" style="display:inline-block"></span>Jobs</a></li>
+				<li><a href="#tabs-5" ><span class="ui-icon ui-icon-clock" style="display:inline-block"></span>History</a></li>
 			   <!-- <li><a href="#tabs-6" >Results</a></li> -->
-				<li><a href="#tabs-7" >About</a></li>
+				<li><a href="#tabs-7" ><span class="ui-icon ui-icon-contact" style="display:inline-block"></span>About</a></li>
 			</ul>
 			
 			
@@ -125,9 +125,78 @@ function computePaymentPerHour() {
 			<div class="generalborderframe"  >
 			<!--<h1 align="center">Module Introduction</h1>-->
 				<h1 align="center">Crowdsourcing for Watson</h1>
-				<br> <a href="http://en.wikipedia.org/wiki/Crowdsourcing" target="_blank" ><img
-					src="graphs/crowdsourcing.jpg" alt="No show" class = "center" title = "What is Crowdsourcing?" /></a>
-				</br> 
+				</br>
+				<h3 style = "color: blue;" ><span class="ui-icon ui-icon-refresh" style="display:inline-block"></span>Input</h3>
+				<strong>The Input tab contains the following input fields (CF):</strong></br>
+• 	Upload of the text files that need to be processed (an entire folder will be uploaded on the
+server)</br>
+• 	Select the filters that should be applied on the files; three types of filters are available:</br>
+◦ 	Special cases filtering:</br>
+▪ 	Special case – semicolon between the two terms</br>
+▪ 	Special case – one term between brackets</br>
+▪ 	No semicolon between the two terms</br>
+▪ 	No term between brackets</br>
+▪ 	No special cases (sentences without semicolon between the two terms and without terms
+    between brackets)</br>
+◦  	Relation mentioned filtering:</br>
+▪ 	Relation mentioned between the two terms</br>
+▪ 	Relation mentioned but not between the two terms</br>
+▪ 	No relation mentioned</br>
+◦ 	Sentence length:</br>
+▪ 	Short sentences</br>
+▪ 	Long sentences</br>
+• 	Select how many sentences should be chosen from each relation file </br>
+<strong>Input for Games:</strong> </br>
+• 	Upload the raw files that need to be processed </br>
+◦ 	The file will be saved on the server</br>
+◦ 	The file will be registered at the database
+				</br>
+				</br>
+				</br>
+				<h3 style = "color: blue;" ><span class="ui-icon ui-icon-cart" style="display:inline-block"></span>Jobs</h3>
+				<strong>The Jobs tab contains the following input fields (CF):</strong> </br>
+					•	Upload of the data file (job file).</br>
+					•	Job settings needed by CF: job title, number of judgments per unit, number of units per assignment, maximum number of judgments that one worker can make, payment per assignment, seconds per unit. </br>
+					•	The maximum number of judgments from the same IP address is always set to be equal to the maximum number of judgments that one worker can make. </br>
+					•	A comment field for adding extra information related to the job/file.</br>
+					•	For the job instructions and the assignment visualization four templates are available:</br>
+					◦	Extra questions required + definition and example added after each relation</br>
+					◦	Extra questions required + definition and example on mouse hover over one relation</br>
+					◦	No extra question required + definition and example added after each relation</br>
+					◦	No extra question required + definition and example on mouse hover over one relation</br>
+					•	Channels for publishing the job:</br>
+					◦	Amt (Amazon Mechanical Turk and CrowdFlower Internal Interface)</br>
+					◦	All – all the channels available at that moment (first we execute a GET request to CF for retrieving all the available channels; next, we set the channels to that list)</br>
+					
+					<strong>Additional information about the job is computed based on the user input:</strong></br>
+					•	After the job file is selected, we compute the number of units (number of lines – 1)</br>
+					•	When the fields: judgments per unit, units per assignment and payment per assignment are added, we compute the total payment for one sentence (unit) </br>
+					•	When the fields: judgments per unit, units per assignment and payment per assignment are added and the number of units in the file is known, we compute the total payment per job </br>
+					•	When the field seconds per unit is added, we compute the seconds per assignment</br>
+					•	After the value of the field seconds per assignment is added, the payment per hour is computed </br>
+					•	After creating a job and setting the price, CF includes a markup of 33% in the cost of the job; thus, the total payment per one unit and the total payment per job are computed using this additional percentage </br>
+					<strong>All the information about the job are stored in a history table.</strong>
+				</br>
+				</br>
+				</br>
+				<h3 style = "color: blue;" ><span class="ui-icon ui-icon-clock" style="display:inline-block"></span>History</h3>
+				<strong>The History tab contains the following functions:</strong> </br>
+				• 	Indicate integrated data</br>
+				• 	Track parameters, statuses and results of jobs </br>
+				• 	Enable to change status of jobs and synchronize the changes in the database and origin </br>
+				• 	Indicate the completion of each job </br>
+				• 	Enable to download both batch files (through Job ID link) and results files (jobs with Finished Status) </br>
+				• 	Enable to block spammers after clicking on Filtered Workers data of a particular finished job: </br>
+				◦	Check Worker ID(s) and fill in the reason to flag spammers relative the selected job</br>
+				◦	Click on a particular Worker ID to visulize the Worker Analytics in a new Web page </br>
+				◦	The Worker Analytics page generates charts for Annotated Sentences and Task Completion Times relative to the selected worker</br>
+				• 	Enable to select Job ID(s) to generate or view statistical results dynamically in the pop-up Results pages, after clicking on the Analyze button: </br>
+				◦	Data "Structuring" (refine and preprocess data, evolve structures to ease analysis, other transformations) </br>
+				◦	Filtering, labeling and classification: to separate (filter or select) certain data, according to defined function or criteria. This may be used for operations such as spam detection, outlier removal, and the like. </br>
+				◦	Analysis: draw statistics from the data (TBC) </br>
+				• 	Enable to sort and filter many types of data including linked data in a cell without page refreshes, based on different columns 
+				</br>
+				</br>
 			</div>
 			</br>
 	
@@ -428,11 +497,11 @@ echo "</table>";
             <!-- Load data from Database --!>
             </br>
             <form id="myform" class="myform" method="post" name="myform">
-	    Reason: <input type="text" name="reason" id="reason" size="100"> <br/>
+        <strong>Reason: </strong><input type="text" name="reason" id="reason" size="100"> <br/>
 	    <strong>Selected Job ID:   </strong><input type="text" name="spamblockjobid" id = "spamblockjobid" disabled="disabled" style = "border: none; background: transparent; color: red; font-weight: bold;" />
             </br>				  
-            Spammers Found: <div >
-	    <table id ="spammerfound" border='1' style='width: 100%'>
+            <strong>Spammers Found: </strong><div >
+	    <table id ="spammerfound" border='1' style='width: 100%' >
             </table>
 	   </form>
 	   <div style="display:none;" id="answer" name="answer">  </div>
@@ -464,7 +533,7 @@ echo "</table>";
 <option value="cTotalPaymentsPerJob">Total Payments Per Job</option>
 <option value="cPaymentsPerHour">Payments Per Hour</option>
 <option value="cChannelsUsed">Channels Used</option>
-<option value="cChannelsPercentage">Channels Percentage</option>
+<!--<option value="cChannelsPercentage">Channels Percentage</option>-->
 <option value="cComments" >Comments</option>
 <option value="cJobJudgmentsMade">Job Judgments Made</option>
 <option value="cJobCompletion">Job Completion</option>
@@ -509,8 +578,8 @@ echo "<th title = 'Payments Per Assignment' class='cPaymentsPerAssignment'>P/A</
 echo "<th title = 'Total Payments Per Unit' class='cTotalPaymentsPerUnit'>TotalP/U</th>";
 echo "<th title = 'Total Payments Per Job' class='cTotalPaymentsPerJob'>TotalP/Job</th>";
 echo "<th title = 'Payments Per Hour' class='cPaymentsPerHour'>P/H</th>";
-echo "<th title = 'Channels Used' class='cChannelsUsed'>Chnl</th>";
-echo "<th title = 'Channels Percentage' class='cChannelsPercentage'>Chnl%</th>";
+echo "<th title = 'Channels Used' class='cChannelsUsed'>ChannelsUsed</th>";
+// echo "<th title = 'Channels Percentage' class='cChannelsPercentage'>Chnl%</th>";
 echo "<th title = 'Comments'  class='cComments'>Cmt</th>";
 echo "<th title = 'Job Judgments Made' class='cJobJudgmentsMade'>JobJ</th>";
 echo "<th title = 'Job Completion' class='cJobCompletion'>JobC</th>";
@@ -551,8 +620,8 @@ while($row = mysql_fetch_array($history)){
         echo "<td style ='font-size: 80%' class='cTotalPaymentsPerUnit'>$total_payment_per_unit</td>";
         echo "<td style ='font-size: 80%' class='cTotalPaymentsPerJob'>$total_payment_per_job</td>";
         echo "<td style ='font-size: 80%' class='cPaymentsPerHour'>$payment_per_hour</td>";
-        echo "<td style ='font-size: 80%' class='cChannelsUsed'>$channels_used</td>";
-		echo "<td style ='font-size: 80%' class='cChannelsPercentage cssChildRow' title = '$channels_percentage' >".substr($channels_percentage,0, 6)."</td>";
+    //    echo "<td style ='font-size: 80%' class='cChannelsUsed'>$channels_used</td>";
+		echo "<td style ='font-size: 80%' class='cChannelsUsed' title = '$channels_used' >".substr($channels_used,0, 16)."</td>";
         echo "<td style ='font-size: 80%' class='cComments'>$job_comments</td>";
         echo "<td style ='font-size: 80%' class='cJobJudgmentsMade'>$job_judgments_made</td>";
         echo "<td style ='font-size: 80%' class='cJobCompletion'>$job_completion</td>";
@@ -723,8 +792,13 @@ while($row = mysql_fetch_array($results)){
   <div class="footer" >
 	<h5 align = "center" class = "copyrightfooter" >Copyright © 2013 <a href = 'http://crowd-watson.nl/wcs/' target="_blank" class = 'filelinks' title = "http://crowd-watson.nl/wcs/" >Crowd-Watson</a>. All rights reserved.</h5>
 
-<h5 align = "center" class = "copyrightfooter" >| <a href = '#tabs-7'  id = "tofive" class = 'filelinks' >About</a> | <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-all' target="_blank" class = 'filelinks' title = "Crowd-watson-all" >Contact</a> | Terms & Conditions | Privacy Policy |</h5>
-	</div>
+<h5 align = "center" class = "copyrightfooter" >
+| <a href = 'http://drwatsonsynonymgame.wordpress.com/about-this-project/' target="_blank" class = 'filelinks' title = 'About Crowd-Watson Project' >About</a> 
+| <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-all' target="_blank" class = 'filelinks' title = "Crowd-watson-all" >Contact</a> 
+| <a href = 'http://drwatsonsynonymgame.wordpress.com/about/' target="_blank" class = 'filelinks' title = 'About IBM Watson'>IBM Watson</a>  
+| <a href = 'http://drwatsonsynonymgame.wordpress.com/research-themes/' target="_blank" class = 'filelinks' title = 'Current four Research Themes'>Research Themes</a>  |</h5>
+</br>	
+</div>
 		
 		
 		

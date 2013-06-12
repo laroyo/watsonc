@@ -108,7 +108,6 @@ function getResults($job_id) {
 
 		//fputcsv($fp_overview, $row_overview);
 		array_push($overview_content,$row_overview); 
-
 		for ($j = 0; $j < count($judgments); $j ++) {
 			$row_result = array($judgments[$j]["unit_id"], $judgments[$j]["worker_id"], $judgments[$j]["worker_trust"], $judgments[$j]["external_type"]);
 			$allChannels[$judgments[$j]["external_type"]] ++;
@@ -162,7 +161,7 @@ function getResults($job_id) {
 	$min_time = gmdate('H:i:s', min($timeDifference));
 	$avg_time = gmdate('H:i:s', array_sum($timeDifference) / $noJudgments);	
 
-	$updatehistorytable = mysql_query("Update history_table Set origin='$origin', channels_percentage='$channel_percentage', min_time_unitworker='$min_time', max_time_unitworker='$max_time', avg_time_unitworker='$avg_time' Where job_id = '$job_id' ") or die(mysql_error());
+	$updatehistorytable = mysql_query("Update history_table Set origin='$origin', channels_used ='$channel_percentage', channels_percentage='$channel_percentage', min_time_unitworker='$min_time', max_time_unitworker='$max_time', avg_time_unitworker='$avg_time' Where job_id = '$job_id' ") or die(mysql_error());
 	
 	$queryFileName="SELECT `file_name` FROM `history_table` WHERE `job_id` = '".$job_id."'";
         $fileName = getOneFieldFromQuery($queryFileName, 'file_name');
@@ -182,9 +181,12 @@ function getResults($job_id) {
 	
 	//FIXME: Specify a correct user as creator of the files (instead of 'script')	
 	storeContentInFile($results_file_info,$results_content,'script'); 
+	$worker_res = exec('/usr/bin/Rscript /var/www/html/wcs/dataproc/workerMetrics.R '. $job_id);
+	error_log('Worker Metrics Process returned status: '. $worker_res);
+
 	//storeContentInFile($overview_file_info,$results_content,'script'); 
 	/* fclose($fp_results); */
 	/* fclose($fp_overview); */
 }
-//getResults("185404");
+//getResults("196344");
 ?>
