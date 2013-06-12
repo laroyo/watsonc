@@ -723,7 +723,11 @@ while($row = mysql_fetch_array($results)){
   <div class="footer" >
 	<h5 align = "center" class = "copyrightfooter" >Copyright © 2013 <a href = 'http://crowd-watson.nl/wcs/' target="_blank" class = 'filelinks' title = "http://crowd-watson.nl/wcs/" >Crowd-Watson</a>. All rights reserved.</h5>
 
-<h5 align = "center" class = "copyrightfooter" >| <a href = 'http://drwatsonsynonymgame.wordpress.com/about-this-project/' target="_blank" class = 'filelinks' >About</a> | <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-all' target="_blank" class = 'filelinks' title = "Crowd-watson-all" >Contact</a> | Terms & Conditions | Privacy Policy |</h5>
+<h5 align = "center" class = "copyrightfooter" >
+| <a href = 'http://drwatsonsynonymgame.wordpress.com/about-this-project/' target="_blank" class = 'filelinks' title = 'About Crowd-Watson Project' >About</a> 
+| <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-all' target="_blank" class = 'filelinks' title = "Crowd-watson-all" >Contact</a> 
+| <a href = 'http://drwatsonsynonymgame.wordpress.com/about/' target="_blank" class = 'filelinks' title = 'About IBM Watson'>IBM Watson</a>  
+| <a href = 'http://drwatsonsynonymgame.wordpress.com/research-themes/' target="_blank" class = 'filelinks' title = 'Current four Research Themes'>Research Themes</a>  |</h5>
 	</div>
 		
 		
