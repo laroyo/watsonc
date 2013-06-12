@@ -221,8 +221,8 @@ $(function() {
 	 $( "#dialog-confirm" ).dialog({
 		  autoOpen: false,
 	      resizable: true,
-	      height:600,
-	      width:1000,
+	      height:650,
+	      width:1245,
 	      modal: true,
 	      buttons: {
 	          "Confirm": function() {
