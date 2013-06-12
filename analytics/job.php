@@ -15,7 +15,9 @@ if (isset($_POST['job_ids'])){
   $job_ids = array_map('intval', $_POST['job_ids']); 
   sort($job_ids); 
 
-  $set_id  = getSetId($job_ids); 
+  /* $set_id  = getSetId($job_ids);  */
+  //FIXME: extend, to be able to analyze several grouped jobs. 
+  $job_id = $job_ids[0];
 } 
 
 if (isset($_GET['test'])){  

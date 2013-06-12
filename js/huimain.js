@@ -397,7 +397,7 @@ $(function() {
  var StatisticsForm = document.createElement("form");
  StatisticsForm.target = "Analysis";
  StatisticsForm.method = "POST"; 
- StatisticsForm.action = "/wcs/set_analytics.php";
+ StatisticsForm.action = "/wcs/analytics/job.php";
  
  var hiddenInput = document.createElement("input");
  hiddenInput.type = "hidden";
