@@ -428,11 +428,11 @@ echo "</table>";
             <!-- Load data from Database --!>
             </br>
             <form id="myform" class="myform" method="post" name="myform">
-	    Reason: <input type="text" name="reason" id="reason" size="100"> <br/>
+        <strong>Reason: </strong><input type="text" name="reason" id="reason" size="100"> <br/>
 	    <strong>Selected Job ID:   </strong><input type="text" name="spamblockjobid" id = "spamblockjobid" disabled="disabled" style = "border: none; background: transparent; color: red; font-weight: bold;" />
             </br>				  
-            Spammers Found: <div >
-	    <table id ="spammerfound" border='1' style='width: 100%'>
+            <strong>Spammers Found: </strong><div >
+	    <table id ="spammerfound" border='1' style='width: 100%' >
             </table>
 	   </form>
 	   <div style="display:none;" id="answer" name="answer">  </div>
@@ -464,7 +464,7 @@ echo "</table>";
 <option value="cTotalPaymentsPerJob">Total Payments Per Job</option>
 <option value="cPaymentsPerHour">Payments Per Hour</option>
 <option value="cChannelsUsed">Channels Used</option>
-<option value="cChannelsPercentage">Channels Percentage</option>
+<!--<option value="cChannelsPercentage">Channels Percentage</option>-->
 <option value="cComments" >Comments</option>
 <option value="cJobJudgmentsMade">Job Judgments Made</option>
 <option value="cJobCompletion">Job Completion</option>
@@ -509,8 +509,8 @@ echo "<th title = 'Payments Per Assignment' class='cPaymentsPerAssignment'>P/A</
 echo "<th title = 'Total Payments Per Unit' class='cTotalPaymentsPerUnit'>TotalP/U</th>";
 echo "<th title = 'Total Payments Per Job' class='cTotalPaymentsPerJob'>TotalP/Job</th>";
 echo "<th title = 'Payments Per Hour' class='cPaymentsPerHour'>P/H</th>";
-echo "<th title = 'Channels Used' class='cChannelsUsed'>Chnl</th>";
-echo "<th title = 'Channels Percentage' class='cChannelsPercentage'>Chnl%</th>";
+echo "<th title = 'Channels Used' class='cChannelsUsed'>ChannelsUsed</th>";
+// echo "<th title = 'Channels Percentage' class='cChannelsPercentage'>Chnl%</th>";
 echo "<th title = 'Comments'  class='cComments'>Cmt</th>";
 echo "<th title = 'Job Judgments Made' class='cJobJudgmentsMade'>JobJ</th>";
 echo "<th title = 'Job Completion' class='cJobCompletion'>JobC</th>";
@@ -551,8 +551,8 @@ while($row = mysql_fetch_array($history)){
         echo "<td style ='font-size: 80%' class='cTotalPaymentsPerUnit'>$total_payment_per_unit</td>";
         echo "<td style ='font-size: 80%' class='cTotalPaymentsPerJob'>$total_payment_per_job</td>";
         echo "<td style ='font-size: 80%' class='cPaymentsPerHour'>$payment_per_hour</td>";
-        echo "<td style ='font-size: 80%' class='cChannelsUsed'>$channels_used</td>";
-		echo "<td style ='font-size: 80%' class='cChannelsPercentage cssChildRow' title = '$channels_percentage' >".substr($channels_percentage,0, 6)."</td>";
+    //    echo "<td style ='font-size: 80%' class='cChannelsUsed'>$channels_used</td>";
+		echo "<td style ='font-size: 80%' class='cChannelsUsed' title = '$channels_used' >".substr($channels_used,0, 16)."</td>";
         echo "<td style ='font-size: 80%' class='cComments'>$job_comments</td>";
         echo "<td style ='font-size: 80%' class='cJobJudgmentsMade'>$job_judgments_made</td>";
         echo "<td style ='font-size: 80%' class='cJobCompletion'>$job_completion</td>";
