@@ -1,6 +1,7 @@
 #!/usr/bin/Rscript
 
-source('/var/www/html/wcs/dataproc/envars.R')
+#source('/var/www/html/wcs/dataproc/envars.R')
+source('/home/gsc/watson/dataproc/envars.R')
 
 source(paste(libpath,'/db.R',sep=''),chdir=TRUE)
 source(paste(libpath,'/simplify.R',sep=''),chdir=TRUE)

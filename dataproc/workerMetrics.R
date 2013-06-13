@@ -2,7 +2,8 @@
 ## Read file 90-sents-all-batches-GS-sentsv3.csv and applies the filters. 
 ## The filter output is the same as 90-sents-all-batches-CS-sentsv3.csv (Dropbox/data/CF-Results-processed/)
 
-source('/var/www/html/wcs/dataproc/envars.R')
+#source('/var/www/html/wcs/dataproc/envars.R')
+source('/home/gsc/watson/dataproc/envars.R')
 library(XLConnect)
 
 source(paste(libpath,'/db.R',sep=''),chdir=TRUE)

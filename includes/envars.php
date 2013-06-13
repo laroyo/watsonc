@@ -1,6 +1,6 @@
 <?php
 //Root directory
-define("BASE_PATH",'/var/www/html/wcs'); 
+define("BASE_PATH",'/home/gsc/watson/'); 
 //$basepath = 
 
 //Files directory

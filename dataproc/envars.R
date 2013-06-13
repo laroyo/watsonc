@@ -1,13 +1,13 @@
 
-basepath <- '/var/www/html/wcs'
+basepath <- '/home/gsc/watson'
 
 #Lib path
 libpath <- paste(basepath,'/dataproc/lib',sep='')
 
 #Db Parameters.
 
-dbuser <- "watsoncs"
-dbpwd <- "Tre2akEf"
+dbuser <- "root"
+dbpwd <- "william1"
 dbname <- 'watsoncs'
 host <- 'localhost'
 
