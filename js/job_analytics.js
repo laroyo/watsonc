@@ -1,29 +1,35 @@
+// The annotations of the job are retrieved from the database in the variable 'sents' as an array of {'sentence_id': id, <relation> : <numOccurencesRelation>}
+// This structure is adapted to fit the one used by nvd3.js by default to build the barchart. 
+
 ids = [];
-rels = ["D","S","C","M","L","AW","P","SE","IA","PO","T","CI"]; 
-relations = []; 
-for (var i = 0; i < rels.length; i++){  
-    relations[rels[i]] = []; 
+relLabels = ["D","S","C","M","L","AW","P","SE","IA","PO","T","CI"]; 
+relOccurences = []; 
+for (var i = 0; i < relLabels.length; i++){  
+    relOccurences[relLabels[i]] = []; 
 }    
+
 sents.map( function(d){
     
     ids.push(d["sentence_id"]); 
-    for (var i = 0; i < rels.length; i++){
-	relations[rels[i]].push(parseInt(d[rels[i]])); 
+    for (var i = 0; i < relLabels.length; i++){
+	relOccurences[relLabels[i]].push(parseInt(d[relLabels[i]])); 
     }
 });  
-r = []; 
-for (var i = 0;i < rels.length; i++)
+
+//Build an array of {x (sentence_id), y: [rel : numLabelsForRelation]}
+var xyValues = []; 
+for (var i = 0;i < relLabels.length; i++)
 {   
-    r[rels[i]] = []; 
+    xyValues[relLabels[i]] = []; 
     for (var j =0; j<ids.length; j++)
     {
-	r[rels[i]].push({ x : parseInt(ids[j]), y : relations[rels[i]][j]})			  
+	xyValues[relLabels[i]].push({ x : parseInt(ids[j]), y : relOccurences[relLabels[i]][j]})			  
     }
 }	
 
 var data = []; 
-for (var i = 0; i < rels.length; i++){
-    data.push({key : rels[i], values : r[rels[i]]}); 
+for (var i = 0; i < relLabels.length; i++){
+    data.push({key : relLabels[i], values : xyValues[relLabels[i]]}); 
 }
 
 nv.addGraph(function() {
@@ -40,8 +46,7 @@ nv.addGraph(function() {
     
     nv.utils.windowResize(chart.update);
     d3.selectAll(".nv-bar").on("click", function (d) {
-	//alert(d.x+" "+d.y+" "+d.y0 + " "+ d.series+" "+d.size+" "+d.y1);
-	window.open("/analytics/sentence.php?sentence_id="+d.x,"_self");
+	window.open("/wcs/analytics/sentence.php?sentence_id="+d.x,"_self");
     });
     return chart;
 });

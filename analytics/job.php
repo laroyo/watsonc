@@ -102,4 +102,4 @@ echo "];</script>";
 <script src="/wcs/js/multiBar.js"></script>
 <script src="/wcs/js/multiBarChart.js"></script>
 <script src="/wcs/js/job_analytics.js"></script>
-<script src="/wcs/js/compTimes.js"></script>
+<!-- <script src="/wcs/js/compTimes.js"></script> !-->
