@@ -21,6 +21,5 @@ echo urlencode("<p>In the sentence:&#160;<strong><em>\"</em></strong>
 <cml:checkbox label=\"[PART_OF]\" value=\"[PART_OF]\" title=\"PART_OF: An anatomical or structural sub-component, e.g. the left ventrical is part of the heart.\"/>
 <cml:checkbox label=\"[OTHER]\" value=\"[OTHER]\" title=\"OTHER: The words are related, but not by any of the above relations.\"/>
 <cml:checkbox label=\"[NONE]\" value=\"[NONE]\" title=\"NONE: There is no relation between those words in this sentence\"/> 
-</cml:checkboxes>
-<cml:text label=\"Selected relations\" class=\"relations\" name=\"relations\" instructions=\"These are the relations that you selected.\" validates=\"required\"/>");
+</cml:checkboxes>");
 ?>

@@ -383,27 +383,46 @@ echo "</table>";
 
 								<div class="labelfield">Choose the template:</div>
 								<div class="inputfield">
-									<input type="radio" name="template" value="t1" checked>
-
-									Relations with definitions and extra questions required <br />
+									<input type="radio" name="template" value="t1" checked> T1: Relations with (mouse-over) definitions and extra questions required  <br />
 								</div>
 
 								<div class="labelfield">&nbsp;</div>
 								<div class="inputfield">
-									<input type="radio" name="template" value="t2"> Relations with
-									definitions but without extra questions <br />
+									<input type="radio" name="template" value="t2">
+
+									T2: Relations with (text) definitions and extra questions required  <br />
 								</div>
 
 								<div class="labelfield">&nbsp;</div>
 								<div class="inputfield">
-									<input type="radio" name="template" value="t3"> Relations
-									without definitions and extra questions required <br />
+									<input type="radio" name="template" value="t1a"> T1A: Relations with (mouse-over) definitions and without extra questions  <br /> <br>
 								</div>
 
 								<div class="labelfield">&nbsp;</div>
 								<div class="inputfield">
-									<input type="radio" name="template" value="t4"> Relations
-									without definitions and without extra questions <br /> <br>
+									<input type="radio" name="template" value="t2a"> T2A: Relations with (text) definitions and without extra questions <br />
+								</div>
+								
+								<div class="labelfield">&nbsp;</div>
+								<div class="inputfield">
+								<input type="radio" name="template" value="t1b">
+
+									T1B: Relations with (mouse-over) definitions, extra questions required and automatic text field  <br />
+								</div>
+
+								<div class="labelfield">&nbsp;</div>
+								<div class="inputfield">
+									<input type="radio" name="template" value="t2b"> T2B: Relations with (text) definitions and extra questions required and automatic text field  <br />
+								</div>
+
+								<div class="labelfield">&nbsp;</div>
+								<div class="inputfield">
+									<input type="radio" name="template" value="t1ab"> T1AB: Relations with (mouse-over) definitions and without extra questions and automatic text field  <br />
+								</div>
+
+								<div class="labelfield">&nbsp;</div>
+								<div class="inputfield">
+									<input type="radio" name="template" value="t2ab"> T2AB: Relations with (text) definitions and extra without questions and automatic text field  <br /> <br>
 								</div>
 
 

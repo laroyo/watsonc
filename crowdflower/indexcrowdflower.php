@@ -71,7 +71,7 @@ $data["execution_mode"] = "builder";
 $data["worker_ui_remix"] = "0";
 $calibrated_unit_time = $_POST["seconds_per_unit"];
 
-if ($_POST["template"] == "t1" || $_POST["template"] == "t3") {
+if ($_POST["template"] == "t1" || $_POST["template"] == "t2" || $_POST["template"] == "t1b" || $_POST["template"] == "t2b") {
 	$myFile = "instructionsWithExtra";
 	$fh = fopen($myFile, 'r');
 	$theData = fread($fh, filesize($myFile));
@@ -86,11 +86,13 @@ else {
 	$data["instructions"] = htmlspecialchars_decode(htmlspecialchars($theData)); 
 }
 
-$myJS = "jsRelations";
-$fh = fopen($myJS, 'r');
-$theData = fread($fh, filesize($myJS));
-fclose($fh);
-$data["js"] = htmlspecialchars_decode(htmlspecialchars($theData));
+if ($_POST["template"] == "t1b" || $_POST["template"] == "t2b" || $_POST["template"] == "t1ab" || $_POST["template"] == "t2ab") {
+	$myJS = "jsRelations";
+	$fh = fopen($myJS, 'r');
+	$theData = fread($fh, filesize($myJS));
+	fclose($fh);
+	$data["js"] = htmlspecialchars_decode(htmlspecialchars($theData));
+}
 
 /* create the job with the specified settings */
 $ch = curl_init();
@@ -120,30 +122,51 @@ $response = exec($upload_query);
 if ($_POST["template"] == "t1") {
 	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
  $template_used = "T1" ;
- $template_info = "Relations with definitions and with extra questions required";
+ $template_info = "T1: Relations with (mouse-over) definitions and extra questions required";
  $response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t2") {
 	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndWithoutExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
 	$template_used = "T2" ;
-	$template_info = "Relations with definitions but without extra questions";
+	$template_info = "T2: Relations with (text) definitions and extra questions required";
 	$response = exec($update_cml_job);
 }
-else if ($_POST["template"] == "t3") {
+else if ($_POST["template"] == "t1a") {
 	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
-	$template_used = "T3" ;
-	$template_info = "Relations without definitions but with extra questions required";
+	$template_used = "T1A" ;
+	$template_info = "T1A: Relations with (mouse-over) definitions and without extra questions";
 	$response = exec($update_cml_job);
 }
-else if ($_POST["template"] == "t4") {
+else if ($_POST["template"] == "t2a") {
 	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithoutExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
-	$template_used = "T4" ;
-	$template_info = "Relations without definitions and without extra questions";
+	$template_used = "T2A" ;
+	$template_info = "T2A: Relations with (text) definitions and extra without questions";
 	$response = exec($update_cml_job);
 }
-
-//print_r(objectToArray($response));
-//print_r(json_decode($response));
+else if ($_POST["template"] == "t1b") {
+	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndExtraAuto.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+ $template_used = "T1B" ;
+ $template_info = "T1B: Relations with (mouse-over) definitions, extra questions required and automatic text field";
+ $response = exec($update_cml_job);
+}
+else if ($_POST["template"] == "t2b") {
+	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndWithoutExtraAuto.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+	$template_used = "T2B" ;
+	$template_info = "T2B: Relations with (text) definitions and extra questions required and automatic text field";
+	$response = exec($update_cml_job);
+}
+else if ($_POST["template"] == "t1ab") {
+	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithExtraAuto.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+	$template_used = "T1AB" ;
+	$template_info = "T1AB: Relations with (mouse-over) definitions and without extra questions and automatic text field";
+	$response = exec($update_cml_job);
+}
+else if ($_POST["template"] == "t2ab") {
+	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithoutExtraAuto.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+	$template_used = "T2AB" ;
+	$template_info = "T2AB: Relations with (text) definitions and extra without questions and automatic text field ";
+	$response = exec($update_cml_job);
+}
 
 $update_job = "curl -X PUT -d \"job[worker_ui_remix]=false&job[execution_mode]=builder\" \"https://api.crowdflower.com/v1/jobs/".$job_id.".json?key=".$api_key."\"";
 $response = exec($update_job);
