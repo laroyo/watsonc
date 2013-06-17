@@ -338,7 +338,7 @@ $(function() {
 			 abbr['NO'] = "None Other";
 			 abbr['RT'] = "Repeated text";
 			 abbr['RR'] = "Repeated response";
-			 abbr['NVW'] = "No valid words";
+			 abbr['RND'] = "Random text";
 			 abbr['NR'] = "No relation";			 			 
 			 
 			 if(keys[j] == 'filters'){
@@ -415,8 +415,10 @@ $(function() {
 	 
  document.body.appendChild(StatisticsForm);
 
- Statistics = window.open("", "Analysis", "status=0,title='Statistical Analyses',height=700,width=600,scrollbars=1");
+// Statistics = window.open("", "Analysis", "status=0,title='Statistical Analyses',height=700,width=1000,scrollbars=1");
 
+ Statistics = $(this).attr('target', '_blank');
+	 
 if (Statistics) {
  StatisticsForm.submit();
 } else {
