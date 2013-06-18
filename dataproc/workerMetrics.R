@@ -160,7 +160,7 @@ if(dim(raw_data)[1] == 0){
   
   workerSentCos <- workerSentenceCosTable(raw_data)
   workerSentScore <- workerSentenceScoreTable(raw_data, workerSentCos, sClarity)            
-  workerRelScore <- workerRelationScore(raw_data, rClarity, workerSentCos)
+  #workerRelScore <- workerRelationScore(raw_data, rClarity, workerSentCos)
   
   ## createSheet(wb.new, name = "pivot-worker")
   ## writeOutputHeaders(wb.new,"pivot-worker")

@@ -4354,11 +4354,12 @@ nv.models.linePlusBarChart = function() {
     , tooltips = true
     , tooltip = function(key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
-               '<p>' +  y + ' at ' + x + '</p>';
+               '<p>' +  y + ' at ' + names[x] + '</p>';
       }
     , x
     , y1
     , y2
+    , names = ["prodege","amt", "zoombucks", "neodev","vivatic"]    
     , state = {}
     , defaultState = null
     , noData = "No Data Available."

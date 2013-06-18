@@ -292,5 +292,58 @@ correctMisspells <- function(text){
 }
 
 
+#Returns the sentences of sentRelDf where the relation is the one chosen by the majority
+getMajSentences <- function(sentRelDf, relation){  
+  res <- c()
+  for (i in seq(1,dim(sentRelDf)[1])){
+    if(max(sentRelDf[i,]) == sentRelDf[i,relation]){
+      res <- c(res, rownames(sentRelDf)[i])
+    }
+  }
+  return (res)
+}
+
+#Returns the majoritary relation(s) for a sentence
+majRelation <- function(sentence){ 
+  max.value <- max(sentence)
+  sent <- unlist(sentence)
+  return (row.names(as.data.frame((sent[sent==max.value]))))
+}
+
+#Transforms an element into a sentence Vector
+#Mult indicates wheter multiple relations are considered.
+#By default (FALSE), multiple relations are ignored. 
+#Applied in conjuntion with majRelation and getRelationVector
+toSentenceVector <- function(list.elem,mult=FALSE){
+
+  sv <- createSentenceVector(1,all, rep(0,14)) 
+  if(length(list.elem) > 1){
+    if(mult)
+      for(elem in list.elem)
+        sv[elem] = 1
+  } else
+      sv[list.elem] = 1
+  return (sv)
+}
+
+
+#R lists are encoded in JSON as objects where each attribute is an element of a list
+#This function encodes the list as an array of json objects. 
+getListAsArray <- function(mlist,key.name,value.name){
+  json <- '['
+  for(n in names(mlist)){
+    elem <- paste('{"',key.name,'":"',n,'", "',value.name,'" : ',toJSON(mlist[[n]]),'}', sep='')
+    if(nchar(json) == 1)
+      separator = ''
+    else
+      separator = ','
+    
+    json <- paste(json, elem,sep=separator)
+  }
+  json <- paste(json,']',sep='')
+  
+  return (json)  
+}
+
 
 
