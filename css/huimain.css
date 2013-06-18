@@ -65,8 +65,13 @@ height: 2em;
 .labelfield {
 	padding-left: 10px;
 	float: left;
-	width: 480px;
+	width: 418px;
 }
+
+.combinedfield {
+	padding-left: 10px;
+}
+
 
 .inputfield {
 	border-top-left-radius: 6px;
@@ -87,6 +92,7 @@ height: 2em;
 	width: 375px; 
 	height: 84px;
 }
+
 
 #spammerfound{
 	

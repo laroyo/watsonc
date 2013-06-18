@@ -337,7 +337,7 @@ echo "</table>";
 										value="Choose Server File" /> <input type="hidden"
 										name="fileid" id="fileid" /> <input type="hidden"
 										name="sentences" id="sentences" /> <label for="uploadedfile"
-										style="font-size: 80%">No File Chosen</label>
+										style="font-size: 75%">No File Chosen</label>
 								</div>
 								<div class="labelfield">Job title:</div>
 								<div class="inputfield">
@@ -372,74 +372,75 @@ echo "</table>";
 								<div class="labelfield">Seconds per unit:</div>
 								<div class="inputfield">
 									<input type="text" class = "textboxInput" name="seconds_per_unit"
-										id="seconds_per_unit" oninput="computeTime()"> <br />
+										id="seconds_per_unit" oninput="computeTime()">
 								</div>
-
+								 
 								<div class="labelfield"
 									title="The purposes or notes of creating the job">Comments:</div>
 								<div class="inputfield">
-									<input type="text" name="job_comment" class="commentboxInput" />
+									<input type="text" name="job_comment" class="commentboxInput" /><br />
 								</div>
-
+								<br />
 								<div class="labelfield">Choose the template:</div>
-								<div class="inputfield">
-									<input type="radio" name="template" value="t1" checked> T1: Relations with (mouse-over) definitions and extra questions required  <br />
+								<div class="inputfield">&nbsp;<br /></div>
+								<div class = "combinedfield">
+									<input type="radio" name="template" value="t1" checked> T1: Relations with (mouse-over) definitions and extra questions required<br />
 								</div>
 
-								<div class="labelfield">&nbsp;</div>
-								<div class="inputfield">
+							
+								<div class = "combinedfield">
 									<input type="radio" name="template" value="t2">
 
 									T2: Relations with (text) definitions and extra questions required  <br />
 								</div>
 
-								<div class="labelfield">&nbsp;</div>
-								<div class="inputfield">
-									<input type="radio" name="template" value="t1a"> T1A: Relations with (mouse-over) definitions and without extra questions  <br /> <br>
+								
+								<div class = "combinedfield">
+									<input type="radio" name="template" value="t1a"> T1A: Relations with (mouse-over) definitions and without extra questions  <br /> 
 								</div>
 
-								<div class="labelfield">&nbsp;</div>
-								<div class="inputfield">
+								
+								<div class = "combinedfield">
 									<input type="radio" name="template" value="t2a"> T2A: Relations with (text) definitions and without extra questions <br />
 								</div>
 								
-								<div class="labelfield">&nbsp;</div>
-								<div class="inputfield">
-								<input type="radio" name="template" value="t1b">
+								
+								<div class = "combinedfield">
+								<input type="radio" name="template" value="t1b" >
 
-									T1B: Relations with (mouse-over) definitions, extra questions required and automatic text field  <br />
+									T1B: Relations with (mouse-over) definitions, extra questions required and automatic text field<br />
 								</div>
 
-								<div class="labelfield">&nbsp;</div>
-								<div class="inputfield">
+								
+								<div class = "combinedfield">
 									<input type="radio" name="template" value="t2b"> T2B: Relations with (text) definitions and extra questions required and automatic text field  <br />
 								</div>
 
-								<div class="labelfield">&nbsp;</div>
-								<div class="inputfield">
+								
+								<div class = "combinedfield">
 									<input type="radio" name="template" value="t1ab"> T1AB: Relations with (mouse-over) definitions and without extra questions and automatic text field  <br />
 								</div>
 
-								<div class="labelfield">&nbsp;</div>
-								<div class="inputfield">
-									<input type="radio" name="template" value="t2ab"> T2AB: Relations with (text) definitions and extra without questions and automatic text field  <br /> <br>
+								
+								<div class = "combinedfield">
+									<input type="radio" name="template" value="t2ab"> T2AB: Relations with (text) definitions and extra without questions and automatic text field  <br /> <br /> 
 								</div>
-
-
+								
 								<div class="labelfield">Choose the channels:</div>
-								<div class="inputfield">
+								<div class="inputfield">&nbsp;</br></div>
+								<div class = "combinedfield">
 									<input type="radio" name="channels" value="c1" checked> Amazon
 									Mechanical Turk <br />
 								</div>
 
-								<div class="labelfield">&nbsp;</div>
-								<div class="inputfield">
+							
+								<div class = "combinedfield">
 									<input type="radio" name="channels" value="c2"> All channels <br />
 								</div>
 
-
-								<div class="labelfield">&nbsp;</div>
-								<div class="inputfield">
+								<br />
+								
+								<div class = "combinedfield">
 									<input type="submit" name="action" value="Create Job" /><br />
 									<br />
 								</div>
@@ -517,7 +518,7 @@ echo "</table>";
             </br>
             <form id="myform" class="myform" method="post" name="myform">
         <strong>Reason: </strong><input type="text" name="reason" id="reason" size="100"> <br/>
-	    <strong>Selected Job ID:   </strong><input type="text" name="spamblockjobid" id = "spamblockjobid" disabled="disabled" style = "border: none; background: transparent; color: red; font-weight: bold;" />
+	    <strong>Selected Job ID:   </strong><input type="text" name="spamblockjobid" id = "spamblockjobid" readonly style = "border: none; background: transparent; color: red; font-weight: bold;" />
             </br>				  
             <strong>Spammers Found: </strong><div >
 	    <table id ="spammerfound" border='1' style='width: 100%' >
