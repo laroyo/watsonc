@@ -518,7 +518,7 @@ echo "</table>";
             </br>
             <form id="myform" class="myform" method="post" name="myform">
         <strong>Reason: </strong><input type="text" name="reason" id="reason" size="100"> <br/>
-	    <strong>Selected Job ID:   </strong><input type="text" name="spamblockjobid" id = "spamblockjobid" disabled="disabled" style = "border: none; background: transparent; color: red; font-weight: bold;" />
+	    <strong>Selected Job ID:   </strong><input type="text" name="spamblockjobid" id = "spamblockjobid" readonly style = "border: none; background: transparent; color: red; font-weight: bold;" />
             </br>				  
             <strong>Spammers Found: </strong><div >
 	    <table id ="spammerfound" border='1' style='width: 100%' >
