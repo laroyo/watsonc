@@ -331,7 +331,7 @@ foreach($compTimes as $unit_id => $list){
             
       echo jsonScatterPoint($prev['time'] * 100 / $max,$unit_id, $prev['count']). "\n"; 
 			    
-      if($prev['time'] != $elem[$time])
+      if($prev['time'] != $elem['time'])
 	//The last element (if not equal to the previous one). 
 	echo ", " . jsonScatterPoint(((int)$elem['time']) * 100 / $max,$unit_id, 1) . "\n"; 
       
