@@ -69,6 +69,17 @@ function getPivotTable($job_id){
 }
 
 /**
+ *  Returns the relation(s) majoritarily chosen for each of the sentences of a job
+ **/
+function getMajRelations($job_id){
+  
+  $worker_res = exec('/usr/bin/Rscript '. BASE_PATH .'dataproc/getRelationsSentences.R '. $job_id);    
+  //print('json: '. $worker_res);
+  $dec = json_decode($worker_res,true);
+  return($dec);
+}
+
+/**
  * The average for the workerMetrics of the members of the set. 
  **/
 function getAvgWorkerMetricsSet($set_id, $filter=NULL){
@@ -274,6 +285,16 @@ function simpleQuery($query){
 }
 
 /**
+ * Query for obtaining one single value (for instance, a counter)
+ **/
+function queryOne($query){
+  $rs = mysql_query($query);   
+  $row = mysql_fetch_assoc($rs);
+  $keys = array_keys($row);
+  return $row[$keys[0]];
+}
+
+/**
  * Returns the results of $query as an associative array [$key => $value]
  * Both $key and $value should be attributes in the query (usually: columns on the queried table). 
  **/
@@ -319,5 +340,26 @@ function queryList($query){
   return $res; 
 }
 
+/**
+ * Groups values within the result by $group_key. 
+ * Ex: retrieve a list with all the filters of a particular worker. 
+ * @param  $value: indicate the field of the row to be listed. If any, the entire rowset will be added. 
+ **/
+function queryGroup($query,$group_key, $value=NULL){
+  
+  $rs = mysql_query($query); 
+  $group_id = NULL;
+  while($row = mysql_fetch_assoc($rs)){
+    if($row[$group_key] != $group_id) 
+      $group_id = $row[$group_key]; 
+    
+    unset($row[$group_key]);
+    if($value != NULL)
+      $res[$group_id][] = $row[$value];              
+    else
+      $res[$group_id][] = $row;                 
+  }
+  return $res; 
+}
 
 ?>
