@@ -4,10 +4,12 @@ require_once('dataproc.inc');
 
 if(isset($_GET['job_id'])){
   $job_id = $_GET['job_id'];    
+  $job_ids = array(179229);
 } 
 
 if(isset($_GET['set_id'])){
   $set_id = $_GET['set_id'];    
+  $job_ids = getJobsInSet($set_id);
 } 
 
 if (isset($_POST['job_ids'])){
@@ -21,7 +23,8 @@ if (isset($_POST['job_ids'])){
 } 
 
 if (isset($_GET['test'])){  
-  $job_id = 179229; 
+  $job_id = 196304; 
+  $job_ids = array(196304);
 }
 
 //FIXME: Move this to a library or somewhere where it could be easily reused. 
@@ -184,7 +187,7 @@ text {
       $count = $majRelations['aggr'][$relation]; 
 
       if($count > 1){
-	echo "<tr><td><span onclick='myToggle(\"".$relation."\")'> + </span></td>";	
+	echo "<tr><td><span onclick='relTableToggle(\"".$relation."\")'> + </span></td>";	
 	echo "<td>" . $abbr[$relation] . "</td><td>" . $count . "</td><td>0.5 (Avg)</td></tr>\n";      
 	
 	
@@ -228,6 +231,7 @@ text {
 
     $numSpammers = queryOne("select count(distinct(worker_id)) as count from filtered_workers where set_id = $job_id");
     $numWorkers = queryOne("select count(distinct(worker_id)) as count from cflower_results where job_id = $job_id");
+    $numSentences = queryOne("select count(distinct(unit_id)) as count from cflower_results where job_id = $job_id");
         
     $worker_filters = queryGroup("select worker_id, filter from filtered_workers where set_id = $job_id order by worker_id asc", 'worker_id', 'filter');
 
@@ -289,15 +293,6 @@ $acum = array_reverse($acum);
 
 $compTimes = queryGroup("select unit_id,worker_id,UNIX_TIMESTAMP(created_at)-UNIX_TIMESTAMP(started_at) as time from cflower_results where job_id = $job_id 
    order by unit_id asc,time asc limit 80",'unit_id');
-
-   /* var data = [{ */
-   /* 'key': 'Group 1', */
-   /* 'values' : [ */
-   /* {'x': 1, */
-   /* 'y': 2, */
-   /* 'size' : 1 */
-   /* }] */
-   /* }] */
 
 function jsonScatterPoint($x, $y, $size){
   return "{'x' : ".sprintf('%01.2f',$x) .",'y' : $y,'size' : $size}"; 	    
@@ -383,9 +378,35 @@ echo "]\n";
       <div class='span4'>
       
       <table class="table table-condensed">
-      <tbody>
+       <tbody>
+
+       <?php 
+
+       function printJobsInSet($job_ids){
+            for($i = 0; $i < sizeof($job_ids); $i++) {
+	      $job_id = $job_ids[$i];
+	      echo "<a href='/wcs/analytics/job.php?job_id=$job_id'> $job_id </a>";
+	      if($i < sizeof($job_ids) - 1)
+		echo ",";
+	    }	 
+       }  
+
+       if(sizeof($job_ids) == 1)  { ?>
+	 <tr><td>Jobs in the set: </td><td> <?php echo($job_ids[0]) ?> </td></tr>  <?php
+       } else if(sizeof($job_ids) <= 3)  { ?>
+	 <tr><td colspan='2'><span class='pull-left'>Jobs in the set: </span>
+         <span class='pull-right'><?php printJobsInSet($job_ids) ?> </span></td></tr> 
+       <?php 
+       } else { ?>
+	 <tr><td>Jobs in the set: </td><td> <?php echo(sizeof($job_ids)); ?> </td></tr>
+	 <tr><td colspan='2' style='text-align: center;'><?php echo(implode(',' , $job_ids)) ?></td></tr>	   	     
+       <?php } ?>
+       <tr><td> Number of sentences in the set:  </td><td> <?php echo($numSentences); ?> </td></tr>
       <tr><td> Number of workers in the set: </td><td><?php echo($numWorkers); ?> </td></td>
-      <tr><td> Number of possible spammers in the set: </td><td><?php echo($numSpammers . " (". sprintf('%01.2f', ($numSpammers / $numWorkers) * 100) ."%)"); ?> </td></td>      
+      <tr><td> Number of LQ candidates in the set: </td><td><?php echo($numSpammers ." (". sprintf('%01.2f', ($numSpammers / $numWorkers) * 100) ."%)"); ?></td</tr>
+      <tr><td> Channels used</td><td></td></tr>   
+
+
       </tbody>
       </table>
       <p> This is placeholder text, to fill in the available space on the right of the pie chart. Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod.</p>
