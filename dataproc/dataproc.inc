@@ -73,8 +73,8 @@ function getPivotTable($job_id){
  **/
 function getMajRelations($job_id){
   
-  $worker_res = exec('/usr/bin/Rscript '. BASE_PATH .'dataproc/getRelationsSentences.R '. $job_id);    
-  //print('json: '. $worker_res);
+
+  $worker_res = exec('/usr/bin/Rscript '. BASE_PATH .'/dataproc/getRelationsSentences.R '. $job_id);    
   $dec = json_decode($worker_res,true);
   return($dec);
 }

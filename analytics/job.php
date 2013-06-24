@@ -184,7 +184,7 @@ text {
       $count = $majRelations['aggr'][$relation]; 
 
       if($count > 1){
-	echo "<tr><td><span onclick='myToggle(\"".$relation."\")'> + </span></td>";	
+	echo "<tr><td><span onclick='relTableToggle(\"".$relation."\")'> + </span></td>";	
 	echo "<td>" . $abbr[$relation] . "</td><td>" . $count . "</td><td>0.5 (Avg)</td></tr>\n";      
 	
 	
@@ -290,15 +290,6 @@ $acum = array_reverse($acum);
 $compTimes = queryGroup("select unit_id,worker_id,UNIX_TIMESTAMP(created_at)-UNIX_TIMESTAMP(started_at) as time from cflower_results where job_id = $job_id 
    order by unit_id asc,time asc limit 80",'unit_id');
 
-   /* var data = [{ */
-   /* 'key': 'Group 1', */
-   /* 'values' : [ */
-   /* {'x': 1, */
-   /* 'y': 2, */
-   /* 'size' : 1 */
-   /* }] */
-   /* }] */
-
 function jsonScatterPoint($x, $y, $size){
   return "{'x' : ".sprintf('%01.2f',$x) .",'y' : $y,'size' : $size}"; 	    
 }
@@ -331,7 +322,7 @@ foreach($compTimes as $unit_id => $list){
             
       echo jsonScatterPoint($prev['time'] * 100 / $max,$unit_id, $prev['count']). "\n"; 
 			    
-      if($prev['time'] != $elem[$time])
+      if($prev['time'] != $elem['time'])
 	//The last element (if not equal to the previous one). 
 	echo ", " . jsonScatterPoint(((int)$elem['time']) * 100 / $max,$unit_id, 1) . "\n"; 
       
