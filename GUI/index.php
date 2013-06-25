@@ -503,7 +503,7 @@ echo "</table>";
 	              $hours = 0;	           
 	           }
 	           $run_time = $days."d ".$hours."h";
-	           $updateRuntime = mysql_query("Update history_table Set run_time = '$run_time' Where job_id = '{$item["job_id"]}' and status != 'Finished' ");
+	           $updateRuntime = mysql_query("Update history_table Set run_time = '$run_time' Where job_id = '{$item["job_id"]}' and status != 'Finished' and status != 'Deleted' ");
               	           	 	           
               }
              ?>

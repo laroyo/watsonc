@@ -44,8 +44,11 @@ if($response_array["state"] == "unordered" || $response_array["state"] == "cance
 
 	if (array_key_exists("message", $delete_response_array)) {
 		echo "The job was deleted";
-    		//  update the database
-		$updateDB = mysql_query("Update history_table Set status = '$status' Where job_id = '$job_id' ") or mysql_error();
+    //  update the database
+	//  $updateDB = mysql_query("Update history_table Set status = '$status' Where job_id = '$job_id' ") or mysql_error();	
+		$getruntime = updateRuntime($job_id);
+	//  $updateDB = mysql_query("Update history_table Set run_time = '$getruntime', status = '$status', status_change = 'disabled', checkbox_check = 'abled' Where job_id = '$job_id' ") or mysql_error();
+		$updateDB = mysql_query("Update history_table Set run_time = '$getruntime', status = '$status', status_change = 'disabled' Where job_id = '$job_id' ") or mysql_error();	
 	}
 }
 else {
