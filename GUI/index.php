@@ -247,7 +247,7 @@ server)</br>
 			</div>
 			<h5>Games</h5>
 			<div id="tabs-Raw">	
-			<form enctype="multipart/form-data" action="/wcs/GUI/services/uploadRaw.php" method="POST">
+			<form enctype="multipart/form-data" action="/wcs/services/uploadRaw.php" method="POST">
 				<div class="borderframe"  >
 					<div class="labelfield">Choose a RAW file to upload:</div>
 					<div class="inputfield">
@@ -313,7 +313,7 @@ while($row = mysql_fetch_array($result)){
 
         echo "<tr>";
         echo "<td><input type='radio' id='radiofile' name ='radiofile'/>$file_id</label></td>";
-        echo "<td><a href = 'http://crowd-watson.nl/wcs/GUI/services/getFile.php?id=$file_id' class = 'filelinks' >$original_name</a></td>";
+        echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$file_id' class = 'filelinks' >$original_name</a></td>";
         echo "<td>$filter_named</td>";
         echo "<td>$batch_size</td>";
         echo "<td>$created_by</td>";
@@ -619,7 +619,7 @@ while($row = mysql_fetch_array($history)){
 	    extract ( $row );
         echo "<tr>";
         echo "<td style ='font-size: 80%' ><input type='checkbox' $checkbox_check id='checkboxjob' name ='job_ids' value = '$job_id'/></td>";
-        echo "<td style ='font-size: 80%' class='cJobId' title = '$job_title' ><a href = 'http://crowd-watson.nl/wcs/GUI/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
+        echo "<td style ='font-size: 80%' class='cJobId' title = '$job_title' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
 		echo "<td style ='font-size: 80%' class='cOrigin'>$origin</td>";
   //    echo "<td style ='font-size: 80%' class='cJobTitle' title = '$job_title' >".substr($job_title,0, 6)."</td>";
 	    echo "<td style ='font-size: 80%' class='cCreatedDate' title = '$created_date' >".substr($created_date,2, 8)."</td>";
@@ -651,7 +651,7 @@ while($row = mysql_fetch_array($history)){
 		echo "<td style ='font-size: 80%' class='cNumberofFilteredSentences'>$no_filtered_sentences</td>";
 		echo "<td style ='font-size: 80%' class='cTotalNumberofWorkers' >$no_workers</td>";
 		echo "<td style ='font-size: 80%' class='cNumberofFilteredWorkers'><button class = 'blockspammers' title = '$job_id' $checkbox_check >$no_filtered_workers</button></td>";
-        echo "<td style ='font-size: 80%' class='cStatus' title = '$job_id' ><a href = 'http://crowd-watson.nl/wcs/GUI/services/getFile.php?id=$resultsfile_id' class = '$checkbox_check' >$status</a></td>";
+        echo "<td style ='font-size: 80%' class='cStatus' title = '$job_id' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$resultsfile_id' class = '$checkbox_check' >$status</a></td>";
         echo "<td style ='font-size: 80%' class='cActions' title = '$job_id' >
         <select $status_change class= 'cActions changeStatus'>
         <option value='ChangeStatus'>-Change-</option>
@@ -718,10 +718,10 @@ while($row = mysql_fetch_array($results)){
 	echo "<td>$avg_time</td>";
 	echo "<td>$actual_time_spent</td>";
 	echo "<td>$max_time</td>";
-	echo "<td><a href = 'http://crowd-watson.nl/wcs/GUI/services/getFile.php?id=$origin_file_id' class = 'filelinks' >$origin_file_name</a></td>";
-	echo "<td><a href = 'http://crowd-watson.nl/wcs/GUI/services/getFile.php?id=$filtered_sentences_file_id' class = 'filelinks' >$number_filtered_sentences</a></td>";
-	echo "<td><a href = 'http://crowd-watson.nl/wcs/GUI/services/getFile.php?id=$filtered_workers_file_id' class = 'filelinks' >$number_filtered_workers</a></td>";
-	echo "<td><a href = 'http://crowd-watson.nl/wcs/GUI/services/showImage.php?id=$statistics_image_id' id = 'showimage' class = 'filelinks' value = '$statistics_image' >$statistics_image
+	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$origin_file_id' class = 'filelinks' >$origin_file_name</a></td>";
+	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$filtered_sentences_file_id' class = 'filelinks' >$number_filtered_sentences</a></td>";
+	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$filtered_workers_file_id' class = 'filelinks' >$number_filtered_workers</a></td>";
+	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/showImage.php?id=$statistics_image_id' id = 'showimage' class = 'filelinks' value = '$statistics_image' >$statistics_image
 	</a>
 	</td>";
 	echo "<td title='$job_id'>
