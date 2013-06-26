@@ -4,10 +4,12 @@ require_once('dataproc.inc');
 
 if(isset($_GET['job_id'])){
   $job_id = $_GET['job_id'];    
+  $job_ids = array(179229);
 } 
 
 if(isset($_GET['set_id'])){
   $set_id = $_GET['set_id'];    
+  $job_ids = getJobsInSet($set_id);
 } 
 
 if (isset($_POST['job_ids'])){
@@ -21,7 +23,8 @@ if (isset($_POST['job_ids'])){
 } 
 
 if (isset($_GET['test'])){  
-  $job_id = 179229; 
+  $job_id = 196304; 
+  $job_ids = array(196304);
 }
 
 //FIXME: Move this to a library or somewhere where it could be easily reused. 
@@ -46,7 +49,7 @@ $matrix = getPivotTable($job_id);
 <!DOCTYPE html>
 <meta charset="utf-8">
 <head>
-<link href="/wcs/css/nv.d3.css" rel="stylesheet" type="text/css">
+<link href="/wcs/analytics/css/nv.d3.css" rel="stylesheet" type="text/css">
 <link href="/wcs/analytics/css/bootstrap.css" rel="stylesheet" type="text/css">
 <style type="text/css">
       body {
@@ -228,6 +231,7 @@ text {
 
     $numSpammers = queryOne("select count(distinct(worker_id)) as count from filtered_workers where set_id = $job_id");
     $numWorkers = queryOne("select count(distinct(worker_id)) as count from cflower_results where job_id = $job_id");
+    $numSentences = queryOne("select count(distinct(unit_id)) as count from cflower_results where job_id = $job_id");
         
     $worker_filters = queryGroup("select worker_id, filter from filtered_workers where set_id = $job_id order by worker_id asc", 'worker_id', 'filter');
 
@@ -374,9 +378,35 @@ echo "]\n";
       <div class='span4'>
       
       <table class="table table-condensed">
-      <tbody>
+       <tbody>
+
+       <?php 
+
+       function printJobsInSet($job_ids){
+            for($i = 0; $i < sizeof($job_ids); $i++) {
+	      $job_id = $job_ids[$i];
+	      echo "<a href='/wcs/analytics/job.php?job_id=$job_id'> $job_id </a>";
+	      if($i < sizeof($job_ids) - 1)
+		echo ",";
+	    }	 
+       }  
+
+       if(sizeof($job_ids) == 1)  { ?>
+	 <tr><td>Jobs in the set: </td><td> <?php echo($job_ids[0]) ?> </td></tr>  <?php
+       } else if(sizeof($job_ids) <= 3)  { ?>
+	 <tr><td colspan='2'><span class='pull-left'>Jobs in the set: </span>
+         <span class='pull-right'><?php printJobsInSet($job_ids) ?> </span></td></tr> 
+       <?php 
+       } else { ?>
+	 <tr><td>Jobs in the set: </td><td> <?php echo(sizeof($job_ids)); ?> </td></tr>
+	 <tr><td colspan='2' style='text-align: center;'><?php echo(implode(',' , $job_ids)) ?></td></tr>	   	     
+       <?php } ?>
+       <tr><td> Number of sentences in the set:  </td><td> <?php echo($numSentences); ?> </td></tr>
       <tr><td> Number of workers in the set: </td><td><?php echo($numWorkers); ?> </td></td>
-      <tr><td> Number of possible spammers in the set: </td><td><?php echo($numSpammers . " (". sprintf('%01.2f', ($numSpammers / $numWorkers) * 100) ."%)"); ?> </td></td>      
+      <tr><td> Number of LQ candidates in the set: </td><td><?php echo($numSpammers ." (". sprintf('%01.2f', ($numSpammers / $numWorkers) * 100) ."%)"); ?></td</tr>
+      <tr><td> Channels used</td><td></td></tr>   
+
+
       </tbody>
       </table>
       <p> This is placeholder text, to fill in the available space on the right of the pie chart. Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod.</p>
@@ -486,22 +516,22 @@ $res = array(array('key' => 'legend', 'values' => $values));
 echo("\n var channels =   " . json_encode($res). ";");    ?>
 </script>
 
-<script src="/wcs/js/d3.v2.js"></script>
-<script src="/wcs/js/nv.d3.js"></script>
-<script src="/wcs/js/tooltip.js"></script>
-<script src="/wcs/js/utils.js"></script>
-<script src="/wcs/js/legend.js"></script>
-<script src="/wcs/js/axis.js"></script>
-<script src="/wcs/js/multiBar.js"></script>
-<script src="/wcs/js/multiBarChart.js"></script>
-<script src="/wcs/js/job_analytics.js"></script> 
-<script src="/wcs/js/pieChart.js"></script>
+<script src="/wcs/analytics/js/d3.v2.js"></script>
+<script src="/wcs/analytics/js/nv.d3.js"></script>
+<script src="/wcs/analytics/js/tooltip.js"></script>
+<script src="/wcs/analytics/js/utils.js"></script>
+<script src="/wcs/analytics/js/legend.js"></script>
+<script src="/wcs/analytics/js/axis.js"></script>
+<script src="/wcs/analytics/js/multiBar.js"></script>
+<script src="/wcs/analytics/js/multiBarChart.js"></script>
+<script src="/wcs/analytics/js/job_analytics.js"></script> 
+<script src="/wcs/analytics/js/pieChart.js"></script>
 <script src="/wcs/plugins/jquery-ui/js/jquery-1.9.1.js"></script>
 <script src="/wcs/analytics/js/bootstrap.js"></script>
 <script src="/wcs/analytics/js/main.js"></script>
 <script src="/wcs/analytics/js/linePlusBar.js"></script>
 <script src="/wcs/analytics/js/scatter.js"></script>
-<!-- <script src="/wcs/js/compTimes.js"></script> !-->
+<!-- <script src="/wcs/analytics/js/compTimes.js"></script> !-->
 
 <script>
   addPieChart(channels,'workersPerChannel','Distribution of workers per channel');

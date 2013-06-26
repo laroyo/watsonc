@@ -278,7 +278,8 @@ else
 	echo "<b>Job ID: $job_id</b>";
 	echo "<br />";
 //  header("Location: index.php");
-	echo "<a href='../index.php'>Back to Home Page</a>";
+//	echo "<a href='../index.php'>Back to Home Page</a>";
+	echo "<a href='../GUI/index.php'>Back to Home Page</a>";
 	
 	// To freash datatable in GUI
 	//echo '<script>parent.window.location.reload(true);</script>';
