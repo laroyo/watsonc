@@ -516,22 +516,22 @@ $res = array(array('key' => 'legend', 'values' => $values));
 echo("\n var channels =   " . json_encode($res). ";");    ?>
 </script>
 
-<script src="/wcs/js/d3.v2.js"></script>
-<script src="/wcs/js/nv.d3.js"></script>
-<script src="/wcs/js/tooltip.js"></script>
-<script src="/wcs/js/utils.js"></script>
-<script src="/wcs/js/legend.js"></script>
-<script src="/wcs/js/axis.js"></script>
-<script src="/wcs/js/multiBar.js"></script>
-<script src="/wcs/js/multiBarChart.js"></script>
-<script src="/wcs/js/job_analytics.js"></script> 
-<script src="/wcs/js/pieChart.js"></script>
+<script src="/wcs/analytics/js/d3.v2.js"></script>
+<script src="/wcs/analytics/js/nv.d3.js"></script>
+<script src="/wcs/analytics/js/tooltip.js"></script>
+<script src="/wcs/analytics/js/utils.js"></script>
+<script src="/wcs/analytics/js/legend.js"></script>
+<script src="/wcs/analytics/js/axis.js"></script>
+<script src="/wcs/analytics/js/multiBar.js"></script>
+<script src="/wcs/analytics/js/multiBarChart.js"></script>
+<script src="/wcs/analytics/js/job_analytics.js"></script> 
+<script src="/wcs/analytics/js/pieChart.js"></script>
 <script src="/wcs/plugins/jquery-ui/js/jquery-1.9.1.js"></script>
 <script src="/wcs/analytics/js/bootstrap.js"></script>
 <script src="/wcs/analytics/js/main.js"></script>
 <script src="/wcs/analytics/js/linePlusBar.js"></script>
 <script src="/wcs/analytics/js/scatter.js"></script>
-<!-- <script src="/wcs/js/compTimes.js"></script> !-->
+<!-- <script src="/wcs/analytics/js/compTimes.js"></script> !-->
 
 <script>
   addPieChart(channels,'workersPerChannel','Distribution of workers per channel');
