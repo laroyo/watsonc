@@ -10,8 +10,8 @@ $content_type = "application/json";
 $api_key = "b5e3b32b4d29d45c16dc09274e099f731237e35f";
 $url = "http://api.crowdflower.com/v1/jobs.json?key=".$api_key;
 $status = $_POST['status'];
-   $job_id = $_POST['job_id'];
-//$job_id="179972";
+$job_id = $_POST['job_id'];
+
 
 /* useful functions for printing the results from the web server */
 function objectToArray($obj) {
@@ -47,12 +47,12 @@ if($response_array["state"] == "paused" || $response_array["state"] == "running"
 
 	
 	if (array_key_exists("success", $cancel_response_array)) {
-		echo "The job was canceled";
-		
+		echo "The job was canceled";		
     //  get results file
-	//    getResults($job_id);
-    //  update the database
+	//  getResults($job_id);
+    //  get the final run time (fixed)
     	$getruntime = updateRuntime($job_id);
+    //  update the database
 		$updateDB = mysql_query("Update history_table Set run_time = '$getruntime', status = '$status', status_change = 'disabled', checkbox_check = 'abled' Where job_id = '$job_id' ") or mysql_error();
 	}
 }
