@@ -49,7 +49,7 @@ $matrix = getPivotTable($job_id);
 <!DOCTYPE html>
 <meta charset="utf-8">
 <head>
-<link href="/wcs/css/nv.d3.css" rel="stylesheet" type="text/css">
+<link href="/wcs/analytics/css/nv.d3.css" rel="stylesheet" type="text/css">
 <link href="/wcs/analytics/css/bootstrap.css" rel="stylesheet" type="text/css">
 <style type="text/css">
       body {
