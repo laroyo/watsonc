@@ -84,6 +84,7 @@ function checkForFilters3() {
 	Create the job file: <br />
 	Number of sentences from each relation: <input type="text" id="nosentences" name="nosentences" size="3"> 
 --!>
+<br />
 	<input type="submit" name="action" value="Submit"/>
 </form>
 
