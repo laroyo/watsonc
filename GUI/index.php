@@ -22,55 +22,6 @@ include_once '../includes/functions.php';
 <script src="/wcs/GUI/plugins/galleria/galleria-1.2.9.min.js" type="text/javascript"></script>
 <script src="/wcs/GUI/js/huimain.js" type="text/javascript"></script>
 
-<script language="javascript">
-
-$(document).ready(function() {
-	
-	 Galleria.loadTheme('/wcs/GUI/plugins/galleria/themes/classic/galleria.classic.min.js');
-     Galleria.run('#galleria');
-	
- });
-
-function computePayment()
-{
-	
-	var payment_per_sentence = document.getElementById("payment_per_sentence");
-	var payment_per_job = document.getElementById("payment_per_job");
-
-	var judgments_per_unit = document.getElementById("judgments_per_unit").value;
-	var units_per_assignment = document.getElementById("units_per_assignment").value;
-	var payment_per_assignment = document.getElementById("payment").value;
-    var total_sentences = document.getElementById("sentences").value;	
-     	
-	if (judgments_per_unit != "" && units_per_assignment != "" && payment_per_assignment != "" && total_sentences != "") {
-	 	payment_per_sentence.value = ((parseInt(judgments_per_unit) * (parseInt(payment_per_assignment) / parseInt(units_per_assignment))) + (parseInt(judgments_per_unit) * (parseInt(payment_per_assignment) / parseInt(units_per_assignment))) * 46.35 / 100 ) / 100 ;
-		payment_per_job.value = parseInt(total_sentences) * payment_per_sentence.value;
-	}
-
-	computePaymentPerHour();
-}
-
-function computeTime() {
-	var seconds_per_unit = document.getElementById("seconds_per_unit").value;
-	var units_per_assignment = document.getElementById("units_per_assignment").value;
-	var seconds_per_assignment = document.getElementById("seconds_per_assignment");
-	seconds_per_assignment.value = parseInt(seconds_per_unit) * parseInt(units_per_assignment);
-
-	computePaymentPerHour();
-}
-
-function computePaymentPerHour() {
-	var payment_per_assignment = document.getElementById("payment").value;
-	var seconds_per_assignment = document.getElementById("seconds_per_assignment").value;
-        var payment_per_hour = document.getElementById("payment_per_hour");
-        if (seconds_per_assignment != "" && payment_per_assignment != "") {
-                payment_per_hour.value = ((60 * 60) / parseInt(seconds_per_assignment)) * (parseInt(payment_per_assignment) / 100);
-        }
-}
-
-</script>
-
-
 </head>
 <body>
 	<div class="wrapper" >
