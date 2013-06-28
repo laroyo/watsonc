@@ -2,12 +2,16 @@
 * Crowd-Watson GUI js 1.0  
 * @requires jQuery V1.9.1
 *
-* Copyright (c) 2013 Hui Lin
+* Copyright (c) 2013 Crowd-Watson
 * http://crowd-watson.nl/wcs/GUI/
 *
 * @type jQuery & javaScript
 * @name Crowd-Watson GUI js
 * @author Hui Lin/alice8linhui@gmail.com
+*/
+
+/*
+** Compute the payment based on the user input when creating a job
 */
 function computePayment()
 {
@@ -28,7 +32,9 @@ function computePayment()
 	computePaymentPerHour();
 }
 
-
+/*
+** Compute the time based on the user input when creating a job
+*/
 function computeTime() {
 	var seconds_per_unit = document.getElementById("seconds_per_unit").value;
 	var units_per_assignment = document.getElementById("units_per_assignment").value;
@@ -38,7 +44,9 @@ function computeTime() {
 	computePaymentPerHour();
 }
 
-
+/*
+** Compute the payment per hour based on the user input when creating a job
+*/
 function computePaymentPerHour() {
 	var payment_per_assignment = document.getElementById("payment").value;
 	var seconds_per_assignment = document.getElementById("seconds_per_assignment").value;
@@ -48,10 +56,11 @@ function computePaymentPerHour() {
         }
 }
 
-
+/*
+** Call and configure the Tablesorter plugin 
+*/
 function configureTablesorter() {
 	
-	/* call and configure the tablesorter plugin */
 	$("table.tablesorter").tablesorter(
 			{
 				theme : 'default',
@@ -124,7 +133,9 @@ function configureTablesorter() {
 	
 }
 
-
+/*
+** Add Classes to Tablesorter filter row based on the classes of header row
+*/
 function addClassesToFilterRow() {
 	var table = $("#historytable");
 	var headerRows = $(table).find(".tablesorter-headerRow").children();
@@ -139,7 +150,9 @@ function addClassesToFilterRow() {
 
 }
 
-
+/*
+** Configure the filters for Tablesorter
+*/
 function tableFilters() {
 	/*** first method *** data-filter-column="1" data-filter-text="!son"
 	  add search value to Discount column (zero based index) input */
@@ -163,7 +176,9 @@ function tableFilters() {
 
 }
 
-
+/*
+** Change the job status in History Table 
+*/
 function changeJobStatus() {
 
 	alert($("option:selected", this).text()
@@ -261,7 +276,9 @@ function changeJobStatus() {
 
 }
 
-
+/*
+** Pass the selected job id(s) to Analytics module and show Analytics data
+*/
 function passJobidtoAnalytics() {
 
 	var arr = [];
@@ -318,12 +335,16 @@ function passJobidtoAnalytics() {
 
 }
 
-
+/*
+** Open the dialog for selecting the server file 
+*/
 function selectServerFile() {
 	$("#dialog-confirm").dialog("open");
 }
 
-
+/*
+** Configure the dialog for selecting the server file 
+*/
 function selectServerFileDialog() {
 $("#dialog-confirm")
 .dialog(
@@ -340,7 +361,9 @@ $("#dialog-confirm")
 		});
 }
 
-
+/*
+** Retrieve data for the selected server file 
+*/
 function confirmSelectedServerFile() {
 	$(this).dialog("close");
 	// check whether users select a file
@@ -385,12 +408,16 @@ function confirmSelectedServerFile() {
 	}
 }
 
-
+/*
+** Close the dialog 
+*/
 function closeDialog() {
 	$(this).dialog("close");
 }
 
-
+/*
+** Open the dialog for blocking spammers and load the spammers of the selected job 
+*/
 function blockSpammers() {
 	$("#dialog-blockspammers").dialog("open");
 	// get selected job id
@@ -491,9 +518,10 @@ function blockSpammers() {
 	});
 }
 
-
+/*
+** Configure the dialog for blocking spammers 
+*/
 function blockSpammersDialog() {	
-	/* Pop-up dialog - Block Spammers */
 	$("#dialog-blockspammers").dialog({
 		autoOpen : false,
 		resizable : true,
@@ -507,8 +535,9 @@ function blockSpammersDialog() {
 	});
 }
 
-
-/* Add the table header in the Block Spammers pop-up dialog */
+/*
+** Add the table header in the Block Spammers pop-up dialog 
+*/
 function addTableHeaders(table) {
 	var fields = [
 	              {
@@ -572,7 +601,9 @@ function addTableHeaders(table) {
 	table.appendChild(row)
 }
 
-
+/*
+** Send the spammers to be blocked for further processing 
+*/
 function confirmBlockSpammers() {
 	// $( this ).dialog( "close" );
 	// alert("ok");
@@ -600,7 +631,9 @@ function confirmBlockSpammers() {
 	// return false;
 }
 
-
+/*
+** Show or Hide columns of History Table
+*/
 function showHideColumns(event, ui) {
 
 	if (ui.checked) {
@@ -611,7 +644,9 @@ function showHideColumns(event, ui) {
 
 }
 
-
+/*
+** Shorten the display data of Channels Percentage
+*/
 function shortenChannelsPercentage() {
 	var len = $(this).text().length;
 	if (len >= 10) {
@@ -619,21 +654,27 @@ function shortenChannelsPercentage() {
 	}
 }
 
-
+/*
+** Show or Hide columns of History Table
+*/
 function checkAllColumns() {
 	$("#hidecolumns > option").each(function() {
 		$("." + this.value).show();
 	});
 }
 
-
+/*
+** Show or Hide columns of History Table
+*/
 function uncheckAllColumns() {
 	$("#hidecolumns > option").each(function() {
 		$("." + this.value).hide();
 	});
 }
 
-
+/*
+** Trigger to show the mage in the pop-up dialog
+*/
 function showImage(event) {
 
 	event.preventDefault();
@@ -641,7 +682,9 @@ function showImage(event) {
 
 }
 
-
+/*
+** Configure the dialog for showing the image
+*/
 function PreviewImage(uri, image_name) {
 
 	imageDialog = $("#dialog-image");
@@ -680,9 +723,9 @@ function PreviewImage(uri, image_name) {
 
 }
 
-
-
-/* Back to top button */
+/*
+** Configure Back to top button
+*/
 (function($) {
 
 	$.scrollUp = function(options) {
@@ -766,39 +809,49 @@ function PreviewImage(uri, image_name) {
 })(jQuery);
 
 
+/*
+** Main line of running js functions
+*/
 $(function() {
 	
+	/* trigger jQuery UI tabs */
 	$("#tabs").tabs();
 	
-	/* To use jQuery UI accordion */
+	/* trigger jQuery UI accordion */
 	$("div#accordion").accordion({collapsible : true, heightStyle : "content",});
-		
+	
+	/* trigger Back to top button */
 	$.scrollUp();
 	
+	/* trigger Galleria to have slideshow */
 	Galleria.loadTheme('/wcs/GUI/plugins/galleria/themes/classic/galleria.classic.min.js');
 	Galleria.run('#galleria');
 	
+	/* load the preprocessing interface to GUI Input tab */
 	$("#preprocessarea").load("/wcs/preprocessing/preprocinterface.php");
 	
+	/* trigger Tablesorter plugin */
 	configureTablesorter();
 	addClassesToFilterRow();
 
-	// External search
-	// buttons set up like this:
+	/* trigger Tablesorter filter function */
 	$('button.search').click(tableFilters);
 	
+	/* to change job status in History Table */
 	$(".changeStatus").change(changeJobStatus);
 
-	/* Send the selected job id(s) to the analytics module */
+	/* send the selected job id(s) to the analytics module */
 	$('#passjobid').click(passJobidtoAnalytics);
-
+    
+	/* show the dialog for selecting the server file */
 	$("#uploadedfile").click(selectServerFile);
 	selectServerFileDialog();
 	
+	/* show the dialog for blocking spammers */
 	$(".blockspammers").click(blockSpammers);
 	blockSpammersDialog();
 	
-	/* Hide or show columns in the History tab */
+	/* hide or show columns in the History tab */
 	$("#hidecolumns").multiselect({click : showHideColumns});
 	
 	// by default, showing all the columns
@@ -813,7 +866,7 @@ $(function() {
 	// to hide all the columns except the job id
 	$('.ui-multiselect-none').click(uncheckAllColumns);
 	
-	/* The trigger for the pop-up dialog containing the statistics image */
+	/* the trigger for the pop-up dialog containing the statistics image */
 	$('#showimage').click(showImage);
 		
 });
