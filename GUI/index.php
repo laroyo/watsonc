@@ -263,7 +263,7 @@ echo "</table>";
 							action="/wcs/crowdflower/indexcrowdflower.php" method="POST"
 							id="form">
 							<div class="borderframe">
-								<div class="labelfield">Choose a file to upload:</div>
+								<div class="labelfield">Select batch for your job:</div>
 								<div class="inputfield">
 									<input name="uploadedfile" type="button" id="uploadedfile"
 										value="Choose Server File" /> <input type="hidden"
@@ -295,7 +295,7 @@ echo "</table>";
 								</div>
 
 								<div class="labelfield">Payment per assignment (CF: Payment per
-									page) (cents):</div>
+									page) (in cents):</div>
 								<div class="inputfield">
 									<input type="text" class = "textboxInput" name="payment" oninput="computePayment()"
 										id="payment"> <br />
@@ -308,7 +308,7 @@ echo "</table>";
 								</div>
 								 
 								<div class="labelfield"
-									title="The purposes or notes of creating the job">Comments:</div>
+									title="The purposes or notes of creating the job">Provide descriptions of your job:</div>
 								<div class="inputfield">
 									<input type="text" name="job_comment" class="commentboxInput" /><br />
 								</div>
@@ -358,7 +358,7 @@ echo "</table>";
 									<input type="radio" name="template" value="t2ab"> T2AB: Relations with (text) definitions and extra without questions and automatic text field  <br /> <br /> 
 								</div>
 								
-								<div class="labelfield">Choose the channels:</div>
+								<div class="labelfield">Choose worker channels:</div>
 								<div class="inputfield">&nbsp;</br></div>
 								<div class = "combinedfield">
 									<input type="radio" name="channels" value="c1" checked> Amazon
@@ -377,12 +377,12 @@ echo "</table>";
 									<br />
 								</div>
 
-								<div class="labelfield">Payment per sentence (dollar):</div>
+								<div class="labelfield">Payment per sentence (in dollars):</div>
 								<div class="inputfield">
 									<input type="text" class = "textboxInput" name="payment_per_sentence"
 										id="payment_per_sentence"> <br />
 								</div>
-								<div class="labelfield">Payment per job (dollar):</div>
+								<div class="labelfield">Payment per job (in dollars):</div>
 								<div class="inputfield">
 									<input type="text" class = "textboxInput" name="payment_per_job" id="payment_per_job">
 									<br />
@@ -706,13 +706,13 @@ while($row = mysql_fetch_array($results)){
 
 	Project members:
     </br>
-	<a href="http://nl.linkedin.com/in/dumitracheanca/" target="_blank" class = "filelinks" >Anca Dumitrache</a>
+	<a href="http://nl.linkedin.com/in/dumitracheanca/" target="_blank" class = "filelinks" >Anca Dumitrache</a>, IBM Nederland BV and VU University Amsterdam
 	</br>
-	<a href="https://plus.google.com/u/0/106755161022646926513/posts" target="_blank" class = "filelinks" >Guillermo Soberon Casado</a>
+	<a href="https://plus.google.com/u/0/106755161022646926513/posts" target="_blank" class = "filelinks" >Guillermo Soberon Casado</a>, VU Univeristy Amsterdam
 	</br>
-	<a href="http://nl.linkedin.com/pub/hui-lin/53/92/b5/" target="_blank" class = "filelinks" >Hui Lin</a>
+	<a href="http://nl.linkedin.com/pub/hui-lin/53/92/b5/" target="_blank" class = "filelinks" >Hui Lin</a>, IBM Nederland BV and Fontys University of Applied Sciences
 	</br>
-	<a href="http://nl.linkedin.com/pub/oana-inel/5a/99/711/" target="_blank" class = "filelinks" >Oana Inel</a>
+	<a href="http://nl.linkedin.com/pub/oana-inel/5a/99/711/" target="_blank" class = "filelinks" >Oana Inel</a>, IBM Nederland BV and VU University Amsterdam
 	</br>
 	<a href="http://nl.linkedin.com/pub/manfred-overmeen/0/445/567/" title = "Senior IT Specialist at IBM Nederland BV" target="_blank" class = "filelinks" >Manfred Overmeen</a>, IBM Nederland BV	
 	</br>
@@ -721,7 +721,7 @@ while($row = mysql_fetch_array($results)){
 	</br>
 	Want to join?
 	</br>
-	If you are interested in a MSc, MSc or a PhD project in this context, send you CV and motivation to <a href="mailto:lora.aroyo@vu.nl">lora.aroyo@vu.nl</a>
+	If you are interested in a BSc, MSc or a PhD project in this context, send you CV and motivation to <a href="mailto:lora.aroyo@vu.nl">lora.aroyo@vu.nl</a>
 	</br>
 	</br>
 	Here are some example projects currently running:</p>
