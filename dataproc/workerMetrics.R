@@ -30,18 +30,29 @@ if(length(args) > 0){
 #FIXME: this be obtained when storing the file on the file storage. 
 file_id <- -1
 
-raw_data <- getJob(job_id)
+raw.data <- getJob(job_id)
+worker.ids <- sort(unique(raw.data$worker_id))
 
-if(dim(raw_data)[1] == 0){
+without.singletons <- TRUE
+
+if(without.singletons) {
+  numSent <- numSentences(raw.data)
+  singletons <- belowFactor(numSent,'numSent',3)
+
+  worker.ids <- setdiff(worker.ids,singletons)
+  raw.data <- raw.data[!(raw.data$worker_id %in% singletons),]
+} 
+
+if(dim(raw.data)[1] == 0){
   cat('JOB_NOT_FOUND')
 } else {
-  
-  sentenceTable <- pivot(raw_data,'unit_id','relation')
+
+  sentenceTable <- pivot(raw.data,'unit_id','relation')
 
   sentenceDf <- getDf(sentenceTable)
   
   #Calculate the measures to apply the filters.
-  filters <- list('SQRT','NormSQRT','NormR')
+  filters <- list('SQRT','NormSQRT','NormR', 'NormRAll')
 
   #Calculate the measures to apply the filters.filters <- list('SQRT','NormSQRT')
   mdf <- calc_measures(sentenceDf,filters)
@@ -54,7 +65,7 @@ if(dim(raw_data)[1] == 0){
     discarded[[f]] <- belowDiff(mdf,f)
     #The filtered *in* 
     filtered[[f]] <- setdiff(rownames(sentenceDf),discarded[[f]])
-    insertFiltSentences(job_id, file_id, f, discarded[[f]])
+    insertFiltSentences(job.id, file_id, f, discarded[[f]])
   }
 
   #After applying the filters, add the "NULL" filter.
@@ -62,16 +73,7 @@ if(dim(raw_data)[1] == 0){
   filtered[['NULL']] <- rownames(sentenceDf)
   discarded[['NULL']] <- NULL
 
-  worker_ids <- sort(unique(raw_data$worker_id))
-
-  numSent <- numSentences(raw_data)
-
-  #Singletons: workers with less than 3 judgments (not sufficient to classify them as spammers). 
-  #singletons <- belowFactor(data.frame(row.names = worker_ids, numSents=numSent), 'numSents',3)
-  singletons <- belowFactor(numSent,'numSent',3)
-
-  #Remove singletons
-  raw_data <- raw_data[!(raw_data$worker_id %in% singletons),]
+  worker.ids <- sort(unique(raw.data$worker_id))
 
   out <- NULL
   spamCandidates <- list()
@@ -79,7 +81,7 @@ if(dim(raw_data)[1] == 0){
   for (f in filters){
     print(paste('computing metrics for filter ',f))
   
-    filt <- raw_data[raw_data$unit_id %in% filtered[[f]],]
+    filt <- raw.data[raw.data$unit_id %in% filtered[[f]],]
 
     filtWorkers <- sort(unique(filt$worker_id))
 
@@ -95,22 +97,21 @@ if(dim(raw_data)[1] == 0){
     cosValues <- cosMeasure(filt)
     #sentRelScoreValues <- sentRelScoreMeasure(filt)
 
-    if(f == 'NULL'){
-      saveWorkerMetrics(cbind(agrValues, cosValues,annotSentence,numSent), job_id)
-    }
+    saveWorkerMetrics(cbind(agrValues, cosValues,annotSentence,numSent), job.id, f,without.singletons)
+
     
     #df <- data.frame(row.names=filtWorkers,numSents=numSent, cos=cosValues, agr=agrValues, annotSentence=(numAnnot/numSent))
     df <- cbind(numSent,cosValues, agrValues,annotSentence)
 
-    # Add empty values for filtered out workers
-    # missingworkers <- setdiff(worker_ids,filtWorkers)
-    # emptyCol <-  rep(0,length(missingworkers))
+    #Add empty values for filtered out workers
+    missingworkers <- setdiff(worker_ids,filtWorkers)
+    emptyCol <-  rep(0,length(missingworkers))
 
-    ## filtrows <- data.frame(row.names=missingworkers,numSents=emptyCol,cos=emptyCol,agr=emptyCol,annotSentence=emptyCol)
-    ## df <- rbind(df, filtrows)
-    ## df <- df[order(as.numeric(row.names(df))),]
+    filtrows <- data.frame(row.names=missingworkers,numSent=emptyCol,cos=emptyCol,agr=emptyCol,annotSentence=emptyCol)
+    df <- rbind(df, filtrows)
+    df <- df[order(as.numeric(row.names(df))),]
 
-  #Empty dataframe
+    #Empty dataframe
     spamFilters <- data.frame(row.names=worker_ids,cos=rep(0,length(worker_ids)),annotSentence=rep(0,length(worker_ids)),agr=rep(0,length(worker_ids)))
 
     candidateRows <- overDiff(df,'cos')
@@ -150,25 +151,25 @@ if(dim(raw_data)[1] == 0){
   colnames(sf) = 'label'
   spamLabels <- rownames(sf[sf$label==TRUE,,drop=FALSE])  
 
-  fname <- getFileName(job_id,fileTypes[['workerMetrics']])
-  path <- getFilePath(job_id, folderTypes[['analysisFiles']])
+  fname <- getFileName(job.id,fileTypes[['workerMetrics']])
+  path <- getFilePath(job.id, folderTypes[['analysisFiles']])
   
   wb.new <- loadWorkbook(paste(path,fname,sep='/'), create = TRUE)
 
-  sentRelDf <- sentRelScoreMeasure(raw_data)
+  sentRelDf <- sentRelScoreMeasure(raw.data)
   sClarity <- sentenceClarity(sentRelDf)
   rClarity <- relationClarity(sentRelDf)  
   
-  workerSentCos <- workerSentenceCosTable(raw_data)
-  workerSentScore <- workerSentenceScoreTable(raw_data, workerSentCos, sClarity)            
-  #workerRelScore <- workerRelationScore(raw_data, rClarity, workerSentCos)
+  workerSentCos <- workerSentenceCosTable(raw.data)
+  workerSentScore <- workerSentenceScoreTable(raw.data, workerSentCos, sClarity)            
+  #workerRelScore <- workerRelationScore(raw.data, rClarity, workerSentCos)
   
   ## createSheet(wb.new, name = "pivot-worker")
   ## writeOutputHeaders(wb.new,"pivot-worker")
 
   ## writeWorksheet(wb.new,data=cbind(out,spamFilterOutput[rownames(out),],spam=sf[rownames(out),]),sheet=1,startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
   
-  query <- sprintf("select worker_id, relation,explanation,selected_words,sentence from cflower_results where job_id = %s", job_id)
+  query <- sprintf("select worker_id, relation,explanation,selected_words,sentence from cflower_results where job_id = %s", job.id)
   res <- dbGetQuery(con,query)
   
 
@@ -182,7 +183,7 @@ if(dim(raw_data)[1] == 0){
   filtWorkers[['rep_response']] <- repeatedResponse(res)
   filValWords <- validWords(res)
   filtWorkers[['valid_words']] <- sort(unique(filValWords$worker_id))
-  filtWorkers[['rep_text']] <- repeatedText(job_id,'both')
+  filtWorkers[['rep_text']] <- repeatedText(job.id,'both')
   
   for (filter in names(filtWorkers)){
     saveFilteredWorkers(job_id, filtWorkers[[filter]], filter)    
@@ -191,10 +192,10 @@ if(dim(raw_data)[1] == 0){
 
   numFilteredSentences <- length(unlist(discarded)) 
 
-  numWorkers <- length(unique(raw_data$worker_id))
+  numWorkers <- length(unique(raw.data$worker_id))
   numFilteredWorkers <- length(union(spamLabels, unique(unlist(filtWorkers))))
 
-  query <- sprintf("update history_table set no_workers = %s, no_filtered_workers = %s where job_id = %s", numWorkers, numFilteredWorkers, job_id)
+  query <- sprintf("update history_table set no_workers = %s, no_filtered_workers = %s where job_id = %s", numWorkers, numFilteredWorkers, job.id)
   rs <- dbSendQuery(con, query)
   
   

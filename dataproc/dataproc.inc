@@ -362,4 +362,12 @@ function queryGroup($query,$group_key, $value=NULL){
   return $res; 
 }
 
+/**
+ * Simple query insert (no parameters). If it's an AUTO_INCREMENT, returns the ID of the inserted element (0 otherwise). 
+ **/
+function simpleInsert ($query){
+  $rs = mysql_query($query); 
+  return mysql_insert_id(); 
+}
+
 ?>
