@@ -3,104 +3,43 @@ source('lib/db.R')
 source('lib/measures.R')
 source('lib/filters.R')
 source(paste(libpath,'/simplify.R',sep=''),chdir=TRUE)
+source('aux.R')
 
 library(lsa)
 library(ROCR)
 
 #job.ids <- c(145547,146309,146522)
-job.ids <- c(178569, 178597, 179229, 179366)
+#job.ids <- c(178569, 178597, 179229, 179366)
+job.ids <- c(196304, 196306,196308)
 
-raw.data <- getJob(job.ids)
+
+set <- TRUE
+if(set){
+  #job.id <- 105 #the 'old' 90 sentences.
+  job.id <- 106 #the 'new' 90 sentences.
+  raw.data <- getJob(job.ids)
+} else {
+  job.id <- job.ids[3]
+  raw.data <- getJob(job.id)
+}
+
+without.singletons <- TRUE
 
 worker.ids <- sort(unique(raw.data$worker_id))
 
-## sentenceTable <- pivot(raw.data,'unit_id','relation')
 
-## sentenceDf <- getDf(sentenceTable)
-
-## #Calculate the measures to apply the filters.
-#filters <- list('NULL', 'NormRAll')
 filters <- list('NULL', 'SQRT','NormSQRT','NormR', 'NormRAll')
-
-## #Calculate the measures to apply the filters.filters <- list('SQRT','NormSQRT')
-## mdf <- calc_measures(sentenceDf,filters)
-
-## for (f in filters){
-##   print(paste('computing metrics for filter ',f))
-
-##   if(f != 'NULL')
-##     filt <- raw.data[data$unit_id %in% filtered[[f]],]
-##   else 
-##     filt <- raw.data
-  
-##   filtWorkers <- sort(unique(filt$worker_id))
-  
-##   numSent <- numSentences(filt)
-##   numAnnot <- numAnnotations(filt)
-  
-##   annotSentence <- numAnnot / numSent
-##   colnames(annotSentence) <- 'annotSentence'
-  
-  
-##   agrValues <- agreement(filt)
-##   cosValues <- cosMeasure(filt)
-##   df <- cbind(numSent,cosValues, agrValues,annotSentence)
-##   saveWorkerMetrics(cbind(agrValues, cosValues,annotSentence,numSent), job_id,f)
-## }
 
 #Remove the singletons
 numSent <- numSentences(raw.data)
 singletons <- belowFactor(numSent,'numSent',3)
+
 worker.ids <- setdiff(worker.ids,singletons)
 data <- raw.data[!(raw.data$worker_id %in% singletons),]
 
-job.id <- 105 #Aggregated 90 sentences.
 
+worker.metrics <- getWorkerMetrics(job.id, filters,without.singletons)
 
-
-#job.id <- job.ids[4]
-worker.metrics <- list()
-query <- sprintf("select worker_id,numSents,cos,agreement as agr,annotSentence as annotSent from worker_metrics where set_id = %s and
- filter is null order by worker_id", job.id)
-worker.metrics[['NULL']] <- dbGetQuery(con,query)
-row.names(worker.metrics[['NULL']]) <- worker.metrics[['NULL']]$worker_id
-worker.metrics[['NULL']] <- worker.metrics[['NULL']][!(worker.metrics[['NULL']]$worker_id %in% singletons),]
-
-
-query <- sprintf("select worker_id,numSents,cos,agreement as agr,annotSentence as annotSent from worker_metrics where set_id = %s and
- filter ='SQRT' order by worker_id", job.id)
-worker.metrics[['SQRT']] <- dbGetQuery(con,query)
-row.names(worker.metrics[['SQRT']]) <- worker.metrics[['SQRT']]$worker_id
-worker.metrics[['SQRT']] <- worker.metrics[['SQRT']][!(worker.metrics[['SQRT']]$worker_id %in% singletons),]
-
-query <- sprintf("select worker_id,numSents,cos,agreement as agr,annotSentence as annotSent from worker_metrics where set_id = %s and
- filter ='NormSQRT' order by worker_id", job.id)
-worker.metrics[['NormSQRT']] <- dbGetQuery(con,query)
-row.names(worker.metrics[['NormSQRT']]) <- worker.metrics[['NormSQRT']]$worker_id
-#Remove singletons
-worker.metrics[['NormSQRT']] <- worker.metrics[['NormSQRT']][!(worker.metrics[['NormSQRT']]$worker_id %in% singletons),]
-
-
-query <- sprintf("select worker_id,numSents,cos,agreement as agr,annotSentence as annotSent from worker_metrics where set_id = %s and
- filter ='NormR' order by worker_id", job.id)
-
-worker.metrics[['NormR']] <- dbGetQuery(con,query)
-row.names(worker.metrics[['NormR']]) <- worker.metrics[['NormR']]$worker_id
-
-#Remove singletons
-worker.metrics[['NormR']] <- worker.metrics[['NormR']][!(worker.metrics[['NormR']]$worker_id %in% singletons),]
-
-
-query <- sprintf("select worker_id,numSents,cos,agreement as agr,annotSentence as annotSent from worker_metrics where set_id = %s and
- filter ='NormRAll' order by worker_id",job.id)
-worker.metrics[['NormRAll']] <- dbGetQuery(con,query)
-row.names(worker.metrics[['NormRAll']]) <- worker.metrics[['NormRAll']]$worker_id
-
-#Remove singletons
-worker.metrics[['NormRAll']] <- worker.metrics[['NormRAll']][!(worker.metrics[['NormRAll']]$worker_id %in% singletons),]
-
-## query <- sprintf("select worker_id, relation,explanation,selected_words,sentence from cflower_results where job_id in (%s)", paste(job_id, collapse=','))
-## res <- dbGetQuery(con,query)
 
 spamFilters <- list()
 spamCandidates <- list()
@@ -136,122 +75,123 @@ candidates <- intersect(rownames(spamCandidates[['NULL']]),rownames(spamCandidat
 candidates <- intersect(candidates, rownames(spamCandidates[['NormSQRT']]))
 candidates <- intersect(candidates, rownames(spamCandidates[['NormR']]))
 candidates <- intersect(candidates, rownames(spamCandidates[['NormRAll']]))
+candidates <- as.numeric(candidates)
 
-## res <- getJob(job.ids)
+disagr <- union(rownames(spamCandidates[['NULL']]),rownames(spamCandidates[['NormSQRT']]))
+disagr <- union(disagr, rownames(spamCandidates[['SQRT']]))
+disagr <- union(disagr, rownames(spamCandidates[['NormSQRT']]))
+disagr <- union(disagr, rownames(spamCandidates[['NormR']]))
+disagr <- union(disagr, rownames(spamCandidates[['NormRAll']]))
+disagr <- sort(as.numeric(disagr))
 
-## res$selected_words <- apply(res[,'selected_words',drop=FALSE],1,FUN=correctMisspells)
-## res$explanation <- apply(res[,'explanation',drop=FALSE],1,FUN=correctMisspells)
+count.disagr <- data.frame(countDisagr= rep(0, length(worker.ids)))
+rownames(count.disagr) <- worker.ids
 
-## oth.non <- res[intersect(grep('OTHER|NONE',res$relation),grep('\n',res$relation)),]
-
-## filtWorkers <- list()
-## filtWorkers[['none_other']] <- noneOther(oth.non)
-## filtWorkers[['rep_response']] <- repeatedResponse(res)
-## filValWords <- validWords(res)
-## filtWorkers[['valid_words']] <- sort(unique(filValWords$worker_id))
-## filtWorkers[['rep_text']] <- repeatedText(job_id,'both')
- 
-evalResults <- function(worker.ids, filtered){
-
-spammers <- c(390141,5254360,5958908,7478095,8071333,8947442,9705524,9767020,9844590,12936896,13617382,13830562,13917479,13997142,14067668,14111684)
-lqw <- c(6501147,8885952,9277827,12300670,12974606,14119448)
-r.norm <- c(3008101,5254360,8947442,9277827,9873337,12300670,13300701,13438162,13617382,13745870,14050729)
-
-no.spam <- c(46633,275944,1246916,5983773,6768661,7336768,8927822,9873337,11307060,12299718,12507046,13291371,13300701,13438162,13637372,13664512,13769712,14050729,14058877,14081714,14083895,14133477,14157276,14161692)
-
-spam <- c(spammers, lqw, r.norm)
-
-not.found <- c()
-false.pos <- c()
-true.pos <- c()
-true.neg <- c()
-false.neg <- c()
-
-res <- list()
-
-for (worker.id in worker.ids){
-
-  if(worker.id %in% spam || worker.id %in% no.spam){
-
-    if(worker.id %in% no.spam){
-      #Predicted positive, result is negative.
-      if(!(worker.id %in% filtered)){
-        true.neg <- c(true.neg, worker.id)
-      } else {
-        false.pos <- c(false.pos, worker.id)
-      }      
-    } else {
-      if(worker.id %in% filtered){
-        true.pos <- c(true.pos, worker.id)
-      } else {
-        false.neg <- c(false.neg, worker.id)
-      }
-    }   
-  } else {
-    not.found <- c(not.found,worker.id)
+for(wid in disagr){
+  for (f in filters){
+    if(wid %in% rownames(spamCandidates[[f]]))
+      count.disagr[as.character(wid),1] <-  count.disagr[as.character(wid),1] + 1
   }
 }
 
-res[['false.neg']] <- false.neg
-res[['false.pos']] <- false.pos
-res[['true.pos']] <-  true.pos
-res[['true.neg']] <-  true.neg
-res[['not.found']] <-  not.found
-return (res)
+count.disagr[order(count.disagr$count),,drop=FALSE]
 
+annotations <- list()
+
+annotations[['spammers']] <- c(390141,5254360,5958908,7478095,8071333,8947442,9705524,9767020,9844590,12936896,13617382,13830562,13917479,13997142,14067668,14111684)
+annotations[['lqw']] <- c(6501147,8885952,9277827,12300670,12974606,14119448)
+annotations[['no_spam']] <- c(46633,275944,1246916,5983773,6768661,7336768,8927822,9873337,11307060,12299718,12507046,13291371,13300701,13438162,13637372,13664512,13769712,14050729,14058877,14081714,14083895,14133477,14157276,14161692)
+
+if(set){
+  none.other <- getWorkers(job.ids, 'none_other')
+  valid.words <- getWorkers(job.ids, 'valid_words')
+  rep.text <- getWorkers(job.ids, 'rep_text')
+  rep.response <- getWorkers(job.ids, 'rep_response')
+} else {
+  none.other <- getWorkers(job.id, 'none_other')
+  valid.words <- getWorkers(job.id, 'valid_words')
+  rep.text <- getWorkers(job.id, 'rep_text')
+  rep.response <- getWorkers(job.id, 'rep_response')  
 }
 
-calc.perf <- function(res){
-  output <- c(rep(1,length(res[['true.pos']])),
-              rep(0,length(res[['true.neg']])),
-              rep(1, length(res[['false.pos']])),
-              rep(0, length(res[['false.neg']])))
-  labels <- c(rep(1,length(res[['true.pos']])),
-              rep(0,length(res[['true.neg']])),
-              rep(0, length(res[['false.pos']])),
-              rep(1, length(res[['false.neg']])))
+content <- union(none.other,valid.words)
+content <- union(content, rep.text)
+content <- union(content, rep.response)
+content <- sort(as.numeric(content))
 
-  ## print(output)
-  ## print(labels)
-  pred <- prediction(output, labels)
-  perf <- performance(pred, "tpr", "fpr")
-  return (perf)
+empty.col <- rep(0, length(worker.ids))
+count.content <- data.frame(none.other=empty.col, rep.text=empty.col, rep.response=empty.col, valid.words=empty.col, countContent=empty.col)
+rownames(count.content) <- worker.ids
+
+for(wid in content[!(content %in% singletons)]){
+
+  wid <- as.character(wid)
+  
+  if(wid %in% none.other)
+    count.content[wid,'none.other'] <- 1
+  if(wid %in% valid.words)
+    count.content[wid,'valid.words'] <- 1
+  if(wid %in% rep.text)
+    count.content[wid,'rep.text'] <- 1
+  if(wid %in% rep.response)
+    count.content[wid,'rep.response'] <- 1
+
+  count.content[wid, 'countContent']<- rowSums(count.content[wid,])[[1]]
+  
 }
 
+count.filters <- cbind(count.disagr, count.content)
+count.filters$disagContent <- count.filters$countDisagr + count.filters$countContent
 
-## pred <- prediction(c(rep(1,length(true.pos)),rep(0,length(true.neg)),rep(1, length(false.pos)), rep(0, length(false.neg))),c(rep(1,length(true.pos)),rep(0,length(true.neg)),rep(0, length(false.pos)), rep(1, length(false.neg))))
-## perf <- performance(pred, "tpr", "fpr")
-## plot(perf)
+#exclude the candidates, and order by disagCount. 
+no.disag <- count.filters[!(row.names(count.filters) %in% candidates),]
+myorder <- c(row.names(no.disag[order(no.disag$disagContent),]),candidates)
 
-query <- paste("select distinct(worker_id) from filtered_workers where set_id in (", paste(job.ids, collapse=','), ") and filter ='none_other' order by worker_id", sep='')
-res <- dbGetQuery(con,query)
-none.other <- res$worker_id
+ag.metrics <- worker.metrics[['NULL']][,c('numSents','cos','agr','annotSent')]
+for(f in filters){
+  if(f != 'NULL'){
+    ag.metrics <- cbind(ag.metrics, worker.metrics[[f]][,c('numSents','cos','agr','annotSent')])
+  }
+}
 
-query <- paste("select distinct(worker_id) from filtered_workers where set_id in (", paste(job.ids, collapse=','), ") and filter ='rep_response' order by worker_id", sep='')
-res <- dbGetQuery(con,query)
-rep.resp <- res$worker_id
+ag.metrics <- cbind(ag.metrics,count.filters)
 
-query <- paste("select distinct(worker_id) from filtered_workers where set_id in (", paste(job.ids, collapse=','), ") and filter ='rep_text' order by worker_id", sep='')
-res <- dbGetQuery(con,query)
-rep.text <- res$worker_id
+#ag.metrics[myorder,]
 
-query <- paste("select distinct(worker_id) from filtered_workers where set_id in (", paste(job.ids, collapse=','), ") and filter ='valid_words' order by worker_id", sep='')
-res <- dbGetQuery(con,query)
-valid.words<- res$worker_id
+wb.new <- loadWorkbook('/home/gsc/Exp3-90-sents-spam.xlsx', create = TRUE)
+createSheet(wb.new, name = "singleton-workers-removed")
+writeWorksheet(wb.new,ag.metrics[myorder,],sheet="singleton-workers-removed",startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
+saveWorkbook(wb.new)
 
-res.none.other <- evalResults(worker.ids, none.other)
-res.rep.text <- evalResults(worker.ids, rep.text)
-res.rep.resp <- evalResults(worker.ids, rep.resp)
-res.valid.words <- evalResults(worker.ids, valid.words)
+overlap <- TRUE
 
-res.none.other[['not.found']] == res.rep.text[['not.found']] 
-res.rep.resp[['not.found']] == res.rep.text[['not.found']] 
+if(overlap){
+  print(paste('filtered by disagreement: ', length(candidates), sep=''))
+  showOverlap(candidates, none.other, 'none.other', singletons)
+  showOverlap(candidates, rep.response, 'rep.response', singletons)
+  showOverlap(candidates, rep.text, 'rep.text', singletons)
+  showOverlap(candidates, valid.words, 'valid.words', singletons)
+}
 
-print('none.other')
+exc.expl <- union(none.other, valid.words)
+exc.expl <- union(exc.expl, rep.text)
+exc.expl <- union(exc.expl, rep.response)
+
+exc.expl <- setdiff(exc.expl, candidates)
+
+print(paste('Exclusive from explanation filters: ', length(exc.expl[!(exc.expl %in% singletons)]),sep=''))
+
+res.none.other <- evalResults(worker.ids, none.other, annotations)
+res.rep.text <- evalResults(worker.ids, rep.text, annotations)
+res.rep.resp <- evalResults(worker.ids, rep.resp, annotations)
+res.valid.words <- evalResults(worker.ids, valid.words, annotations)
+
+#Section: plottin ROC curves. 
+#print('none.other')
 #perf.none.other <- calc.perf(res.none.other)
-print('rep.text')
+#print('rep.text')
 #perf.rep.text <- calc.perf(res.rep.text)
-print('rep.resp')
+#print('rep.resp')
 #perf.rep.resp <- calc.perf(res.rep.resp)
 
 ## par(mfrow=c(1,3))
@@ -259,54 +199,19 @@ print('rep.resp')
 ## plot(perf.rep.text)
 ## plot(perf.rep.resp)
 
+#Section: numeric measures (precision, recall, etc)
+numeric.measures <- FALSE
 
-fmeasure <- function(true.pos, true.neg, false.pos, false.neg){
-    return ((2 * true.pos)  / (2 * true.pos +  false.pos + false.neg))
+if(numeric.measures){
+  print('None other: ')
+  measures(res.none.other)
+  print('Repeated response: ')
+  measures(res.rep.resp)
+  print('Repeated text: ')
+  measures(res.rep.text)
+  print('valid words: ')
+  measures(res.valid.words)
 }
-
-fscore <- function(prec, rec){
-  return ((2 * rec * prec) / (rec+prec))
-}
-
-precision <- function(true.pos, true.neg, false.pos, false.neg){
-   return (true.pos / (true.pos + false.pos))
-}
-
-recall <- function(true.pos, true.neg, false.pos, false.neg){
-  return (true.pos / (true.pos + false.neg))
-}
-
-accuracy <- function(true.pos, true.neg, false.pos, false.neg){
-  return ((true.pos + true.neg) / (true.pos + false.pos + true.neg + false.neg))
-}
-
-measures <- function(res){
-   true.pos <- length(res$true.pos)
-   false.neg <- length(res$false.neg)
-   false.pos <- length(res$false.pos)
-   true.neg <- length(res$true.neg)
-
-   print(paste('fmeasure: ', fmeasure(true.pos, true.neg, false.pos, false.neg)))
-
-   prec <- precision(true.pos, true.neg, false.pos, false.neg)
-   rec <- recall(true.pos, true.neg, false.pos, false.neg)
-
-   print(paste('precision: ', prec))
-   print(paste('recall: ', rec))
-   print(paste('fscore: ', fscore(prec, rec)))
-
-   print(paste('accuracy: ', accuracy(true.pos, true.neg, false.pos, false.neg)))
-   print('------------------------')
-}
-
-print('None other: ')
-measures(res.none.other)
-print('Repeated response: ')
-measures(res.rep.resp)
-print('Repeated text: ')
-measures(res.rep.text)
-print('valid words: ')
-measures(res.valid.words)
 
 
 ## fmeasure(res.none.other)
