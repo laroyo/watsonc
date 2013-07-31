@@ -103,15 +103,15 @@ annotations[['lqw']] <- c(6501147,8885952,9277827,12300670,12974606,14119448)
 annotations[['no_spam']] <- c(46633,275944,1246916,5983773,6768661,7336768,8927822,9873337,11307060,12299718,12507046,13291371,13300701,13438162,13637372,13664512,13769712,14050729,14058877,14081714,14083895,14133477,14157276,14161692)
 
 if(set){
-  none.other <- getWorkers(job.ids, 'none_other')
-  valid.words <- getWorkers(job.ids, 'valid_words')
-  rep.text <- getWorkers(job.ids, 'rep_text')
-  rep.response <- getWorkers(job.ids, 'rep_response')
+  none.other <- getFilteredWorkers(job.ids, 'none_other')
+  valid.words <- getFilteredWorkers(job.ids, 'valid_words')
+  rep.text <- getFilteredWorkers(job.ids, 'rep_text')
+  rep.response <- getFilteredWorkers(job.ids, 'rep_response')
 } else {
-  none.other <- getWorkers(job.id, 'none_other')
-  valid.words <- getWorkers(job.id, 'valid_words')
-  rep.text <- getWorkers(job.id, 'rep_text')
-  rep.response <- getWorkers(job.id, 'rep_response')  
+  none.other <- getFilteredWorkers(job.id, 'none_other')
+  valid.words <- getFilteredWorkers(job.id, 'valid_words')
+  rep.text <- getFilteredWorkers(job.id, 'rep_text')
+  rep.response <- getFilteredWorkers(job.id, 'rep_response')  
 }
 
 content <- union(none.other,valid.words)
