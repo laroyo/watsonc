@@ -3,10 +3,10 @@ source('lib/db.R')
 source('lib/measures.R')
 source('lib/filters.R')
 source(paste(libpath,'/simplify.R',sep=''),chdir=TRUE)
-source('aux.R')
+source('evalfunctions.R')
 
 library(lsa)
-library(ROCR)
+library(XLConnect)
 
 #job.ids <- c(145547,146309,146522)
 #job.ids <- c(178569, 178597, 179229, 179366)
@@ -145,7 +145,7 @@ count.filters$disagContent <- count.filters$countDisagr + count.filters$countCon
 
 #exclude the candidates, and order by disagCount. 
 no.disag <- count.filters[!(row.names(count.filters) %in% candidates),]
-myorder <- c(row.names(no.disag[order(no.disag$disagContent),]),candidates)
+disag.order <- c(row.names(no.disag[order(no.disag$disagContent),]),candidates)
 
 ag.metrics <- worker.metrics[['NULL']][,c('numSents','cos','agr','annotSent')]
 for(f in filters){
@@ -156,21 +156,19 @@ for(f in filters){
 
 ag.metrics <- cbind(ag.metrics,count.filters)
 
-#ag.metrics[myorder,]
-
 wb.new <- loadWorkbook('/home/gsc/Exp3-90-sents-spam.xlsx', create = TRUE)
 createSheet(wb.new, name = "singleton-workers-removed")
-writeWorksheet(wb.new,ag.metrics[myorder,],sheet="singleton-workers-removed",startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
+writeWorksheet(wb.new,ag.metrics[disag.order,],sheet="singleton-workers-removed",startRow=2,startCol=1,header=TRUE,rownames='Worker ID')
 saveWorkbook(wb.new)
 
 overlap <- TRUE
 
 if(overlap){
   print(paste('filtered by disagreement: ', length(candidates), sep=''))
-  showOverlap(candidates, none.other, 'none.other', singletons)
-  showOverlap(candidates, rep.response, 'rep.response', singletons)
-  showOverlap(candidates, rep.text, 'rep.text', singletons)
-  showOverlap(candidates, valid.words, 'valid.words', singletons)
+  printOverlap(candidates, none.other, 'none.other', singletons)
+  printOverlap(candidates, rep.response, 'rep.response', singletons)
+  printOverlap(candidates, rep.text, 'rep.text', singletons)
+  printOverlap(candidates, valid.words, 'valid.words', singletons)
 }
 
 exc.expl <- union(none.other, valid.words)
@@ -186,31 +184,18 @@ res.rep.text <- evalResults(worker.ids, rep.text, annotations)
 res.rep.resp <- evalResults(worker.ids, rep.resp, annotations)
 res.valid.words <- evalResults(worker.ids, valid.words, annotations)
 
-#Section: plottin ROC curves. 
-#print('none.other')
-#perf.none.other <- calc.perf(res.none.other)
-#print('rep.text')
-#perf.rep.text <- calc.perf(res.rep.text)
-#print('rep.resp')
-#perf.rep.resp <- calc.perf(res.rep.resp)
-
-## par(mfrow=c(1,3))
-## plot(perf.none.other)
-## plot(perf.rep.text)
-## plot(perf.rep.resp)
-
 #Section: numeric measures (precision, recall, etc)
 numeric.measures <- FALSE
 
 if(numeric.measures){
   print('None other: ')
-  measures(res.none.other)
+  printCoverageMeasures(res.none.other)
   print('Repeated response: ')
-  measures(res.rep.resp)
+  printCoverageMeasures(res.rep.resp)
   print('Repeated text: ')
-  measures(res.rep.text)
+  printCoverageMeasures(res.rep.text)
   print('valid words: ')
-  measures(res.valid.words)
+  printCoverageMeasures(res.valid.words)
 }
 
 
@@ -223,8 +208,6 @@ if(numeric.measures){
 ## recall(res.rep.resp)
 ## accuracy(res.rep.resp)
 
-
-#plot(perf)
 
 
 
