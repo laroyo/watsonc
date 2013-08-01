@@ -125,14 +125,14 @@ text {
     <div class="span3">
        <div class="well sidebar-nav affix" data-spy="affix" data-offset-top="50">
        <ul class="nav nav-list" >
-              <li class="nav-header">Job Overview</li>
-              <li class="active"><a href="#annotationDistribution">Annotation Distribution</a></li>
-              <li><a href="#relationDistribution">Annotated relations</a></li>
               <li class="nav-header">Workers</li>
               <li><a href="#workersSection">Workers distribution</a></li>
               <li><a href="#filteredworkers">Low quality candidates</a></li>
               <li><a href="#completionTimes">Task completion times</a></li>
-              <li><a href="#filtesdistribution">Filters distribution</a></li>
+              <li><a href="#filtersDistribution">Filters distribution</a></li>
+              <li class="nav-header">Job Overview</li>
+              <li class="active"><a href="#annotationDistribution">Annotation Distribution</a></li>
+              <li><a href="#relationDistribution">Annotated relations</a></li>
               <li class="nav-header">Sentences</li>
               <li><a href="#">TBC</a></li>
               <li><a href="#">TBC</a></li>
@@ -433,8 +433,8 @@ echo "]\n";
       </div> <!-- span -->
       </div> <!-- row -->
       </section>
-       <section id ="completionTimes">
 
+      <section id ="completionTimes">
       <h4> Task completion times</h4>
 
        <div class='row'>
@@ -446,25 +446,14 @@ echo "]\n";
        y-axis. Points with bigger radius represent a percentile whith more than one worker. </p>
        </div> <!-- /span -->
        </div> <!-- /row -->
+      </section>
 
-
+      <section id ="filtersDistribution">
       <h4> Filters </h4>
-      <div class='row'>
-
-      <div class='span4'>
-      Left
-      <div id="filterBarchar">
-      <svg></svg>
+      <div id="vennFilters">
       </div>     
-      </div> <!--  span -->
-      <div class='span4'>
-      <div id="distSpamFilter">
-      <svg class='piechart'></svg>
-      </div>            
-      
-      </div> <!-- span -->
-      </div> <!-- row -->
-      
+      </section>
+	 
     </div><!--/span-->
     </div> <!--/row-->
       <hr>
@@ -516,8 +505,10 @@ $res = array(array('key' => 'legend', 'values' => $values));
 echo("\n var channels =   " . json_encode($res). ";");    ?>
 </script>
 
+<script src="/wcs/analytics/js/jquery-1.9.1.js"></script>
 <script src="/wcs/analytics/js/d3.v2.js"></script>
 <script src="/wcs/analytics/js/nv.d3.js"></script>
+
 <script src="/wcs/analytics/js/tooltip.js"></script>
 <script src="/wcs/analytics/js/utils.js"></script>
 <script src="/wcs/analytics/js/legend.js"></script>
@@ -526,11 +517,13 @@ echo("\n var channels =   " . json_encode($res). ";");    ?>
 <script src="/wcs/analytics/js/multiBarChart.js"></script>
 <script src="/wcs/analytics/js/job_analytics.js"></script> 
 <script src="/wcs/analytics/js/pieChart.js"></script>
-<script src="/wcs/plugins/jquery-ui/js/jquery-1.9.1.js"></script>
 <script src="/wcs/analytics/js/bootstrap.js"></script>
 <script src="/wcs/analytics/js/main.js"></script>
 <script src="/wcs/analytics/js/linePlusBar.js"></script>
 <script src="/wcs/analytics/js/scatter.js"></script>
+<script src="/wcs/analytics/js/venn/venn.js"></script>
+<script src="/wcs/analytics/js/mds/mds.js"></script>
+<script src="/wcs/analytics/js/numeric/numeric-1.2.6.js"></script>
 <!-- <script src="/wcs/analytics/js/compTimes.js"></script> !-->
 
 <script>
@@ -538,8 +531,32 @@ echo("\n var channels =   " . json_encode($res). ";");    ?>
 //addPieChart(data_spam,'disSpamChannel');
   addLinePlusBar(spamPerChannel,'spamPerChannel', 'LQ candidates per channel + Ratio LQ / Workers');
   addPieChart(distSpamChannel,'distSpamChannel', '% of LQ candidates per channel');
-  addPieChart(distSpamFilter,'distSpamFilter', '% of LQ candidates per filter');
   addScatterPlot(compTimes, 'compTimes');
+
+// define sets and set set intersections
+/* var sets = [{label: "A", size: 10}, {label: "B", size: 10}], */
+/*     overlaps = [{sets: [0,1], size: 2}]; */
+
+var sets = [{'label': "valid_words", size: 7},{'label': "disagr", size: 11},{'label': "rep_resp", size: 9},{'label': "rep_text", size: 5},{'label': "none_other", size: 10}],
+  overlaps = [{sets: [0,1], size: 1}, 
+	      {sets: [0,2], size: 1}, 
+	      {sets: [0,3], size: 0}, 
+	      {sets: [0,4], size: 0}, 
+	      {sets: [1,2], size: 1}, 
+	      {sets: [1,3], size: 0}, 
+	      {sets: [1,4], size: 0}, 
+	      {sets: [2,3], size: 0}, 
+	      {sets: [2,4], size: 0}, 
+	      {sets: [3,4], size: 0}];
+
+
+
+// get positions for each set
+sets = venn.venn(sets, overlaps);
+
+// draw the diagram in the 'simple_example' div
+venn.drawD3Diagram(d3.select("#vennFilters"), sets, 300, 300);
+
 </script>
 </body>
 </html>
