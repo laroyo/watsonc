@@ -64,7 +64,7 @@ if(dim(raw.data)[1] == 0){
     discarded[[f]] <- belowDiff(mdf,f)
     #The filtered *in* 
     filtered[[f]] <- setdiff(rownames(sentenceDf),discarded[[f]])
-    insertFiltSentences(job.id, file_id, f, discarded[[f]])
+    saveFilteredSentences(job.id, file_id, f, discarded[[f]])
   }
 
   #After applying the filters, add the "NULL" filter.
@@ -97,7 +97,6 @@ if(dim(raw.data)[1] == 0){
     #sentRelScoreValues <- sentRelScoreMeasure(filt)
 
     saveWorkerMetrics(cbind(agrValues, cosValues,annotSentence,numSent), job.id, f,without.singletons)
-
     
     #df <- data.frame(row.names=filtWorkers,numSents=numSent, cos=cosValues, agr=agrValues, annotSentence=(numAnnot/numSent))
     df <- cbind(numSent,cosValues, agrValues,annotSentence)
@@ -187,7 +186,7 @@ if(dim(raw.data)[1] == 0){
   for (filter in names(filtWorkers)){
     saveFilteredWorkers(job_id, filtWorkers[[filter]], filter)    
   }
-  saveFilteredWorkers(job_id, spamLabels, NULL)
+  saveFilteredWorkers(job_id, spamLabels, 'disag_filters')
 
   numFilteredSentences <- length(unlist(discarded)) 
 
