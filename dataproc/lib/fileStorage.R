@@ -50,6 +50,7 @@ writeOutputHeaders <- function(workbook, worksheet){
   writeWorksheet(workbook,data="|V| < STDEV",sheet=worksheet,startRow=1,startCol=6,header=FALSE)
   writeWorksheet(workbook,data="norm|V| < STDEV",sheet=worksheet,startRow=1,startCol=10,header=FALSE)
   writeWorksheet(workbook,data="norm|R| < STDEV",sheet=worksheet,startRow=1,startCol=14,header=FALSE)
+  writeWorksheet(workbook,data="norm-all|R| < STDEV",sheet=worksheet,startRow=1,startCol=14,header=FALSE)
 
   mergeCells(workbook, sheet = worksheet, reference = "A1:A2")
   mergeCells(workbook, sheet = worksheet, reference = "B1:E1")
