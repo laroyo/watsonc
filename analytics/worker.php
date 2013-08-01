@@ -84,7 +84,7 @@ $maxTime = getMaxArray($taskCompTimes, 'time');
 <!DOCTYPE html>
 <meta charset="utf-8">
 
-<link href="/wcs/css/nv.d3.css" rel="stylesheet" type="text/css">
+<link href="/wcs/analytics/css/nv.d3.css" rel="stylesheet" type="text/css">
 <style>
 
 body {
@@ -127,12 +127,12 @@ text {
     <svg></svg>
   </div>
 
-<script src="/wcs/js/d3.v2.js"></script>
-<script src="/wcs/js/nv.d3.js"></script>
-<script src="/wcs/js/tooltip.js"></script>
-<script src="/wcs/js/utils.js"></script>
-<script src="/wcs/js/legend.js"></script>
-<script src="/wcs/js/axis.js"></script>
+<script src="/wcs/analytics/js/d3.v2.js"></script>
+<script src="/wcs/analytics/js/nv.d3.js"></script>
+<script src="/wcs/analytics/js/tooltip.js"></script>
+<script src="/wcs/analytics/js/utils.js"></script>
+<script src="/wcs/analytics/js/legend.js"></script>
+<script src="/wcs/analytics/js/axis.js"></script>
 <script> 
 <?php
 
@@ -143,7 +143,7 @@ text {
 
 ?> 
 </script>
-<script src="/wcs/js/lineChart.js"></script>
+<script src="/wcs/analytics/js/lineChart.js"></script>
 <script>
   addLineChart('#two_graphs svg', two_graphs); 
   addLineChart('#combined svg', data); 
