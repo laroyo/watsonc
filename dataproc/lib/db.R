@@ -4,31 +4,16 @@ library(rjson)
 
 con <- dbConnect(MySQL(), user=dbuser,password=dbpwd,dbname=dbname,host=host)
 
-
 getJob <- function(job_ids){
   query <- sprintf('select unit_id,worker_id,worker_trust,external_type,relation,explanation,selected_words,started_at,created_at,term1,term2,sentence from cflower_results where job_id in (%s)', paste(job_ids,collapse=','))
   #print(query)
   return(dbGetQuery(con, query))
 }
 
-insertFiltSentences <- function(set_id, file_id, filter, filteredSentences){
-  unit_ids <- toJSON(filteredSentences)
-  query <- sprintf("insert into filtered_sentences (set_id, file_id,filter, unit_ids) values (%s,%s,'%s','%s')", set_id, file_id,filter,unit_ids)
-  #print(query)  
-  return(dbGetQuery(con, query))  
-}
-
-insertFiltWorkers <- function(set_id, file_id, filter, filteredWorkers){
-
-  worker_ids <- toJSON(filteredWorkers)    
-  query <- sprintf("insert into filtered_workers (set_id, file_id,filter, worker_ids) values (%s,%s,'%s','%s')", set_id, file_id,filter,worker_ids)
-  return(dbGetQuery(con, query))  
-}
-
-saveFileMetadata <- function(filename, path,mime_type, filesize, creator){
-  query <- sprintf("insert into file_storage (original_name,storage_path,mime_type,filesize,createdby) values ('%s', '%s', '%s',%s,'%s')",filename, path,mime_type,filesize,creator)
-  #print(query)
-  return(dbGetQuery(con, query))  
+getJobsInSet <- function(set_id){
+  query <- sprintf("select members from analysis_sets where set_id = %d ", set_id)
+  row <- (dbGetQuery(con, query))[1,1]
+  return (fromJSON(row))
 }
 
 createSet <- function(job_ids){  
@@ -41,39 +26,72 @@ createSet <- function(job_ids){
   return(id)
 }
 
-saveWorkerMetrics <- function(dframe,set_id){
+saveFileMetadata <- function(filename, path,mime_type, filesize, creator){
+  query <- sprintf("insert into file_storage (original_name,storage_path,mime_type,filesize,createdby) values ('%s', '%s', '%s',%s,'%s')",filename, path,mime_type,filesize,creator)
+  #print(query)
+  return(dbGetQuery(con, query))  
+}
+
+saveFilteredSentences <- function(set_id, file_id, filter, filteredSentences){
+  unit_ids <- toJSON(filteredSentences)
+  query <- sprintf("insert into filtered_sentences (set_id, file_id,filter, unit_ids) values (%s,%s,'%s','%s')", set_id, file_id,filter,unit_ids)
+  #print(query)  
+  return(dbGetQuery(con, query))  
+}
+
+saveFilteredWorkers <- function(set.id,worker.ids, filter){
+  for(worker.id in worker.ids){
+    query <- sprintf("insert into filtered_workers (set_id,filter,worker_id) values (%s,'%s',%s)", set.id,filter,worker.id)    
+    dbSendQuery(con,query)                
+  }  
+}
+
+getFilteredWorkers <- function(job.ids, filter){
+  query <- sprintf("select distinct(worker_id) from filtered_workers where set_id in (%s) and filter ='%s' order by worker_id",
+                     paste(job.ids, collapse=','), filter)  
+  res <- dbGetQuery(con,query)
+  return(res$worker_id)
+}
+
+saveWorkerMetrics <- function(dframe,set_id, filters,without.singletons=FALSE){
   for(worker_id in row.names(dframe)){
     row <- dframe[worker_id,]
-    query <- sprintf("insert into  worker_metrics (set_id, worker_id, filter, numSents, cos, agreement,annotSentence) values (%s, %s,NULL, %s, %s, %s,%s)",                      set_id,worker_id, row$numSent, row$cos, row$agr, row$annotSentence);
-    rs <- dbSendQuery(con, query)
+    for (f in filters){
+      query <- sprintf("insert into  worker_metrics (set_id, worker_id, filter, numSents, cos, agreement,annotSentence) values (%s, %s,%s, %s, %s, %s,%s)",                      set_id,worker_id, f, row$numSent, row$cos, row$agr, row$annotSentence);
+      rs <- dbSendQuery(con, query)
+    }
   }
 }
 
-getWorkerMetrics <- function(set_id){
+getWorkerMetrics <- function(job.id, filters,without.singletons){
 
-  query <- sprintf("select * from worker_metrics where set_id = %d and filter is null", set_id)    
-  print(query)
-  rs<- (dbGetQuery(con, query))
-  return (rs)
-      
-  ## query <- sprintf("select distinct(filter) from worker_metrics where set_id = %d",set_id)
-  ## filters <- (dbGetQuery(con, query))
-  ## res <- list()
+  worker.metrics <- list()
+  if(without.singletons)
+    table.name <- 'worker_metsing'
+  else
+    table.name <- 'worker_metrics'
+  
+  for (f in filters){
+    if(f == 'NULL'){
+      query <- sprintf("select worker_id,numSents,cos,agreement as agr,annotSentence as annotSent from %s where set_id = %s and
+         filter is null order by worker_id", table.name, job.id)
 
-  ## for (i in seq(1,dim(filters)[1])){
-  ##   query <- sprintf("select * from worker_metrics where set_id = %d and filter = '%s'", set_id,filters[i,])    
-  ##   print(query)
-  ##   rs<- (dbGetQuery(con, query))    
-  ##   res[[filters[i,]]] <- rs[,c('worker_id','numSents','cos','agreement','annotSentence')]    
-  ## }
-  ## return (res)
+      worker.metrics[['NULL']] <- dbGetQuery(con,query)
+      row.names(worker.metrics[['NULL']]) <- worker.metrics[['NULL']]$worker_id
+      #worker.metrics[['NULL']] <- worker.metrics[['NULL']][!(worker.metrics[['NULL']]$worker_id %in% singletons),]
+    } else {
+      query <- sprintf("select worker_id,numSents,cos,agreement as agr,annotSentence as annotSent from %s where set_id = %s and
+         filter ='%s' order by worker_id", table.name,job.id, f)
+      worker.metrics[[f]] <- dbGetQuery(con,query)
+      row.names(worker.metrics[[f]]) <- worker.metrics$worker_id
+      #worker.metrics[[f]] <- metrics[!(metrics$worker_id %in% singletons),]      
+    }
+  }
+  return (worker.metrics)
 }
 
-getJobsInSet <- function(set_id){
-  query <- sprintf("select members from analysis_sets where set_id = %d ", set_id)
-  row <- (dbGetQuery(con, query))[1,1]
-  return (fromJSON(row))
-}
+
+
 
 #job_ids <- getJobsInSet(set_id)
 ## strptime(,'%Y-%m-%d %H:%M:%S')
@@ -89,19 +107,14 @@ getTaskCompletionTimes <- function(job_id, df=FALSE){
   }
 } 
 
-insertSentClarity <- function(sentClarity){
+saveSentClarity <- function(sentClarity){
   for (i in seq(1:length(sentClarity))){
     query <- sprintf("insert into sent_clarity (unit_id,clarity) values (%s,%s)", names(sentClarity[i]), sentClarity[i]);
     dbGetQuery(con,query)    
   }
 }
 
-selectWorkerSentenceScore <- function(worker_id){
-  query <- sprintf("select unit_id,score from workerSentenceScore where worker_id = %s", worker_id)
-  return (dbGetQuery(con,query))  
-}
-
-insertWorkerSentenceScore <- function(workerSentenceScore,workerSentenceCosine){
+saveWorkerSentenceScore <- function(workerSentenceScore,workerSentenceCosine){
   for (i in seq(1:dim(workerSentenceScore)[1])){
     for (j in seq(1:dim(workerSentenceScore)[2])){
       if(!is.na(workerSentenceScore[i,j])){        
@@ -113,7 +126,7 @@ insertWorkerSentenceScore <- function(workerSentenceScore,workerSentenceCosine){
   }    
 }
 
-insertWorkerRelationScore <- function(workerRelScore){
+saveWorkerRelationScore <- function(workerRelScore){
     for (i in seq(1:dim(workerRelScore)[1])){
       for (j in seq(1:dim(workerRelScore)[2])){
         if(!is.na(workerRelScore[i,j]) & workerRelScore[i,j] > 0){
@@ -129,13 +142,4 @@ insertWorkerRelationScore <- function(workerRelScore){
     }
   }
 
-saveFilteredWorkers <- function(set.id,worker.ids, filter){
-  for(worker.id in worker.ids){
-    if(is.null(filter))
-      query <- sprintf("insert into filtered_workers (set_id,filter,worker_id) values (%s,NULL,%s)", set.id,worker.id)
-    else
-      query <- sprintf("insert into filtered_workers (set_id,filter,worker_id) values (%s,'%s',%s)", set.id,filter,worker.id)
 
-    dbSendQuery(con,query)                
-  }  
-}

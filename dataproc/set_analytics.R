@@ -46,7 +46,7 @@ if(dim(raw_data)[1] == 0){
     #The filtered *in* 
     filtered[[f]] <- setdiff(rownames(sentenceDf),discarded[[f]])
     file_id = -1
-    insertFiltSentences(set_id, file_id, f, discarded[[f]])
+    saveFilteredSentences(set_id, file_id, f, discarded[[f]])
   }
 }
 
