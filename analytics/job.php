@@ -4,7 +4,7 @@ require_once('dataproc.inc');
 
 if(isset($_GET['job_id'])){
   $job_id = $_GET['job_id'];    
-  $job_ids = array(179229);
+  $job_ids = array($job_id);
 } 
 
 if(isset($_GET['set_id'])){
@@ -299,7 +299,9 @@ function jsonScatterPoint($x, $y, $size){
 }
 
 $min_unit = min(array_keys($compTimes)); 
-echo "<script>"; 
+?>
+<script>
+<?php
 echo "var compTimes = ["; 
 
 foreach($compTimes as $unit_id => $list){
@@ -448,9 +450,77 @@ echo "]\n";
        </div> <!-- /row -->
       </section>
 
-      <section id ="filtersDistribution">
-      <h4> Filters </h4>
-      <div id="vennFilters">
+    <!-- Filters
+    ================================================== -->
+    <script src="/wcs/analytics/js/jquery-1.9.1.js"></script>
+
+    <script>
+
+       $.arrayIntersect = function(a, b)
+       {
+	 return $.grep(a, function(i)
+	  {
+	    return $.inArray(i, b) > -1;
+	  });
+       };
+       function loadSelect(id, data, exclude = null){
+	 $('#'+id).empty();
+	 $('#'+id).append(new Option('', ''));
+
+	 var filters = Object.keys(data)
+	 for(var k in filters){
+	   if(filters[k] != exclude){
+	     $('#'+id).append(new Option(filters[k], filters[k]));
+	   } 
+	 }
+       }
+       function loadVennDiagram(def){	 
+	 var f1 = def == true ? $('#filter1').children()[1].value : $('#filter1').val(); 
+	 var f2 = def == true ? $('#filter1').children()[2].value : $('#filter2').val(); 	          
+
+	 alert(f1);
+	 alert(f2);
+	 if(f1 && f2){
+	   
+	   var intersect = $.arrayIntersect(filteredWorkers[f1], filteredWorkers[f2]);
+	   
+	   var sets = [{'label': f1, size: filteredWorkers[f1].length},{'label': f2, size: filteredWorkers[f2].length}],
+	     intersects = [{sets: [0,1], size: intersect.length}];
+	   
+	   // get positions for each set
+	   sets = venn.venn(sets, intersects);
+	   $("#vennFilters").empty();
+	   //if(def)
+	   venn.drawD3Diagram(d3.select("#vennFilters"), sets, 300, 300);	     
+	   d3.selectAll('circle').on("mouseover", alert(' -> mouseover')); 
+	     /* else  */
+	   /*   venn.updateD3Diagram(d3.select("#vennFilters"), sets);	    */
+	 } 
+       }	 
+
+
+   </script>
+   <section id ="filtersDistribution">
+	 <h4> Filters </h4>
+
+	 <div class='row'> Select two filters to display the overlap between both: </div>
+	 <div class='row'>
+	 Filter 1: 
+	 <select id='filter1' onchange='loadSelect("filter2",filteredWorkers, this.value)'> 
+	 </select>
+
+	 <script>
+	 <?php echo 'var filteredWorkers = ' . json_encode($spamPerFilter) . ";"; ?>      
+	 loadSelect('filter1', filteredWorkers); 
+	 </script>
+
+	 Filter 2: 
+         <select id = 'filter2' onchange='loadVennDiagram()'> 
+         </select>
+	 </div>
+	 <!-- //alert($.arrayIntersect(filteredWorkers['disag_filters'], filteredWorkers['valid_words'])); -->
+		    
+	 <div id="vennFilters">
       </div>     
       </section>
 	 
@@ -463,6 +533,7 @@ echo "]\n";
 
 </div><!--/.container-->    
 <script>       	    
+
 <?php
     
 $matrix = getPivotTable($job_id); 
@@ -505,7 +576,7 @@ $res = array(array('key' => 'legend', 'values' => $values));
 echo("\n var channels =   " . json_encode($res). ";");    ?>
 </script>
 
-<script src="/wcs/analytics/js/jquery-1.9.1.js"></script>
+
 <script src="/wcs/analytics/js/d3.v2.js"></script>
 <script src="/wcs/analytics/js/nv.d3.js"></script>
 
@@ -533,29 +604,16 @@ echo("\n var channels =   " . json_encode($res). ";");    ?>
   addPieChart(distSpamChannel,'distSpamChannel', '% of LQ candidates per channel');
   addScatterPlot(compTimes, 'compTimes');
 
+  //Load the default venn diagram for filters. 
+  loadVennDiagram(true);
+
 // define sets and set set intersections
 /* var sets = [{label: "A", size: 10}, {label: "B", size: 10}], */
 /*     overlaps = [{sets: [0,1], size: 2}]; */
 
-var sets = [{'label': "valid_words", size: 7},{'label': "disagr", size: 11},{'label': "rep_resp", size: 9},{'label': "rep_text", size: 5},{'label': "none_other", size: 10}],
-  overlaps = [{sets: [0,1], size: 1}, 
-	      {sets: [0,2], size: 1}, 
-	      {sets: [0,3], size: 0}, 
-	      {sets: [0,4], size: 0}, 
-	      {sets: [1,2], size: 1}, 
-	      {sets: [1,3], size: 0}, 
-	      {sets: [1,4], size: 0}, 
-	      {sets: [2,3], size: 0}, 
-	      {sets: [2,4], size: 0}, 
-	      {sets: [3,4], size: 0}];
 
 
 
-// get positions for each set
-sets = venn.venn(sets, overlaps);
-
-// draw the diagram in the 'simple_example' div
-venn.drawD3Diagram(d3.select("#vennFilters"), sets, 300, 300);
 
 </script>
 </body>
