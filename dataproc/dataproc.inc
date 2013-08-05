@@ -341,7 +341,7 @@ function queryList($query){
 
 /**
  * Groups values within the result by $group_key. 
- * Ex: retrieve a list with all the filters of a particular worker. 
+ * Ex: retrieve a list with all the filters of a particular worker (see ex. in analytics/job.php).
  * @param  $value: indicate the field of the row to be listed. If any, the entire rowset will be added. 
  **/
 function queryGroup($query,$group_key, $value=NULL){
