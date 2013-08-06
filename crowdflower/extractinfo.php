@@ -93,7 +93,7 @@ function getResults($job_id) {
 
 	$table_header_results = array('unit_id', 'worker_id', 'worker_trust', 'external_type', 'step_1_select_the_valid_relations',  'step_2b_if_you_selected_none_in_step_1_explain_why',  'step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1', 'started_at', 'created_at', 'term1', 'term2', 'sentence');
 	$table_header_overview = array('job_id', 'unit_id', 'created_at', 'updated_at', 'agreement', 'term1', 'term2', 'sentence');
-	
+
 	$results_content = array($table_header_results);
 	$overview_content = array($table_header_overview); 
 
@@ -119,20 +119,32 @@ function getResults($job_id) {
 			}
 			if (isset($judgments[0]["data"]["step_1_select_the_valid_relations"])) {
 				for ($k = 0; $k < count($judgments[$j]["data"]["step_1_select_the_valid_relations"]); $k ++) {
-					$choices .= extractChoice($judgments[$j]["data"]["step_1_select_the_valid_relations"][$k]) . "\n";
+					if (strpos($judgments[$j]["data"]["step_1_select_the_valid_relations"][$k],'the words are related') !== false) {
+    						$choices .= "[OTHER]" . "\n";
+					}
+					else {
+						$choices .= extractChoice($judgments[$j]["data"]["step_1_select_the_valid_relations"][$k]) . "\n";
+					}
 				}
 			}
-			
+
 				$choices = substr($choices, 0, -1);
-				array_push($row_result, $choices, $judgments[$j]["data"]["step_2b_if_you_selected_none_in_step_1_explain_why"], $judgments[$j]["data"]["step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"], formatDateAndTime($judgments[$j]["started_at"]), formatDateAndTime($judgments[$j]["created_at"]), $judgments[$j]["unit_data"]["term1"], $judgments[$j]["unit_data"]["term2"], $judgments[$j]["unit_data"]["sentence"]);
+				array_push($row_result, $choices, $judgments[$j]["data"]["step_2b_if_you_selected_none_in_step_1_explain_why"], $judgments[$j]["data"]["step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"], formatDateAndTime($judgments[$j]["started_at"]), formatDateAndTime($judgments[$j]["created_at"]), $judgments[$j]["unit_data"]["term1"], $judgments[$j]["unit_data"]["term2"];
+			if (isset($judgments[$j]["unit_data"]["sentence"])) {
+				array_push($row_result, $judgments[$j]["unit_data"]["sentence"]);
+			}
+			if (isset($judgments[$j]["unit_data"]["text"])) {
+				array_push($row_result, $judgments[$j]["unit_data"]["text"]);
+			}
+
 			//fputcsv($fp_results, $row_result);
 			array_push($results_content, $row_result);
-			
+
 			$first_date = new DateTime(formatDateAndTime($judgments[$j]["started_at"]));
 			$second_date = new DateTime(formatDateAndTime($judgments[$j]["created_at"]));
 			array_push($startingTimeArray, $first_date);
 			array_push($endingTimeArray, $second_date);
-			
+
 			$difference = to_seconds($first_date->diff($second_date));
 			//echo $difference;
 			array_push($timeDifference, $difference); 
@@ -162,7 +174,7 @@ function getResults($job_id) {
 	$avg_time = gmdate('H:i:s', array_sum($timeDifference) / $noJudgments);	
 
 	$updatehistorytable = mysql_query("Update history_table Set origin='$origin', channels_used ='$channel_percentage', channels_percentage='$channel_percentage', min_time_unitworker='$min_time', max_time_unitworker='$max_time', avg_time_unitworker='$avg_time' Where job_id = '$job_id' ") or die(mysql_error());
-	
+
 	$queryFileName="SELECT `file_name` FROM `history_table` WHERE `job_id` = '".$job_id."'";
         $fileName = getOneFieldFromQuery($queryFileName, 'file_name');
 
@@ -178,7 +190,7 @@ function getResults($job_id) {
 	    'mime_type' => 'text/csv',
 	    'file_type' => 'CFlowerResultFiles'
 	); 
-	
+
 	//FIXME: Specify a correct user as creator of the files (instead of 'script')	
 	storeContentInFile($results_file_info,$results_content,'script'); 
 	$worker_res = exec('/usr/bin/Rscript /var/www/html/wcs/dataproc/workerMetrics.R '. $job_id);
