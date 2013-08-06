@@ -20,9 +20,9 @@ library(lsa)
 args <- commandArgs(trailingOnly = TRUE)
 
 if(length(args) > 0){
-  job_id <- args[1]
+  job.id <- args[1]
 } else {
-  if(!exists('job_id')){
+  if(!exists('job.id')){
     stop('Error: you should provide a Job id (parameter)')
   }
 }
@@ -30,7 +30,7 @@ if(length(args) > 0){
 #FIXME: this be obtained when storing the file on the file storage. 
 file_id <- -1
 
-raw.data <- getJob(job_id)
+raw.data <- getJob(job.id)
 worker.ids <- sort(unique(raw.data$worker_id))
 
 without.singletons <- TRUE
@@ -103,7 +103,7 @@ if(dim(raw.data)[1] == 0){
     df <- cbind(numSent,cosValues, agrValues,annotSentence)
 
     #Add empty values for filtered out workers
-    missingworkers <- setdiff(worker_ids,filtWorkers)
+    missingworkers <- setdiff(worker.ids,filtWorkers)
     emptyCol <-  rep(0,length(missingworkers))
 
     filtrows <- data.frame(row.names=missingworkers,numSent=emptyCol,cos=emptyCol,agr=emptyCol,annotSentence=emptyCol)
@@ -111,12 +111,14 @@ if(dim(raw.data)[1] == 0){
     df <- df[order(as.numeric(row.names(df))),]
 
     #Empty dataframe
-    spamFilters <- data.frame(row.names=worker_ids,cos=rep(0,length(worker_ids)),annotSentence=rep(0,length(worker_ids)),agr=rep(0,length(worker_ids)))
+    spamFilters <- data.frame(row.names=worker.ids,cos=rep(0,length(worker.ids)),annotSentence=rep(0,length(worker.ids)),agr=rep(0,length(worker.ids)))
 
-    candidateRows <- overDiff(df,'cos')
+    candidateRows <- belowDiff(df,'cos')
     if(length(candidateRows) > 0 & dim(spamFilters[rownames(spamFilters) %in% candidateRows,])[1]>0){
       spamFilters[rownames(spamFilters) %in% candidateRows,]$cos = 1
     }
+    spammers <- c(14067668,9705524,12974606,14119448,9844590,8071333,13997142,8885952,7478095,9767020,13617382,5254360,8947442)
+
     
     candidateRows <- overDiff(df,'annotSentence')
     if(length(candidateRows) > 0 & dim(spamFilters[rownames(spamFilters) %in% candidateRows,])[1]>0){
@@ -139,19 +141,21 @@ if(dim(raw.data)[1] == 0){
     }
   }
 
-  spamFilterOutput <- data.frame(row.names=worker_ids,
+  spamFilterOutput <- data.frame(row.names=worker.ids,
                                  filter1=rowSums(spamCandidates[['NULL']]),
                                  filter2=rowSums(spamCandidates[['SQRT']]),
-                                 filter3=rowSums(spamCandidates[['NormSQRT']])
+                                 filter3=rowSums(spamCandidates[['NormSQRT']]),
+                                 filter4=rowSums(spamCandidates[['NormR']]),
+                                 filter5=rowSums(spamCandidates[['NormRAll']])
                                  )
 
   #Combine spamFilterOutput. 
-  sf <- as.data.frame(rowSums(spamFilterOutput > 0) > 1)
+  sf <- as.data.frame(rowSums(spamFilterOutput > 1) > 1)
   colnames(sf) = 'label'
   spamLabels <- rownames(sf[sf$label==TRUE,,drop=FALSE])  
 
   fname <- getFileName(job.id,fileTypes[['workerMetrics']])
-  path <- getFilePath(job.id, folderTypes[['analysisFiles']])
+  path <- getFilePath(job.id, folderTypes[['analysisFiles']], FALSE)
   
   wb.new <- loadWorkbook(paste(path,fname,sep='/'), create = TRUE)
 
@@ -183,11 +187,19 @@ if(dim(raw.data)[1] == 0){
   filValWords <- validWords(res)
   filtWorkers[['valid_words']] <- sort(unique(filValWords$worker_id))
   filtWorkers[['rep_text']] <- repeatedText(job.id,'both')
-  
+
+  createSheet(wb.new, name = "beh-filters")
+  writeBehFiltersHeaders(wb.new, 'beh-filters')
+
+  writeWorksheet(wb.new,filtWorkers[['none_other']],sheet='beh-filters',startRow=2,startCol=1,header=FALSE)
+  writeWorksheet(wb.new,filtWorkers[['rep_response']],sheet='beh-filters',startRow=2,startCol=3,header=FALSE)
+  writeWorksheet(wb.new,filtWorkers[['valid_words']],sheet='beh-filters',startRow=2,startCol=5,header=FALSE)
+  writeWorksheet(wb.new,filtWorkers[['rep_text']],sheet='beh-filters',startRow=2,startCol=7,header=FALSE)
+     
   for (filter in names(filtWorkers)){
-    saveFilteredWorkers(job_id, filtWorkers[[filter]], filter)    
+    saveFilteredWorkers(job.id, filtWorkers[[filter]], filter)    
   }
-  saveFilteredWorkers(job_id, spamLabels, 'disag_filters')
+  saveFilteredWorkers(job.id, spamLabels, 'disag_filters')
 
   numFilteredSentences <- length(unlist(discarded)) 
 
