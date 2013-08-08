@@ -26,10 +26,17 @@ function formatDateAndTime($input) {
 
 /* parse the response for extracting the relation between terms */
 function extractChoice($input) {
-	$pattern = "/\[[A-Za-z\_\:]*\]/";
-	preg_match($pattern, $input, $matches);
-	$choice = str_replace(":", "", $matches[0]);
-	return $choice; 
+	if(strpos($input, '[') !== FALSE) {
+		$pattern = "/\[[A-Za-z\_\:]*\]/";
+		preg_match($pattern, $input, $matches);
+		$choice = str_replace(":", "", $matches[0]);
+		return $choice; 
+	}
+	if(strpos($input, ':') !== FALSE) {
+		$choice = current(explode(':', $input));
+		return $choice;
+	}
+	else return $input;
 }
 
 function format_interval(DateInterval $interval) {
@@ -128,8 +135,20 @@ function getResults($job_id) {
 				}
 			}
 
-				$choices = substr($choices, 0, -1);
-				array_push($row_result, $choices, $judgments[$j]["data"]["step_2b_if_you_selected_none_in_step_1_explain_why"], $judgments[$j]["data"]["step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"], formatDateAndTime($judgments[$j]["started_at"]), formatDateAndTime($judgments[$j]["created_at"]), $judgments[$j]["unit_data"]["term1"], $judgments[$j]["unit_data"]["term2"];
+			$choices = substr($choices, 0, -1);
+			array_push($row_result, $choices, $judgments[$j]["data"]["step_2b_if_you_selected_none_in_step_1_explain_why"]);
+			if(isset($judgments[$j]["data"]["step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"]))
+				array_push($row_result, $judgments[$j]["data"]["step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"]);
+			if(isset($judgments[$j]["data"]["step_2a_paste_the_words_from_the_sentence_that_support_your_selection_above"]))
+				array_push($row_result, $judgments[$j]["data"]["step_2a_paste_the_words_from_the_sentence_that_support_your_selection_above"]);
+			if(isset($judgments[$j]["data"]["step_2a_copy__paste_the_words_from_the_sentence_that_support_your_selection_in_step1"]))
+				 array_push($row_result, $judgments[$j]["data"]["step_2a_copy__paste_the_words_from_the_sentence_that_support_your_selection_in_step1"]);
+			if(isset($judgments[$j]["data"]["step_2a_copy__paste_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"]))
+				 array_push($row_result, $judgments[$j]["data"]["step_2a_copy__paste_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1"]);
+
+
+
+			array_push($row_result, formatDateAndTime($judgments[$j]["started_at"]), formatDateAndTime($judgments[$j]["created_at"]), $judgments[$j]["unit_data"]["term1"], $judgments[$j]["unit_data"]["term2"]);
 			if (isset($judgments[$j]["unit_data"]["sentence"])) {
 				array_push($row_result, $judgments[$j]["unit_data"]["sentence"]);
 			}
@@ -200,5 +219,5 @@ function getResults($job_id) {
 	/* fclose($fp_results); */
 	/* fclose($fp_overview); */
 }
-//getResults("196344");
+//getResults("134491");
 ?>
