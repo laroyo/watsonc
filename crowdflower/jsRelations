@@ -5,7 +5,7 @@ window.onload = function() {
   inputText[0].readOnly = true;
 }
 
-for(i=0; i<15; ++i) {
+for(i=2; i<16; ++i) {
   inputElements[i].onclick=function() {
     if(this.checked) {
       inputText[0].value += this.value + " ";
