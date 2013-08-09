@@ -32,7 +32,7 @@ function extractChoice($input) {
 		$choice = str_replace(":", "", $matches[0]);
 		return $choice; 
 	}
-	if(strpos($input, ':') !== FALSE) {
+	else if(strpos($input, ':') !== FALSE) {
 		$choice = current(explode(':', $input));
 		return $choice;
 	}
