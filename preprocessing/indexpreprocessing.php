@@ -124,6 +124,9 @@ if (!is_dir($filesdir.'Experiments')) {
 	}
 } 
 
+ shell_exec("rm -rf ".$filesdir."AppliedFilters/helper1");
+ shell_exec("rm -rf ".$filesdir."AppliedFilters/helper2");
+
 $directoriesTextFiles = glob($filesdir.'TextFiles/*' , GLOB_ONLYDIR);
 $noFiles = 0;
 $textFilesAddr = "";
@@ -459,6 +462,9 @@ if (!is_dir($filesdir.'Experiments/'.$timestamp."/".$appliedFilter)) {
 		 die('Failed to create folder...');
 	}
 } 
+
+ shell_exec("rm -rf ".$filesdir."AppliedFilters/helper1");
+ shell_exec("rm -rf ".$filesdir."AppliedFilters/helper2");
 
 $jobDate = date('dFY');
 $jobTime = date('H:i:s');
