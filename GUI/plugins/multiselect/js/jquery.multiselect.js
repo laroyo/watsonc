@@ -34,7 +34,7 @@
       checkAllText: 'Check all',
       uncheckAllText: 'Uncheck all',
       noneSelectedText: 'Select columns',
-      selectedText: 'Change the number of displayed columns',
+      selectedText: 'Displayed Columns',
       selectedList: 0,
       show: null,
       hide: null,
@@ -228,7 +228,7 @@
           value = o.selectedText.replace('#', numChecked).replace('#', $inputs.length);
         }
       }
-	value = "Change the number of displayed columns";
+	value = "Displayed Columns";
       this._setButtonValue(value);
 
       return value;
