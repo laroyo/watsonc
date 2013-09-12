@@ -228,7 +228,7 @@
           value = o.selectedText.replace('#', numChecked).replace('#', $inputs.length);
         }
       }
-
+	value = "Change the number of displayed columns";
       this._setButtonValue(value);
 
       return value;
