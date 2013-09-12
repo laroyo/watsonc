@@ -34,7 +34,7 @@
       checkAllText: 'Check all',
       uncheckAllText: 'Uncheck all',
       noneSelectedText: 'Select columns',
-      selectedText: '# Columns Shown',
+      selectedText: 'Change the number of displayed columns',
       selectedList: 0,
       show: null,
       hide: null,

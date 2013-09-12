@@ -308,7 +308,7 @@ echo "</table>";
 								</div>
 								 
 								<div class="labelfield"
-									title="The purposes or notes of creating the job">Provide descriptions of your job:</div>
+									title="The purposes or notes of creating the job">Provide description of your job:</div>
 								<div class="inputfield">
 									<input type="text" name="job_comment" class="commentboxInput" /><br />
 								</div>
@@ -367,13 +367,13 @@ echo "</table>";
 
 							
 								<div class = "combinedfield">
-									<input type="radio" name="channels" value="c2"> All channels <br />
+									<input type="radio" name="channels" value="c2"> Multiple channels <br />
 								</div>
 
 								<br />
 								
 								<div class = "combinedfield">
-									<input type="submit" name="action" value="Create Job" /><br />
+									<input type="submit" name="action" value="Create & Publish Job" /><br />
 									<br />
 								</div>
 
@@ -393,7 +393,7 @@ echo "</table>";
 										id="seconds_per_assignment"><br />
 								</div>
 
-								<div class="labelfield">Payment per hour:</div>
+								<div class="labelfield">Payment per hour (in dollars):</div>
 								<div class="inputfield">
 									<input type="text" class = "textboxInput" name="payment_per_hour"
 										id="payment_per_hour"> <br />
@@ -457,7 +457,7 @@ echo "</table>";
 	   </div>
  </div>
              
-  <button class="reset" title = "Click to clear all the filter options" >Reset Filters</button> <!-- targetted by the "filter_reset" option -->
+  <button class="reset" title = "Click to clear all the filter options" >Reset Column Filters</button> <!-- targetted by the "filter_reset" option -->
   <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JOB IDs" >Analyze</button> 
 <select id="hidecolumns" name="hidecolumns" multiple="multiple" title = "Click to hide/show columns">
 <!--<option value="cJobId">Job ID (Batch File)</option>-->
