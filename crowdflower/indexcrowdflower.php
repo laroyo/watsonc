@@ -272,17 +272,31 @@ if (!mysql_query($insertSQL,$con))
 }
 else
 {
-
-	echo "<b>A new job is created and saved.</b>";
-	echo "<br />";
-	echo "<b>Job ID: $job_id</b>";
-	echo "<br />";
+	$getJobs = "SELECT job_id FROM batches_for_cf WHERE cfbatch_id = $file_id";
+	$jobs_used = getOneFieldFromQuery($query, 'job_id');
+	if ($jobs_used == "no_job") {
+		$updateQuery = "UPDATE batches_for_cf SET job_id = $job_id WHERE file_id = $file_id";
+	}
+	else {
+		$updateQuery = "UPDATE batches_for_cf SET job_id = $jobs_used".", ".$job_id." WHERE file_id = $file_id";
+	}
+	if (!mysql_query($updateQuery, $con))
+	{
+        	die('Error: ' . mysql_error());
+	}
+	else
+	{
+		echo "<b>A new job is created and saved.</b>";
+		echo "<br />";
+		echo "<b>Job ID: $job_id</b>";
+		echo "<br />";
 //  header("Location: index.php");
 //	echo "<a href='../index.php'>Back to Home Page</a>";
-	echo "<a href='../GUI/index.php'>Back to Home Page</a>";
+		echo "<a href='../GUI/index.php'>Back to Home Page</a>";
 	
 	// To freash datatable in GUI
 	//echo '<script>parent.window.location.reload(true);</script>';
-}
+	}
+}	
 
 ?>

@@ -231,6 +231,7 @@ echo "<th>File ID</th>";
 echo "<th>File Name</th>";
 echo "<th>Filter Applied</th>";
 echo "<th>Batch Size</th>";
+echo "<th>Job Id</th>";
 echo "<th>Created By</th>";
 echo "<th>Created Date</th>";
 echo "<th>Comments</th>";
@@ -249,6 +250,7 @@ while($row = mysql_fetch_array($result)){
         echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$file_id' class = 'filelinks' >$original_name</a></td>";
         echo "<td>$filter_named</td>";
         echo "<td>$batch_size</td>";
+	echo "<td>$job_id</td>";
         echo "<td>$created_by</td>";
         echo "<td>$created</td>";
         echo "<td>$comment</td>";
