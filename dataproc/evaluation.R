@@ -9,9 +9,8 @@ library(lsa)
 library(XLConnect)
 
 #job.ids <- c(145547,146309,146522)
-#job.ids <- c(178569, 178597, 179229, 179366)
-job.ids <- c(196304, 196306,196308)
-
+job.ids <- c(178569, 178597, 179229, 179366)
+#job.ids <- c(196304, 196306,196308)
 
 set <- TRUE
 if(set){
@@ -23,6 +22,7 @@ if(set){
   raw.data <- getJob(job.id)
 }
 
+#Without singleton *workers* 
 without.singletons <- TRUE
 
 worker.ids <- sort(unique(raw.data$worker_id))

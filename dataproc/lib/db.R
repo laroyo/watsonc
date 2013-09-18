@@ -57,7 +57,11 @@ saveWorkerMetrics <- function(dframe,set_id, filters,without.singletons=FALSE){
   for(worker_id in row.names(dframe)){
     row <- dframe[worker_id,]
     for (f in filters){
-      query <- sprintf("insert into  worker_metrics (set_id, worker_id, filter, numSents, cos, agreement,annotSentence) values (%s, %s,%s, %s, %s, %s,%s)",                      set_id,worker_id, f, row$numSent, row$cos, row$agr, row$annotSentence);
+      if(f == 'NULL'){
+        query <- sprintf("insert into  worker_metrics (set_id, worker_id, filter, numSents, cos, agreement,annotSentence) values (%s, %s,NULL, %s, %s, %s,%s)",                      set_id,worker_id, f, row$numSent, row$cos, row$agr, row$annotSentence);
+      } else  {
+        query <- sprintf("insert into  worker_metrics (set_id, worker_id, filter, numSents, cos, agreement,annotSentence) values (%s, %s,'%s', %s, %s, %s,%s)",                      set_id,worker_id, f, row$numSent, row$cos, row$agr, row$annotSentence);
+      }
       rs <- dbSendQuery(con, query)
     }
   }

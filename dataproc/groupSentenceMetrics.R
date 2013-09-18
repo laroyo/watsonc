@@ -1,7 +1,10 @@
 #!/usr/bin/Rscript
-source('envars.R')
+#source('/var/www/html/wcs/dataproc/envars.R')
+source('/home/gsc/watson/dataproc/envars.R')
 
-#Parse a results file from Crowdflower, and generates contingency tables for relations/workers and sentences as an output. 
+# This scripts parses a results file from Crowdflower, and generates contingency tables for relations/workers and sentences, and relation clusters as an output.
+# TODO: use only one script for both sets and jobs (merge this and sentenceMetrics.R)
+
 library(XLConnect)
 
 
@@ -17,19 +20,21 @@ library(gtools)
 #For calculating the cosine. 
 library(lsa)
 
-args <- commandArgs(trailingOnly = TRUE)
 
-if(length(args) > 0){
-  job.id <- args[1]
-} else {
-  if(!exists('job.id')){
-    stop('Error: you should provide a Job id (parameter)')
-  }
-}
+#job.ids <- c(139057 ,132248,132763,134491,145309,143343 ,145547 ,146309 ,146522, 178569,178597,179229,179366,196304,196306,196308,196309,196344,199057)
+job.ids <- c(145309,143343 ,145547 ,146309 ,146522, 178569,178597,179229,179366,196304,196306,196308,196309,196344,199057)
+#job.ids <- c(145309)
+
+job.id <- 100
+
+#eq <- dbGetQuery(con, 'select unit_id,chang_id from unit_index_equivalences where chang_id not like "%-%"')
+query <- 'select chang_id,unit_id from unit_index_equivalences where chang_id in (select chang_id from unit_index_equivalences where chang_id not like "%-%" group by chang_id having count(*) > 1)'
+eq <- dbGetQuery(con, query);
+
 
 outputfile <- paste(filespath,'/','AnalysisFiles','/',job.id,'_sentenceMetrics.xlsx',sep='')
 
-query <- sprintf('select unit_id,worker_id,worker_trust,external_type,relation,explanation,selected_words,started_at,created_at,term1,term2,sentence from cflower_results where job_id = %s', job.id)
+query <- sprintf('select unit_id,worker_id,worker_trust,external_type,relation,explanation,selected_words,started_at,created_at,term1,term2,sentence from cflower_results where job_id in (%s)', paste(job.ids, collapse=','))
 raw_data <- dbGetQuery(con, query)
 
 raw_data <- raw_data[raw_data$relation != '',]
@@ -38,20 +43,12 @@ if(dim(raw_data)[1] == 0){
   cat('JOB_NOT_FOUND')
 } else {
 
-  #Get chang data and equivalences, to be added to the spreadsheets. 
-  query <- 'select chang_id,unit_id from unit_index_equivalences where chang_id in (select chang_id from unit_index_equivalences)'
-  equivalences <- dbGetQuery(con, query);
-  
-  chang.data <- dbGetQuery(con, "select ID as chang_id,relation_type,term1,b1,e1,term2,b2,e2,sentence from chang_data")
-
-  for (unit_id in equivalences$unit_id){
-    if(unit_id %in% raw_data$unit_id){
-      raw_data[raw_data$unit_id == unit_id,]$chang_id <- equivalences[equivalences$unit_id == unit_id,]$chang_id
-    }
+  for (unit_id in eq$unit_id){
+    raw_data[raw_data$unit_id == unit_id,]$unit_id <- eq[eq$unit_id == unit_id,]$chang_id
   }
   
   #Spammers
-  query <- sprintf("select distinct(worker_id) from filtered_workers where set_id = %s and filter = 'disag_filters'",job.id)
+  query <- sprintf("select distinct(worker_id) from filtered_workers where filter = 'disag_filters' or filter = 'beh_filters'")
   spammers <- dbGetQuery(con,query)$worker_id
   
   #Shorten the names of some fields. 
@@ -60,13 +57,7 @@ if(dim(raw_data)[1] == 0){
   names(raw_data)[names(raw_data)=="step_2b_if_you_selected_none_in_step_1_explain_why"] <- "explanation"
 
   sentenceTable <- pivot(raw_data,'unit_id','relation')
-
   sentenceDf <- getDf(sentenceTable)
-  
-  job.ids <- c(145547,146309,146522,178597,179229,179366,196304,196306,196308,196309,196344,199057)
-  #132248,132763,134491,139057,143343,
-  print(sentenceDf)
-  
   
   #Save the initial pivot table (with data from CF)
   fname <- getFileName(job.id,fileTypes[['pivotCFOutput']])
@@ -87,6 +78,13 @@ if(dim(raw_data)[1] == 0){
   #FIXME: get the adecuate value for the creator
   #creator = 'script'
   #saveFileMetadata(fname,path,mimeTypes[['excel']],-1,creator)
+
+  #Get chang data and equivalences, to be added to the spreadsheets. 
+  query <- 'select chang_id,unit_id from unit_index_equivalences where chang_id in (select chang_id from unit_index_equivalences)'
+  equivalences <- dbGetQuery(con, query);
+
+  chang.data <- dbGetQuery(con, "select ID as chang_id,relation_type,term1,b1,e1,term2,b2,e2,sentence from chang_data")
+
 
   #####
   # Pivot with singleton workers.
@@ -198,7 +196,7 @@ if(dim(raw_data)[1] == 0){
 
     #To calculate the top, second, etc. 
     order.values <- rev(sort(as.vector(as.matrix(sentenceDf[sent.id,]))))
-
+    
     
     for (relation in rels){
       #if(sentenceDf[sent.id, relation] > 0){

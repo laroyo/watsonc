@@ -146,7 +146,78 @@ simplify <- function(data,field,mField) {
 #field: the other field in the contingency table (for the moment, only 'relation')
 pivot <-function(data,pfield,field){
   data <- colselect(data,pfield,field)
-  return(simplify(data,pfield,field))
+  sentenceTable <- simplify(data,pfield,field)
+  if(job.id == 132248 || job.id == 132763 || job.id == 134491 || job.id == 139057){
+    
+    equ <- list('sign_or_symptom_of' = '[SYMPTOM]', 
+                'may_cause'='[CAUSES]', 
+                'diagnosed_by'='[DIAGNOSE_BY_TEST_OR_DRUG]',
+                'DIAGNOSED_BY_TEST_OR_DRUG'='[DIAGNOSE_BY_TEST_OR_DRUG]',
+                '[DIAGNOSED_BY_TEST_OR_DRUG]'='[DIAGNOSE_BY_TEST_OR_DRUG]',
+                'DIAGNOSIS_TEST_OR_DRUG'='[DIAGNOSE_BY_TEST_OR_DRUG]',
+                '[DIAGNOSIS_TEST_OR_DRUG]'='[DIAGNOSE_BY_TEST_OR_DRUG]',
+                'treated_by'='[TREATS]',
+                '[TREATED_BY]'='[TREATS]', 
+                'location_of'='[LOCATION]',
+                '[HAS_LOCATION]'='[LOCATION]',
+                'LOCATION_OF'='[LOCATION]',
+                '[LOCATION_OF]'='[LOCATION]',
+                'may_diagnose'='[DIAGNOSE_BY_TEST_OR_DRUG]',
+                'cause_of'='[CAUSES]',
+                'causes'='[CAUSES]',
+                'CAUSES'='[CAUSES]',
+                'has_manifestation'='[MANIFESTATION]',
+                'prevented_by'='[PREVENTS]',
+                'treats'='[TREATS]',
+                'TREATS'='[TREATS]',
+                'TREATED_BY'='[TREATS]',
+                'may_treat'='[TREATS]',
+                'diagnose'= '[DIAGNOSE_BY_TEST_OR_DRUG]',
+                'prevents'='[PREVENTS]',
+                'PREVENTS'='[PREVENTS]',
+                'PREVENTED_BY'='[PREVENTS]',
+                '[PREVENTED_BY]'='[PREVENTS]',
+                "may_prevent"='[PREVENTS]',
+                '[OTHER]'='[OTHER]',
+                '[NONE]'='[NONE]',
+                'symptom_of'='[SYMPTOM]',
+                'SYMPTOM_OF'='[SYMPTOM]',
+                '[SYMPTOM_OF]'='[SYMPTOM]',
+                'HAS_SYMPTOM'='[SYMPTOM]',
+                '[HAS_SYMPTOM]'='[SYMPTOM]',
+                'MANIFESTATION_OF'='[MANIFESTATION]',
+                '[MANIFESTATION_OF]'='[MANIFESTATION]',
+                'HAS_MANIFESTATION'='[MANIFESTATION]',
+                '[HAS_MANIFESTATION]'='[MANIFESTATION]',
+                'CAUSED_BY'='[CAUSES]',
+                '[CAUSED_BY]'='[CAUSES]'                               
+                )
+    
+    
+    relations <- c('[CAUSES]','[SYMPTOM]','[LOCATION]','[PREVENTS]','[DIAGNOSE_BY_TEST_OR_DRUG]','[MANIFESTATION]',
+                   '[ASSOCIATED_WITH]','[PART_OF]','[OTHER]','[TREATS]','[NONE]','[IS_A]','[SIDE_EFFECT]',
+                   '[CONTRAINDICATES]')
+    
+    df <- as.data.frame(matrix(data=0,nrow=dim(sentenceTable)[1],ncol = 14))
+    colnames(df) <- relations
+    rownames(df) <- rownames(sentenceTable)
+    
+    mcols <- colnames(sentenceTable)
+    for(mcol in mcols){
+      if (mcol != 'disease_has_finding' && mcol != 'desease_has_finding' && mcol != '[HA'){
+        for(row.id in rownames(sentenceTable)) {
+          if(mcol %in% relations){
+            df[row.id, mcol] <- (df[row.id,mcol] +  sentenceTable[row.id,mcol])
+          } else  {
+            df[row.id, equ[[mcol]]] <- (df[row.id,equ[[mcol]]] +  sentenceTable[row.id,mcol])
+          }
+        }
+      }        
+    }
+    return(df)
+  } else {
+    return(sentenceTable)
+  }
 }
 
 
@@ -343,6 +414,49 @@ getListAsArray <- function(mlist,key.name,value.name){
   json <- paste(json,']',sep='')
   
   return (json)  
+}
+
+addChangData <- function(sentenceDf,chang.data,no.ids=FALSE){
+  #Create empty data frame. 
+  mDf <- as.data.frame(matrix(nrow=1,ncol=24,dimnames=list(0,c('unit_id','chang_id',all,'relation_type','term1','b1','e1','term2','b2','e2','sentence'))))
+  mDf <- mDf[0,]
+  
+  for(r in seq(2:dim(sentenceDf)[1])){        
+    
+    sent.id <- as.numeric(row.names(sentenceDf[r, ]))
+    if(no.ids){
+      chang.id <- sentenceDf[r,]$chang.id
+      unit.id.id <- sentenceDf[r,]$unit.id
+    } else {
+    
+      if(as.numeric(sent.id) < 200000000) {
+        unit.id <- 'M'
+        chang.id <- sent.id
+      } else {
+        chang.id <- dbGetQuery(con,sprintf('select chang_id from unit_index_equivalences where unit_id = %s limit 1', sent.id))$chang_id
+        if(is.null(chang.id)){
+          chang.id <- 0
+        }
+        unit.id <- sent.id
+      }
+    }
+    
+    ## if(unit.id  > 200000000)
+    ##   chang.id <- equivalences[equivalences$unit_id == unit.id,][1,1]
+    ## else
+    ##   chang.id <- unit.id
+                                        #sentenceDf$unit_id <- row.names(sentenceDf)
+      
+    if(!is.na(chang.id) && chang.id != 0) {
+      if(no.ids){
+        row <- cbind(sentenceDf[r,], chang.data[chang.data$chang_id== chang.id,c('relation_type','term1','b1','e1','term2','b2','e2','sentence')])      
+      } else {
+        row <- cbind(unit.id=as.character(unit.id),chang.id,sentenceDf[r,], chang.data[chang.data$chang_id== chang.id,c('relation_type','term1','b1','e1','term2','b2','e2','sentence')])      
+      }
+      mDf <- rbind(mDf,row)
+    }    
+  }
+  return (mDf)
 }
 
 

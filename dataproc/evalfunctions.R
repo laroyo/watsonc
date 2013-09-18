@@ -1,3 +1,5 @@
+# Functions for evaluating the spam filtering (given manual annotations). 
+
 # Given a list of spammers (filtered) and the annotated spammers (annotations)
 # returns  the false/true positives/negatives for the filtered individuals. 
 evalResults <- function(worker.ids, filtered, annotations){
@@ -13,7 +15,7 @@ evalResults <- function(worker.ids, filtered, annotations){
   
   res <- list()
   
-  for (worker.id in worker.ids){
+ for (worker.id in worker.ids){
     
     if(worker.id %in% spam || worker.id %in% no.spam){
       
