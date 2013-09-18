@@ -10,6 +10,50 @@
 * @author Hui Lin/alice8linhui@gmail.com
 */
 
+function checkForFilters1() {
+	if (!document.getElementById("filters1").checked) {
+		var radioButtons = document.getElementsByName('specialcases'); 
+		for (var i = 0; i < 5; i ++) {
+			if(radioButtons[i].checked == true)
+				radioButtons[i].checked = false;
+		}
+	}
+	else {
+		var radioButtons = document.getElementsByName('specialcases');
+		radioButtons[0].checked = true;
+
+	}
+}
+
+function checkForFilters2() {
+	if (!document.getElementById("filters2").checked) {
+		var radioButtons = document.getElementsByName('relation'); 
+		for (var i = 0; i < 3; i ++) {
+			if(radioButtons[i].checked == true)
+				radioButtons[i].checked = false;
+		}
+	}
+	else {
+		var radioButtons = document.getElementsByName('relation');
+		radioButtons[0].checked = true;
+	}
+}
+
+function checkForFilters3() {
+	if (!document.getElementById("filters3").checked) {
+		var radioButtons = document.getElementsByName('length'); 
+		for (var i = 0; i < 2; i ++) {
+			if(radioButtons[i].checked == true)
+				radioButtons[i].checked = false;
+		}
+	}
+	else {
+		var radioButtons = document.getElementsByName('length');
+		radioButtons[0].checked = true;
+	}
+}
+
+
 /*
 ** Compute the payment based on the user input when creating a job
 */
@@ -369,15 +413,15 @@ function confirmSelectedServerFilePreprocessing() {
 	$(this).dialog("close");
 	// check whether users select a file
 	if ($('input:radio[name=radiofilepreprocessing]:checked',
-			this).closest('tr').children().slice(1,
-					2).text().length == 0) {
+			this).closest('tr').children().slice(0,
+					1).text().length == 0) {
 		alert("Please select a folder with the input data!");
 		$("#dialog-confirm-preprocessing").dialog("open");
 	} else {
 		alert($(
 				'input:radio[name=radiofilepreprocessing]:checked',
 				this).closest('tr').children()
-				.slice(1, 2).text()
+				.slice(0, 1).text()
 				+ ' is selected!');
 		// take the name of the selected folder
                 $("#foldername")
@@ -386,7 +430,7 @@ function confirmSelectedServerFilePreprocessing() {
                                                 'input:radio[name=radiofilepreprocessing]:checked',
                                                 this).closest('tr')
                                                 .children().slice(
-                                                                1, 2)
+                                                                0, 1)
                                                                 .text())
 
 		// take the names of the selected files
@@ -396,7 +440,7 @@ function confirmSelectedServerFilePreprocessing() {
 						'input:radio[name=radiofilepreprocessing]:checked',
 						this).closest('tr')
 						.children().slice(
-								2, 3)
+								1, 2)
 								.text())
 		// take the name of the selected folder
 		$("label[for='uploadedfilepreprocessing']")
@@ -405,7 +449,7 @@ function confirmSelectedServerFilePreprocessing() {
 						'input:radio[name=radiofilepreprocessing]:checked',
 						this).closest('tr')
 						.children().slice(
-								1, 2)
+								0, 1)
 								.text());
 	}
 }
@@ -910,7 +954,7 @@ $(function() {
 	Galleria.run('#galleria');
 	
 	/* load the preprocessing interface to GUI Input tab */
-	$("#preprocessarea").load("/wcs/preprocessing/preprocinterface.php");
+//	$("#preprocessarea").load("/wcs/preprocessing/preprocinterface.php");
 	
 	/* trigger Tablesorter plugin */
 	configureTablesorter();
