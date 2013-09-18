@@ -335,6 +335,88 @@ function passJobidtoAnalytics() {
 
 }
 
+
+/*
+** Open the dialog for selecting the server file 
+*/
+function selectServerFilePreprocessing() {
+	$("#dialog-confirm-preprocessing").dialog("open");
+}
+
+/*
+** Configure the dialog for selecting the server file 
+*/
+function selectServerFileDialogPreprocessing() {
+$("#dialog-confirm-preprocessing")
+.dialog(
+		{
+			autoOpen : false,
+			resizable : true,
+			height : 650,
+			width : 1245,
+			modal : true,
+			buttons : {
+				"Confirm" : confirmSelectedServerFilePreprocessing,
+				Cancel : closeDialogPreprocessing
+			}
+		});
+}
+
+/*
+** Retrieve data for the selected server file 
+*/
+function confirmSelectedServerFilePreprocessing() {
+	$(this).dialog("close");
+	// check whether users select a file
+	if ($('input:radio[name=radiofilepreprocessing]:checked',
+			this).closest('tr').children().slice(1,
+					2).text().length == 0) {
+		alert("Please select a folder with the input data!");
+		$("#dialog-confirm-preprocessing").dialog("open");
+	} else {
+		alert($(
+				'input:radio[name=radiofilepreprocessing]:checked',
+				this).closest('tr').children()
+				.slice(1, 2).text()
+				+ ' is selected!');
+		// take the name of the selected folder
+                $("#foldername")
+                .val(
+                                $(
+                                                'input:radio[name=radiofilepreprocessing]:checked',
+                                                this).closest('tr')
+                                                .children().slice(
+                                                                1, 2)
+                                                                .text())
+
+		// take the names of the selected files
+		$("#filenames")
+		.val(
+				$(
+						'input:radio[name=radiofilepreprocessing]:checked',
+						this).closest('tr')
+						.children().slice(
+								2, 3)
+								.text())
+		// take the name of the selected folder
+		$("label[for='uploadedfilepreprocessing']")
+		.text(
+				$(
+						'input:radio[name=radiofilepreprocessing]:checked',
+						this).closest('tr')
+						.children().slice(
+								1, 2)
+								.text());
+	}
+}
+
+/*
+** Close the dialog 
+*/
+function closeDialogPreprocessing() {
+	$(this).dialog("close");
+}
+
 /*
 ** Open the dialog for selecting the server file 
 */
@@ -846,6 +928,11 @@ $(function() {
 	/* show the dialog for selecting the server file */
 	$("#uploadedfile").click(selectServerFile);
 	selectServerFileDialog();
+
+	/* show the dialog for selecting the server file */
+        $("#uploadedfilepreprocessing").click(selectServerFilePreprocessing);
+        selectServerFileDialogPreprocessing();
+
 	
 	/* show the dialog for blocking spammers */
 	$(".blockspammers").click(blockSpammers);
