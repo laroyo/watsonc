@@ -1,77 +1,96 @@
 /* Sticky footer */
 * {
-margin: 0;
-outline: none;
+	margin: 0;
+	outline: none;
 }
-html, body {
-background: #eceadf url(/wcs/GUI/plugins/jquery-ui/css/pepper-grinder/images/ui-bg_fine-grain_10_eceadf_60x60.png) 50% 50% repeat;
-height: 100%;
+
+html,body {
+	background: #eceadf
+		url(/wcs/GUI/plugins/jquery-ui/css/pepper-grinder/images/ui-bg_fine-grain_10_eceadf_60x60.png)
+		50% 50% repeat;
+	height: 100%;
 }
+
 .wrapper {
-min-height: 100%;
-height: auto;
-margin: 0 auto -2em;
+	min-height: 100%;
+	height: auto;
+	margin: 0 auto -2em;
 }
-.footer, .push {
-height: 2em;
+
+.footer,.push {
+	height: 2em;
 }
 
 /* Remove the boarder of tabs  */
-.ui-widget-content { border: none;}
-
-/* Indicate title with tabs  */
-#tabs { position: relative; }
-
-/* floating right inverts the order of the <li> ! */
-/*.ui-tabs .ui-tabs-nav li { float: right !important; }*/ 
-
-.ui-tabs .ui-tabs-nav { height: 2.35em; text-align: right;  }
-.ui-tabs .ui-tabs-nav li { display: inline-block; float: none; margin:0; box-shadow: -5px -5px 5px #888; }
-
-.ui-tab-title { position: absolute; left: 20px; top: 15px; }
-
-.ui-widget-header {box-shadow: 0 0 5px 5px #888;}
-
- li a {
-    outline-color: transparent;
+.ui-widget-content {
+	border: none;
 }
 
+/* Indicate title with tabs  */
+#tabs {
+	position: relative;
+}
 
+/* floating right inverts the order of the <li> of tabs */
+.ui-tabs .ui-tabs-nav {
+	height: 2.35em;
+	text-align: right;
+}
 
-.ui-widget { font-family: Trebuchet MS, Tahoma, Verdana,
- Arial, sans-serif; font-size: 16px; }
- 
+.ui-tabs .ui-tabs-nav li {
+	display: inline-block;
+	float: none;
+	margin: 0;
+	box-shadow: -5px -5px 5px #888;
+}
 
+.ui-tab-title {
+	position: absolute;
+	left: 20px;
+	top: 15px;
+}
+
+.ui-widget-header {
+	box-shadow: 0 0 5px 5px #888;
+}
+
+li a {
+	outline-color: transparent;
+}
+
+.ui-widget {
+	font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif;
+	font-size: 16px;
+}
 
 /* For slide show  */
-
- #galleria{ 
-    margin-left: auto;
+#galleria {
+	margin-left: auto;
 	margin-right: auto;
-	width: 968px; 
-	height: 600px; 
-	background: #eceadf url(/wcs/GUI/plugins/jquery-ui/css/pepper-grinder/images/ui-bg_fine-grain_10_eceadf_60x60.png) 50% 50% repeat;
-	}
-
+	width: 968px;
+	height: 600px;
+	background: #eceadf
+		url(/wcs/GUI/plugins/jquery-ui/css/pepper-grinder/images/ui-bg_fine-grain_10_eceadf_60x60.png)
+		50% 50% repeat;
+}
 
 .columnline {
-	color : red;
+	color: red;
 }
 
 .rowline {
-	color : white;
+	color: white;
 }
 
 .labelfield {
 	padding-left: 10px;
 	float: left;
-	width: 418px;
+	width: 450px;
 }
 
 .combinedfield {
 	padding-left: 10px;
 }
-
 
 .inputfield {
 	border-top-left-radius: 6px;
@@ -80,28 +99,24 @@ height: 2em;
 	border-bottom-right-radius: 6px;
 }
 
-.textboxInput{
+.textboxInput {
 	margin-top: 0.48px;
 	margin-bottom: 0.48px;
 	width: 375px;
 }
 
-.commentboxInput{
+.commentboxInput {
 	margin-top: 0.48px;
 	margin-bottom: 0.48px;
-	width: 375px; 
+	width: 375px;
 	height: 84px;
 }
 
-
-#spammerfound{
-	
-	 width: 600px;
-	 
+#spammerfound {
+	width: 600px;
 }
 
-.generalborderframe, .borderframe, .sideframe
-{
+.generalborderframe,.borderframe,.sideframe {
 	border: 1px solid #d9d6c4;
 	padding: 20px;
 	margin-left: 80px;
@@ -116,27 +131,28 @@ height: 2em;
 	box-shadow: 0 0 5px 5px #888;
 }
 
-.borderframe {	
+.borderframe {
 	margin-left: 50px;
-	margin-right: 50px;	
+	margin-right: 50px;
 }
 
-.sideframe
-{
+.sideframe {
 	margin-left: 880px;
 	margin-right: 10px;
-	
 }
 
-.copyrightfooter
-{
-	font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;
+.copyrightfooter {
+	font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif;
 }
 
-img.center { display: block; margin-left: auto; margin-right: auto; }
+/* To centre the image */
+img.center {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
 
-table.tablesorter
-{
+table.tablesorter {
 	border-top-left-radius: 6px;
 	border-top-right-radius: 6px;
 	border-bottom-left-radius: 6px;
@@ -146,66 +162,49 @@ table.tablesorter
 
 a[href].tdlinks {
 	color: red;
-	font: bold;	
-	}
-	
-	a[href].filelinks {
-	color: blue;
-	font: bold;	
-	}
-	
-	a[href].titlelinks {	
-   font: bold;	
-   TEXT-DECORATION: NONE;
-	}
-	
-	a[href].abled {
-	color: blue;
-	font: bold;	
-	}
-	
-	a[href].disabled {		
-	pointer-events: none;
-   cursor: default;
-   TEXT-DECORATION: NONE;
-	}
-	
-	table#resultstable {
-	width: auto;
-	
-	}
-	
-	textarea, input[type=text]
-	{
-	border: 1px solid #ccc;
-	}
-textarea:focus, input:focus
-{
-background-color: #e4e4e4;   // #97bfd9
+	font: bold;
 }
 
-	
+a[href].filelinks {
+	color: blue;
+	font: bold;s
+}
+
+a[href].titlelinks {
+	font: bold;
+	TEXT-DECORATION: NONE;
+}
+
+a[href].abled {
+	color: blue;
+	font: bold;
+}
+
+/* To disable the files download when the href has the diabled class */
+a[href].disabled {
+	pointer-events: none;
+	cursor: default;
+	TEXT-DECORATION: NONE;
+}
+
+table#resultstable {
+	width: auto;
+}
+
+textarea,input[type=text] {
+	border: 1px solid #ccc;
+}
+
+textarea:focus,input:focus {
+	background-color: #e4e4e4;
+}
+
 .ui-tabs .generaltab {
-	
 	overflow-x: auto;
 	overflow-y: auto;
 }
 
-/*
-.ui-tabs .historytab {
-	width: auto;
-	overflow-x: block;
-	overflow-y: block;
-}
-
-
-.historytab .ui-tabs-nav  {
-margin: 0;
-padding: .2em .2em 0;
-width: 128%;
-}
-*/
-
+/* Back to top button */ 
 #scrollUp {
 	bottom: 20px;
 	right: 20px;
@@ -224,7 +223,7 @@ width: 128%;
 	transition: background 200ms linear;
 	-webkit-backface-visibility: hidden;
 }
-	#scrollUp:hover {
-		background: #808080;
-	}
 
+#scrollUp:hover {
+	background: #808080;
+}

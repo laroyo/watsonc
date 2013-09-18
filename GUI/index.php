@@ -1,9 +1,8 @@
 <?php 
 include_once '../includes/dbinfo.php';
 include_once '../includes/functions.php';
-
-
 ?>
+
 <!doctype html>
 <html lang="us">
 <head>
@@ -13,7 +12,6 @@ include_once '../includes/functions.php';
 <link href="/wcs/GUI/plugins/jquery-ui/css/pepper-grinder/jquery-ui-1.10.2.custom.css" rel="stylesheet">
 <link href="/wcs/GUI/plugins/Mottie-tablesorter/css/theme.default.css" rel="stylesheet" type="text/css" />	
 <link href="/wcs/GUI/plugins/multiselect/css/jquery.multiselect.css" rel="stylesheet" type="text/css" />	
-
 <link href="/wcs/GUI/css/huimain.css" rel="stylesheet">
 <!-- js libraries  -->
 <script src="/wcs/GUI/plugins/jquery-ui/js/jquery-1.9.1.js"></script>
@@ -22,70 +20,7 @@ include_once '../includes/functions.php';
 <script src="/wcs/GUI/plugins/Mottie-tablesorter/js/jquery.tablesorter.widgets.js" type="text/javascript"></script>
 <script src="/wcs/GUI/plugins/multiselect/js/jquery.multiselect.js" type="text/javascript"></script>
 <script src="/wcs/GUI/plugins/galleria/galleria-1.2.9.min.js" type="text/javascript"></script>
-
 <script src="/wcs/GUI/js/huimain.js" type="text/javascript"></script>
-<script language="javascript">
-
-
-function getselectedjobid()
-{
-	 
-	 var selectedjobid = document.getElementById(spamblockjobid).value;
-	 return selectedjobid;
-}
-
-
-
-$(document).ready(function() {
-	
-	 Galleria.loadTheme('/wcs/GUI/plugins/galleria/themes/classic/galleria.classic.min.js');
-     Galleria.run('#galleria');
-	
- });
-
-
-function computePayment()
-{
-	
-	var payment_per_sentence = document.getElementById("payment_per_sentence");
-	var payment_per_job = document.getElementById("payment_per_job");
-
-	var judgments_per_unit = document.getElementById("judgments_per_unit").value;
-	var units_per_assignment = document.getElementById("units_per_assignment").value;
-	var payment_per_assignment = document.getElementById("payment").value;
-    var total_sentences = document.getElementById("sentences").value;	
-     	
-	if (judgments_per_unit != "" && units_per_assignment != "" && payment_per_assignment != "" && total_sentences != "") {
-	 	payment_per_sentence.value = ((parseInt(judgments_per_unit) * (parseInt(payment_per_assignment) / parseInt(units_per_assignment))) + (parseInt(judgments_per_unit) * (parseInt(payment_per_assignment) / parseInt(units_per_assignment))) * 46.35 / 100 ) / 100 ;
-		payment_per_job.value = parseInt(total_sentences) * payment_per_sentence.value;
-	}
-
-	computePaymentPerHour();
-}
-
-function computeTime() {
-	var seconds_per_unit = document.getElementById("seconds_per_unit").value;
-	var units_per_assignment = document.getElementById("units_per_assignment").value;
-	var seconds_per_assignment = document.getElementById("seconds_per_assignment");
-	seconds_per_assignment.value = parseInt(seconds_per_unit) * parseInt(units_per_assignment);
-
-	computePaymentPerHour();
-}
-
-function computePaymentPerHour() {
-	var payment_per_assignment = document.getElementById("payment").value;
-	var seconds_per_assignment = document.getElementById("seconds_per_assignment").value;
-        var payment_per_hour = document.getElementById("payment_per_hour");
-        if (seconds_per_assignment != "" && payment_per_assignment != "") {
-                payment_per_hour.value = ((60 * 60) / parseInt(seconds_per_assignment)) * (parseInt(payment_per_assignment) / 100);
-        }
-}
-
-
-</script>
-
-
-
 
 </head>
 <body>
@@ -101,9 +36,7 @@ function computePaymentPerHour() {
 			   <!-- <li><a href="#tabs-6" >Results</a></li> -->
 				<li><a href="#tabs-7" ><span class="ui-icon ui-icon-contact" style="display:inline-block"></span>About</a></li>
 			</ul>
-			
-			
-			
+		
 			<div id="tabs-1" class = "generaltab" >
 			</br>
 			   <div id="galleria">
@@ -298,6 +231,7 @@ echo "<th>File ID</th>";
 echo "<th>File Name</th>";
 echo "<th>Filter Applied</th>";
 echo "<th>Batch Size</th>";
+echo "<th>Job Id</th>";
 echo "<th>Created By</th>";
 echo "<th>Created Date</th>";
 echo "<th>Comments</th>";
@@ -316,6 +250,7 @@ while($row = mysql_fetch_array($result)){
         echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$file_id' class = 'filelinks' >$original_name</a></td>";
         echo "<td>$filter_named</td>";
         echo "<td>$batch_size</td>";
+	echo "<td>$job_id</td>";
         echo "<td>$created_by</td>";
         echo "<td>$created</td>";
         echo "<td>$comment</td>";
@@ -330,7 +265,7 @@ echo "</table>";
 							action="/wcs/crowdflower/indexcrowdflower.php" method="POST"
 							id="form">
 							<div class="borderframe">
-								<div class="labelfield">Choose a file to upload:</div>
+								<div class="labelfield">Select batch for your job:</div>
 								<div class="inputfield">
 									<input name="uploadedfile" type="button" id="uploadedfile"
 										value="Choose Server File" /> <input type="hidden"
@@ -362,7 +297,7 @@ echo "</table>";
 								</div>
 
 								<div class="labelfield">Payment per assignment (CF: Payment per
-									page) (cents):</div>
+									page) (in cents):</div>
 								<div class="inputfield">
 									<input type="text" class = "textboxInput" name="payment" oninput="computePayment()"
 										id="payment"> <br />
@@ -375,7 +310,7 @@ echo "</table>";
 								</div>
 								 
 								<div class="labelfield"
-									title="The purposes or notes of creating the job">Comments:</div>
+									title="The purposes or notes of creating the job">Provide description of your job:</div>
 								<div class="inputfield">
 									<input type="text" name="job_comment" class="commentboxInput" /><br />
 								</div>
@@ -425,7 +360,7 @@ echo "</table>";
 									<input type="radio" name="template" value="t2ab"> T2AB: Relations with (text) definitions and extra without questions and automatic text field  <br /> <br /> 
 								</div>
 								
-								<div class="labelfield">Choose the channels:</div>
+								<div class="labelfield">Choose worker channels:</div>
 								<div class="inputfield">&nbsp;</br></div>
 								<div class = "combinedfield">
 									<input type="radio" name="channels" value="c1" checked> Amazon
@@ -434,22 +369,22 @@ echo "</table>";
 
 							
 								<div class = "combinedfield">
-									<input type="radio" name="channels" value="c2"> All channels <br />
+									<input type="radio" name="channels" value="c2"> Multiple channels <br />
 								</div>
 
 								<br />
 								
 								<div class = "combinedfield">
-									<input type="submit" name="action" value="Create Job" /><br />
+									<input type="submit" name="action" value="Create & Publish Job" /><br />
 									<br />
 								</div>
 
-								<div class="labelfield">Payment per sentence (dollar):</div>
+								<div class="labelfield">Payment per sentence (in dollars):</div>
 								<div class="inputfield">
 									<input type="text" class = "textboxInput" name="payment_per_sentence"
 										id="payment_per_sentence"> <br />
 								</div>
-								<div class="labelfield">Payment per job (dollar):</div>
+								<div class="labelfield">Payment per job (in dollars):</div>
 								<div class="inputfield">
 									<input type="text" class = "textboxInput" name="payment_per_job" id="payment_per_job">
 									<br />
@@ -460,7 +395,7 @@ echo "</table>";
 										id="seconds_per_assignment"><br />
 								</div>
 
-								<div class="labelfield">Payment per hour:</div>
+								<div class="labelfield">Payment per hour (in dollars):</div>
 								<div class="inputfield">
 									<input type="text" class = "textboxInput" name="payment_per_hour"
 										id="payment_per_hour"> <br />
@@ -508,10 +443,7 @@ echo "</table>";
               }
              ?>
 				
-			
-             
-             
-             
+				
             <div id = "dialog-blockspammers" title = "Block Spammers" >
             <!-- Load data from Database --!>
             </br>
@@ -527,8 +459,7 @@ echo "</table>";
 	   </div>
  </div>
              
-<!--  <button class="search" data-filter-column="10" data-filter-text="2?%">Saved Filters</button> (search the Discount column for "2?%") -->
-  <button class="reset" title = "Click to clear all the filter options" >Reset Filters</button> <!-- targetted by the "filter_reset" option -->
+  <button class="reset" title = "Click to clear all the filter options" >Reset Column Filters</button> <!-- targetted by the "filter_reset" option -->
   <button class="passjobid" id = "passjobid"  title = "Click to analyze selected JOB IDs" >Analyze</button> 
 <select id="hidecolumns" name="hidecolumns" multiple="multiple" title = "Click to hide/show columns">
 <!--<option value="cJobId">Job ID (Batch File)</option>-->
@@ -740,7 +671,7 @@ while($row = mysql_fetch_array($results)){
 			</div>
 			<h5>Games</h5>
   <div>
-    <p>Pending</p>
+  <p>Pending</p>
   </div>
   </div>
   </br>
@@ -756,19 +687,18 @@ while($row = mysql_fetch_array($results)){
 	<a href="http://sciencetoprofitsblog.com/2012/02/15/second-opinions-ibm-watson-crowdsourcing/" target="_blank" ><img
 	src="/wcs/GUI/img/icon-watson.jpg" alt="No show" title = "Crowdsourcing for Watson" style="width: 12%; height: 12%"  /></a>
 	
-	
 	<a href="http://www.ibm.com/us/en/" target="_blank" ><img
 	src="img/IBM.jpg" alt="No show" title = "IBM"  style="width: 12%; height: 12%" /></a>
 	
 	<a href="http://www.vu.nl/en/index.asp" target="_blank" ><img
 		src="img/VU.jpg" alt="No show" title = "VU University Amsterdam"  style="width: 21%; height: 21%" /></a>
-		</br>
-		</br>
+	</br>
+	</br>
 	<p>This project is a collaboration between the VU University Amsterdam and IBM Research, NY.
 	</br>
 	</br>
 	Principle investigators:
-		</br>
+	</br>
 	
 	<a href="http://www.cs.vu.nl/~laroyo/" target="_blank" title = "Professor in the Computer Science department of VU University Amsterdam" class = "filelinks" >Lora Aroyo</a>, VU University Amsterdam	
 	</br>
@@ -777,14 +707,14 @@ while($row = mysql_fetch_array($results)){
 	</br>
 
 	Project members:
-		</br>
-	<a href="http://nl.linkedin.com/in/dumitracheanca/" target="_blank" class = "filelinks" >Anca Dumitrache</a>
+    </br>
+	<a href="http://nl.linkedin.com/in/dumitracheanca/" target="_blank" class = "filelinks" >Anca Dumitrache</a>, IBM Nederland BV and VU University Amsterdam
 	</br>
-	<a href="https://plus.google.com/u/0/106755161022646926513/posts" target="_blank" class = "filelinks" >Guillermo Soberon Casado</a>
+	<a href="https://plus.google.com/u/0/106755161022646926513/posts" target="_blank" class = "filelinks" >Guillermo Soberon Casado</a>, VU Univeristy Amsterdam
 	</br>
-	<a href="http://nl.linkedin.com/pub/hui-lin/53/92/b5/" target="_blank" class = "filelinks" >Hui Lin</a>
+	<a href="http://nl.linkedin.com/pub/hui-lin/53/92/b5/" target="_blank" class = "filelinks" >Hui Lin</a>, IBM Nederland BV and Fontys University of Applied Sciences
 	</br>
-	<a href="http://nl.linkedin.com/pub/oana-inel/5a/99/711/" target="_blank" class = "filelinks" >Oana Inel</a>
+	<a href="http://nl.linkedin.com/pub/oana-inel/5a/99/711/" target="_blank" class = "filelinks" >Oana Inel</a>, IBM Nederland BV and VU University Amsterdam
 	</br>
 	<a href="http://nl.linkedin.com/pub/manfred-overmeen/0/445/567/" title = "Senior IT Specialist at IBM Nederland BV" target="_blank" class = "filelinks" >Manfred Overmeen</a>, IBM Nederland BV	
 	</br>
@@ -792,25 +722,23 @@ while($row = mysql_fetch_array($results)){
 	</br>
 	</br>
 	Want to join?
-			</br>
-			If you are interested in a MSc, MSc or a PhD project in this context, send you CV and motivation to <a href="mailto:lora.aroyo@vu.nl">lora.aroyo@vu.nl</a>
-			</br>
-			</br>
-			Here are some example projects currently running:</p>
-			</br>
+	</br>
+	If you are interested in a BSc, MSc or a PhD project in this context, send you CV and motivation to <a href="mailto:lora.aroyo@vu.nl">lora.aroyo@vu.nl</a>
+	</br>
+	</br>
+	Here are some example projects currently running:</p>
+	</br>
 	<img src="img/crowd-watson/CW23v2.JPG" class = "center" style="width: 65%; height: 65%" >
 	</br>
  </div>
  </br>
 </div>
   
-  </div>
- 
+  </div> 
   <div class="push"></div>
   </div> 
   <div class="footer" >
 	<h5 align = "center" class = "copyrightfooter" >Copyright © 2013 <a href = 'http://crowd-watson.nl/wcs/GUI/' target="_blank" class = 'filelinks' title = "http://crowd-watson.nl/wcs/GUI/" >Crowd-Watson</a>. All rights reserved.</h5>
-
 <h5 align = "center" class = "copyrightfooter" >
 | <a href = 'http://drwatsonsynonymgame.wordpress.com/about-this-project/' target="_blank" class = 'filelinks' title = 'About Crowd-Watson Project' >About</a> 
 | <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-all' target="_blank" class = 'filelinks' title = "Crowd-watson-all" >Contact</a> 
@@ -818,8 +746,6 @@ while($row = mysql_fetch_array($results)){
 | <a href = 'http://drwatsonsynonymgame.wordpress.com/research-themes/' target="_blank" class = 'filelinks' title = 'Current four Research Themes'>Research Themes</a>  |</h5>
 </br>	
 </div>
-		
-		
-		
+				
 </body>
 </html>

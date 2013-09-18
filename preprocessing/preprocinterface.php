@@ -49,29 +49,28 @@ function checkForFilters3() {
 <body>
 
 <form enctype="multipart/form-data" action="/wcs/preprocessing/indexpreprocessing.php" method="POST" id="form" name="form">
-	Choose the text files for processing: <input type="file" multiple name="uploadedfile[]" webkitdirectory="" id="uploadedfile" /> <br /><br />
-	Comments: <br /> <textarea name="files_comment" id="files_comment" rows="4" cols="60"/> <br />
+	Select your input data files: <input type="file" multiple name="uploadedfile[]" webkitdirectory="" id="uploadedfile" /> <br /><br />
+	Provide description of your data: <br /> <textarea name="files_comment" id="files_comment" rows="4" cols="60"/> <br />
 
-	Choose the filters that should be applied on the uploaded data: <br />
+	Select data filters to be applied: <br />
 	
-	<input type="checkbox" name="filters[]" id="filters1" value="specialcases" checked onchange="checkForFilters1()"> Special cases <br />
-		<input type="radio" name="specialcases" id="specialcases" value="withSemicolon"> with special case (semicolon) <br />
-		<input type="radio" name="specialcases" id="specialcases" value="withTermBetweenBr"> with special case (term between brackets) <br />
-		<input type="radio" name="specialcases" id="specialcases" value="noSemicolon"> without special case (semicolon) <br />
-		<input type="radio" name="specialcases" id="specialcases" value="noTermBetweenBr"> without special case (term between brackets) <br />
-		<input type="radio" name="specialcases" id="specialcases" value="noSpecialCase" checked> without special cases <br /><br />
+	<input type="checkbox" name="filters[]" id="filters1" value="specialcases" checked onchange="checkForFilters1()"> Filters for Special Cases <br />
+		<input type="radio" name="specialcases" id="specialcases" value="withSemicolon"> Select sentences with SEMICOLON <br />
+		<input type="radio" name="specialcases" id="specialcases" value="withTermBetweenBr"> Select sentences with AT LEAST ONE OF THE TERMS BETWEEN BRACKETS <br />
+		<input type="radio" name="specialcases" id="specialcases" value="noSemicolon"> Filter out sentences with SEMICOLON <br />
+		<input type="radio" name="specialcases" id="specialcases" value="noTermBetweenBr"> Filter out sentences with AT LEAST ONE OF THE TERMS BETWEEN BRACKETS <br />
+		<input type="radio" name="specialcases" id="specialcases" value="noSpecialCase" checked> Filter out sentences with SPECIAL CASES <br /><br />
 
-	<input type="checkbox" name="filters[]" id="filters2" value="relations" checked onchange="checkForFilters2()"> Relation mentioned <br />
-		<input type="radio" name="relation" id="relation" value="withRelationsBetween"> between the two terms <br />
-		<input type="radio" name="relation" id="relation" value="withRelationsOutside"> outside the two terms <br />
-		<input type="radio" name="relation" id="relation" value="noRelation" checked> no relation mentioned <br /><br />
+	<input type="checkbox" name="filters[]" id="filters2" value="relations" checked onchange="checkForFilters2()"> Filters for Relation Mentions <br />
+		<input type="radio" name="relation" id="relation" value="withRelationsBetween"> Select sentences with a relation mentioned between the two terms <br />
+		<input type="radio" name="relation" id="relation" value="withRelationsOutside"> Select sentences with a relation mentioned outside the two terms <br />
+		<input type="radio" name="relation" id="relation" value="noRelation" checked> Filter out sentences with any relation mentioned in the sentence <br /><br />
 
-	<input type="checkbox" name="filters[]" id="filters3" value="length" checked onchange="checkForFilters3()"> Sentence length <br />
-		<input type="radio" name="length" id="length" value="long"> long sentences <br />
-		<input type="radio" name="length" id="length" value="shortAndAverage" checked> short sentences <br /><br />
+	<input type="checkbox" name="filters[]" id="filters3" value="length" checked onchange="checkForFilters3()"> Filters for Sentence Length <br />
+		<input type="radio" name="length" id="length" value="long"> Select only LONG sentences <br />
+		<input type="radio" name="length" id="length" value="shortAndAverage" checked> Select only SHORT sentences <br /><br />
 
-	Create the job file: <br />
-	Introduce the number of sentences for each relation: <br />
+	Indicate the number of sentences per relation name to be included in the sentence batch: <br />
 		<input type="text" id="noscause" name="noscause" size="2">  Cause <br />
 		<input type="text" id="noscontra" name="noscontra" size="2">  Contraindicate <br />
 		<input type="text" id="nosdiagnose" name="nosdiagnose" size="2">  Diagnose <br />  
@@ -84,7 +83,8 @@ function checkForFilters3() {
 	Create the job file: <br />
 	Number of sentences from each relation: <input type="text" id="nosentences" name="nosentences" size="3"> 
 --!>
-	<input type="submit" name="action" value="Submit"/>
+<br />
+	<input type="submit" name="action" value="Create & Save Batch"/>
 </form>
 
 </body>
