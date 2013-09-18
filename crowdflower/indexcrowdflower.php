@@ -67,8 +67,8 @@ $data["max_judgments_per_ip"] = $_POST["max_judgments_per_worker"];
 $data["webhook_uri"] = "http://129.35.251.201/cgi-bin/webhook.php";
 $data["send_judgments_webhook"] = "true";
 $data["payment_cents"] = $_POST["payment"];
-$data["execution_mode"] = "builder";
-$data["worker_ui_remix"] = "0";
+//$data["execution_mode"] = "builder";
+//$data["worker_ui_remix"] = "0";
 $calibrated_unit_time = $_POST["seconds_per_unit"];
 
 if ($_POST["template"] == "t1" || $_POST["template"] == "t2" || $_POST["template"] == "t1b" || $_POST["template"] == "t2b") {
@@ -120,56 +120,56 @@ $response = exec($upload_query);
 //print_r($array);
 
 if ($_POST["template"] == "t1") {
-	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
  $template_used = "T1" ;
  $template_info = "T1: Relations with (mouse-over) definitions and extra questions required";
  $response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t2") {
-	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndWithoutExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
 	$template_used = "T2" ;
 	$template_info = "T2: Relations with (text) definitions and extra questions required";
 	$response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t1a") {
-	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithoutExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
 	$template_used = "T1A" ;
 	$template_info = "T1A: Relations with (mouse-over) definitions and without extra questions";
 	$response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t2a") {
-	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithoutExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndWithoutExtra.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
 	$template_used = "T2A" ;
 	$template_info = "T2A: Relations with (text) definitions and extra without questions";
 	$response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t1b") {
-	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndExtraAuto.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithExtraAuto.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
  $template_used = "T1B" ;
  $template_info = "T1B: Relations with (mouse-over) definitions, extra questions required and automatic text field";
  $response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t2b") {
-	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndWithoutExtraAuto.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndExtraAuto.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
 	$template_used = "T2B" ;
 	$template_info = "T2B: Relations with (text) definitions and extra questions required and automatic text field";
 	$response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t1ab") {
-	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithExtraAuto.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithoutExtraAuto.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
 	$template_used = "T1AB" ;
 	$template_info = "T1AB: Relations with (mouse-over) definitions and without extra questions and automatic text field";
 	$response = exec($update_cml_job);
 }
 else if ($_POST["template"] == "t2ab") {
-	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithoutDefAndWithoutExtraAuto.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+	$update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlWithDefAndWithoutExtraAuto.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
 	$template_used = "T2AB" ;
-	$template_info = "T2AB: Relations with (text) definitions and extra without questions and automatic text field ";
+	$template_info = "T2AB: Relations with (text) definitions and without extra questions and automatic text field ";
 	$response = exec($update_cml_job);
 }
 
-$update_job = "curl -X PUT -d \"job[worker_ui_remix]=false&job[execution_mode]=builder\" \"https://api.crowdflower.com/v1/jobs/".$job_id.".json?key=".$api_key."\"";
-$response = exec($update_job);
+//$update_job = "curl -X PUT -d \"job[worker_ui_remix]=false&job[execution_mode]=builder\" \"https://api.crowdflower.com/v1/jobs/".$job_id.".json?key=".$api_key."\"";
+//$response = exec($update_job);
 //print_r(objectToArray($response));
 //print_r(json_decode($response));
 
@@ -265,21 +265,27 @@ VALUES
  '$payment_per_hour', '$channels_used', '$job_comments',
 '$job_judgments_made', '$job_completion', '$run_time', '$status', '$status_change', '$checkbox_check')";
 
-
 if (!mysql_query($insertSQL,$con))
 {
 	die('Error: ' . mysql_error());
 }
 else
 {
-
-	echo "<b>A new job is created and saved.</b>";
-	echo "<br />";
-	echo "<b>Job ID: $job_id</b>";
-	echo "<br />";
+	$getJobs = "SELECT job_id FROM batches_for_cf WHERE file_id = $file_id";
+	$jobs_used = getOneFieldFromQuery($getJobs, 'job_id');
+	if (strcmp($jobs_used, "no_job") == 0) {
+		$updateQuery = mysql_query("UPDATE batches_for_cf SET job_id = $job_id WHERE file_id = $file_id");
+	}
+	else {
+		$updateQuery = mysql_query("UPDATE batches_for_cf SET job_id = '$jobs_used".", ".$job_id."' WHERE file_id = $file_id");
+	}
+		echo "<b>A new job is created and saved.</b>";
+		echo "<br />";
+		echo "<b>Job ID: $job_id</b>";
+		echo "<br />";
 //  header("Location: index.php");
 //	echo "<a href='../index.php'>Back to Home Page</a>";
-	echo "<a href='../GUI/index.php'>Back to Home Page</a>";
+		echo "<a href='../GUI/index.php'>Back to Home Page</a>";
 	
 	// To freash datatable in GUI
 	//echo '<script>parent.window.location.reload(true);</script>';
