@@ -31,6 +31,11 @@ if(length(args) > 0){
 file_id <- -1
 
 raw.data <- getJob(job.id)
+
+if(job.id == 196344){
+  raw.data <- raw.data[raw.data$relation != '',]
+}
+
 worker.ids <- sort(unique(raw.data$worker_id))
 
 without.singletons <- TRUE
@@ -47,9 +52,8 @@ if(dim(raw.data)[1] == 0){
   cat('JOB_NOT_FOUND')
 } else {
 
-  sentenceTable <- pivot(raw.data,'unit_id','relation')
-
-  sentenceDf <- getDf(sentenceTable)
+  sentenceTable <- pivot(raw.data,'unit_id','relation')    
+  sentenceDf <- getDf(sentenceTable)  
   
   #Calculate the measures to apply the filters.
   filters <- list('SQRT','NormSQRT','NormR', 'NormRAll')
@@ -182,23 +186,29 @@ if(dim(raw.data)[1] == 0){
   oth.non <- res[intersect(grep('OTHER|NONE',res$relation),grep('\n',res$relation)),]
 
   filtWorkers <- list()
-  filtWorkers[['none_other']] <- noneOther(oth.non)
+  if(dim(oth.non)[1] > 0){
+    filtWorkers[['none_other']] <- noneOther(oth.non)
+  }
   filtWorkers[['rep_response']] <- repeatedResponse(res)
   filValWords <- validWords(res)
   filtWorkers[['valid_words']] <- sort(unique(filValWords$worker_id))
   filtWorkers[['rep_text']] <- repeatedText(job.id,'both')
 
-  createSheet(wb.new, name = "beh-filters")
-  writeBehFiltersHeaders(wb.new, 'beh-filters')
-
-  writeWorksheet(wb.new,filtWorkers[['none_other']],sheet='beh-filters',startRow=2,startCol=1,header=FALSE)
-  writeWorksheet(wb.new,filtWorkers[['rep_response']],sheet='beh-filters',startRow=2,startCol=3,header=FALSE)
-  writeWorksheet(wb.new,filtWorkers[['valid_words']],sheet='beh-filters',startRow=2,startCol=5,header=FALSE)
-  writeWorksheet(wb.new,filtWorkers[['rep_text']],sheet='beh-filters',startRow=2,startCol=7,header=FALSE)
-     
-  for (filter in names(filtWorkers)){
-    saveFilteredWorkers(job.id, filtWorkers[[filter]], filter)    
+  beh.filters <- c('none_other', 'rep_response','valid_words', 'rep_text')  
+  bspammers <- c()
+  
+  for (f in beh.filters){
+    for (f2 in beh.filters){
+      if(f != f2)
+        bspammers <- union(bspammers,intersect(filtWorkers[[f]],filtWorkers[[f2]]))
+    }
   }
+  
+  saveFilteredWorkers(job.id,unique(bspammers),'beh_filters')
+       
+  ## for (filter in names(filtWorkers)){
+  ##   saveFilteredWorkers(job.id, filtWorkers[[filter]], filter)    
+  ## }
   saveFilteredWorkers(job.id, spamLabels, 'disag_filters')
 
   numFilteredSentences <- length(unlist(discarded)) 
@@ -237,6 +247,16 @@ if(dim(raw.data)[1] == 0){
 
   createSheet(wb.new, name = "spammer-labels")
   writeWorksheet(wb.new,data=spamLabels,sheet='spammer-labels',startRow=1,startCol=1,header=FALSE)
+
+
+  createSheet(wb.new, name = "beh-filters")
+  writeBehFiltersHeaders(wb.new, 'beh-filters')
+  
+  writeWorksheet(wb.new,filtWorkers[['none_other']],sheet='beh-filters',startRow=2,startCol=1,header=FALSE)
+  writeWorksheet(wb.new,filtWorkers[['rep_response']],sheet='beh-filters',startRow=2,startCol=3,header=FALSE)
+  writeWorksheet(wb.new,filtWorkers[['valid_words']],sheet='beh-filters',startRow=2,startCol=5,header=FALSE)
+  writeWorksheet(wb.new,filtWorkers[['rep_text']],sheet='beh-filters',startRow=2,startCol=7,header=FALSE)
+
   
   saveWorkbook(wb.new)
 

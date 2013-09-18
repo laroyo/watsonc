@@ -104,7 +104,7 @@ workerAgreement <- function(worker_id, raw_data, sentMat) {
     sm2 <- sentMat[[as.character(coworker)]]   
     
     sentInCommon <- intersect(rownames(sm1), rownames(sm2))        
-
+   
     for (sent in sentInCommon){
       v1 <- sm1[as.character(sent),]
       v2 <- sm2[as.character(sent),]
@@ -128,7 +128,7 @@ workerCosine <- function(worker_id, dframe){
   workerSentences <- dframe[dframe$worker_id == worker_id,]$unit_id
 
   sumCos <- 0 
-    
+  count <- 0
   for (sentence_id in workerSentences){
 
     workerSV <- getSentenceVector(dframe,sentence_id, worker_id)
@@ -136,10 +136,14 @@ workerCosine <- function(worker_id, dframe){
   
     restVector <- (sentVector - workerSV)
 
-    sumCos <- sumCos + cosine( as.vector(t(restVector)), as.vector(t(workerSV)))
+    mcos <- cosine(as.vector(t(restVector)), as.vector(t(workerSV)))
+    if(!is.na(mcos)){
+      sumCos <- sumCos + mcos
+      count <- count + 1
+    }
   }
 
-  return (sumCos / length(workerSentences))
+  return (sumCos / count)
 
 }
 
