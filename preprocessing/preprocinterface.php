@@ -47,9 +47,52 @@ function checkForFilters3() {
 </script>
 </head>
 <body>
+	<div id="dialog-confirm-proprocessing" title="Select a folder from the server">
+	<button class="reset" title = "Click to clear all the filter options" >Reset Filters</button> <!-- targetted by the "filter_reset" option -->
+<br>
+  <?php
 
+$result = mysql_query("SELECT s.storage_path, s.original_name, r.comment
+FROM  file_storage s
+INNER JOIN raw_file as r on s.id = r.fileid
+WHERE s.storage_path like \"%TextFiles%\"");
+
+echo "<table id='selectfolder' class='tablesorter'>";
+echo "<thead>"; //thead tag is required for using tablesorter
+echo "<tr>";
+echo "<th>Folder Name</th>";
+echo "<th>Content Files</th>";
+echo "<th>Comment</th>";
+echo "</tr>";
+echo "</thead>";
+echo "<tbody>"; //tbody tag is required for using tablesorter
+
+$indexFolder = 0;
+while($row = mysql_fetch_array($result)){
+
+	    extract ( $row );
+	
+	$folderName = substr($folder_name, 0, strrpos($folder_name, "/"));
+        echo "<tr>";
+        echo "<td><input type='radio' id='radiofilepreprocessing' name ='radiofilepreprocessing'/>$folderName</label></td>";
+        echo "<td>$original_name</td>";
+        echo "<td>$comment</td>";
+        echo "</tr>";
+}
+
+echo "</tbody>";
+echo "</table>";
+?>
+</div>
 <form enctype="multipart/form-data" action="/wcs/preprocessing/indexpreprocessing.php" method="POST" id="form" name="form">
-	Select your input data files: <input type="file" multiple name="uploadedfile[]" webkitdirectory="" id="uploadedfile" /> <br /><br />
+	Select your input data files from your local machine: <input type="file" multiple name="uploadedfile[]" webkitdirectory="" id="uploadedfile" /> <br /> or <br />
+	<div class="labelfield"> Select your input data files from your local machine: </div>
+	<div class="inputfield">
+		<input name="uploadedfilepreprocessing" type="button" id="uploadedfilepreprocessing" value="Choose Server Folder" /> 
+		<input type="hidden" name="foldername" id="foldername" /> 
+		<input type="hidden" name="filenames" id="filenames" /> 
+		<label for="uploadedfilepreprocessing" 	style="font-size: 75%">No Folder Chosen</label>
+	</div>
 	Provide description of your data: <br /> <textarea name="files_comment" id="files_comment" rows="4" cols="60"/> <br />
 
 	Select data filters to be applied: <br />
