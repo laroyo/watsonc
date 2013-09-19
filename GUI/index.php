@@ -469,6 +469,9 @@ echo "</table>";
 								<div class = "combinedfield">
 									<input type="radio" name="channels" value="c2"> Multiple channels <br />
 								</div>
+								 <div class = "combinedfield">
+                                                                        <input type="radio" name="channels" value="c3" title="amt, crowdguru, prodege, neodev, vivatic, zoombucks"> Last used channels (mouseover) <br />
+                                                                </div>
 
 								<br />
 								
