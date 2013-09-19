@@ -195,7 +195,7 @@ if ($channel_type == "c1") {
 	array_push($channels, "mob");
 }
 else if ($channel_type == "c2") {
-	$channels_used = "all";
+	$channels_used = "multiple";
 	$get_channels_query = "curl \"https://api.crowdflower.com/v1/jobs/$job_id/channels?key=$api_key\"";
 	$response = exec($get_channels_query);	
 //	print_r(objectToArray(json_decode($response)));
@@ -205,6 +205,15 @@ else if ($channel_type == "c2") {
 	foreach($array["available_channels"] as $value) {
 		array_push($channels, $value);
 	}
+}
+else if ($channel_type == "c3") {
+	$channels_used = "last used ones";
+	$array_push($channels, "amt");
+	$array_push($channels, "neodev");
+	$array_push($channels, "prodege");
+	$array_push($channels, "crowdguru");
+	$array_push($channels, "vivatic");
+	$array_push($channels, "zoombucks");
 }
 
 $channels_string = "";
