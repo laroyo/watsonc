@@ -1,8 +1,8 @@
 # Functions for evaluating the spam filtering (given manual annotations). 
 
-# Given a list of spammers (filtered) and the annotated spammers (annotations)
-# returns  the false/true positives/negatives for the filtered individuals. 
 evalResults <- function(worker.ids, filtered, annotations){
+   # Given a list of spammers (filtered) and the annotated spammers (annotations)
+   # returns  the false/true positives/negatives for the filtered individuals.  
   
   spam <- c(annotations['spammers'], annotations['lqw'])
   no.spam <- c(annotations['no_spam'])
@@ -66,8 +66,9 @@ accuracy <- function(true.pos, true.neg, false.pos, false.neg){
   return ((true.pos + true.neg) / (true.pos + false.pos + true.neg + false.neg))
 }
 
-#Computes precission and recall (et al) measures, and prints them. 
 printCoverageMeasures <- function(res){
+  #Computes precission and recall (et al) measures, and prints them.
+  
    true.pos <- length(res$true.pos)
    false.neg <- length(res$false.neg)
    false.pos <- length(res$false.pos)
@@ -86,8 +87,10 @@ printCoverageMeasures <- function(res){
    print('------------------------')
 }
 
-#Computes the overlap between disagreement and other filter.
+
 printOverlap <- function(filtered.disagr, filtered.other,filter.name,singletons){
+  #Computes the overlap between disagreement and other filter.
+  
   flagged <- filtered.other[!(filtered.other %in% singletons)]
   overlap <- length(intersect(flagged, filtered.disagr))  
   print(sprintf(' %s: identified workers: %d - Overlapping: %d - percentage : %s', filter.name, length(flagged), overlap, (overlap * 100 /   length(flagged))))

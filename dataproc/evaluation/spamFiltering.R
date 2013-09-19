@@ -1,9 +1,11 @@
-source('envars.R')
-source('lib/db.R')
-source('lib/measures.R')
-source('lib/filters.R')
+# Script for evaluating the spam filtering (given manual annotations. 
+
+source('/home/gsc/watson/dataproc/envars.R')
+source(paste(libpath,'/db.R',sep=''),chdir=TRUE)
+source(paste(libpath,'/measures.R',sep=''),chdir=TRUE)
+source(paste(libpath,'/filters.R',sep=''),chdir=TRUE)
 source(paste(libpath,'/simplify.R',sep=''),chdir=TRUE)
-source('evalfunctions.R')
+source('spamFilteringFunctions.R')
 
 library(lsa)
 library(XLConnect)
@@ -98,6 +100,7 @@ count.disagr[order(count.disagr$count),,drop=FALSE]
 
 annotations <- list()
 
+#TODO: retrieve those from a database table, instead of manually writing them. 
 annotations[['spammers']] <- c(390141,5254360,5958908,7478095,8071333,8947442,9705524,9767020,9844590,12936896,13617382,13830562,13917479,13997142,14067668,14111684)
 annotations[['lqw']] <- c(6501147,8885952,9277827,12300670,12974606,14119448)
 annotations[['no_spam']] <- c(46633,275944,1246916,5983773,6768661,7336768,8927822,9873337,11307060,12299718,12507046,13291371,13300701,13438162,13637372,13664512,13769712,14050729,14058877,14081714,14083895,14133477,14157276,14161692)
