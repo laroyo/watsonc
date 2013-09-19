@@ -473,6 +473,7 @@ echo "</table>";
                                                                         <input type="radio" name="channels" value="c3" title="amt, crowdguru, prodege, neodev, vivatic, zoombucks"> Last used channels (mouseover) <br />
                                                                 </div>
 
+
 								<br />
 								
 								<div class = "combinedfield">
@@ -517,32 +518,48 @@ echo "</table>";
 			<div id="tabs-5" class = "historytab" >
 <div>
 				
-				<?php 	
+<?php
+$timezone = date_default_timezone_get();
+date_default_timezone_set($timezone); 	
+	function format_interval_ht(DateInterval $interval) {
+    		$result = "";
+	    	if ($interval->y) { $result .= ""; }
+    		if ($interval->m) { $result .= ""; }
+    		if ($interval->d) { $result .= $interval->format("%d d "); }
+    		if ($interval->h) { $result .= $interval->format("%h h "); }
+    		if ($interval->i) { $result .= $interval->format("%i m "); }
+    		if ($interval->s) { $result .= ""; }
+    		return $result;
+	}
 
-				$result = mysql_query("SELECT * FROM `history_table` WHERE 1");
+$result = mysql_query("SELECT * FROM `history_table` WHERE 1");
+/* Update run_time in the database */
+while($item = mysql_fetch_array($result)) {
+	if ($item["status"] == "Running") {
+		$date2 = date('Y-m-d H:i:s');
+	        $date1 = $item["created_date"];
+		
+		$first_date = new DateTime($date1);
+		$second_date = new DateTime($date2);
 
-				/* Update run_time in the database */
-				while($item = mysql_fetch_array($result))
-              {
+		$difference = $first_date->diff($second_date);
+		$runningtime = format_interval_ht($difference);
+	     //      $ts1 = strtotime($date1);
+	     //      $ts2 = strtotime($date2);
 
-	           $date2 = date('Y-m-d H:i:s');
-	           $date1 = $item["created_date"];
-	           $ts1 = strtotime($date1);
-	           $ts2 = strtotime($date2);
-
-	           $diff = $ts2 - $ts1;
-	           $days = floor($diff/86400);   //24*60*60
-	           $hours = round(($diff-$days*60*60*24)/(60*60));
-	           if($hours == 24)
-	           {
-	              $days += 1;
-	              $hours = 0;	           
-	           }
-	           $run_time = $days."d ".$hours."h";
-	           $updateRuntime = mysql_query("Update history_table Set run_time = '$run_time' Where job_id = '{$item["job_id"]}' and status != 'Finished' and status != 'Deleted' ");
-              	           	 	           
-              }
-             ?>
+	     //      $diff = $ts2 - $ts1;
+	     //      $days = floor($diff/86400);   //24*60*60
+	     //      $hours = round(($diff-$days*60*60*24)/(60*60));
+	     //      if($hours == 24)
+	     //      {
+	     //         $days += 1;
+	     //         $hours = 0;	           
+	     //      }
+	     //      $run_time = $days."d ".$hours."h";
+	           $updateRuntime = mysql_query("Update history_table Set run_time = '$runningtime' Where job_id = '{$item["job_id"]}' and status != 'Finished' and status != 'Deleted' ");
+	}
+}
+?>
 				
 				
             <div id = "dialog-blockspammers" title = "Block Spammers" >
