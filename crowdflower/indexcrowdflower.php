@@ -2,8 +2,8 @@
 include_once '../includes/dbinfo.php';
 include_once '../includes/functions.php';
 $content_type = "application/json";
-//$api_key = "c6b735ba497e64428c6c61b488759583298c2cf3";
-$api_key = "b5e3b32b4d29d45c16dc09274e099f731237e35f";
+$api_key = "c6b735ba497e64428c6c61b488759583298c2cf3";
+//$api_key = "b5e3b32b4d29d45c16dc09274e099f731237e35f";
 
 $url = "http://api.crowdflower.com/v1/jobs.json?key=".$api_key;
 $uploadDirectory = "Files/";
@@ -255,7 +255,7 @@ $origin = "CF";
 $job_judgments_made = 0;
 $job_completion = 0.0;
 $run_time = 0;
-$status = "Running";
+$status = "Published";
 $status_change = "abled";
 $checkbox_check = "disabled";
 
