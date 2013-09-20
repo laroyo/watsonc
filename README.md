@@ -34,7 +34,7 @@ The functionality of the Crowd Watson framework is divided in modules, separatin
 
 ### Setup and configuration
 
-For details about dependency and instructions to set up a Crowd-watson instance, see [[Setup]] page. 
+For details about dependency and instructions to set up a Crowd-watson instance, see [Setup](https://github.com/laroyo/watsonc/wiki/Setup) page. 
 
 
 ### References 
