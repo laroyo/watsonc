@@ -131,21 +131,25 @@ $directoriesTextFiles = glob($filesdir.'TextFiles/*' , GLOB_ONLYDIR);
 $noFiles = 0;
 $textFilesAddr = "";
 
+if (!empty($_FILES['uploadedfilepreproc'])) {
 foreach ($directoriesTextFiles as $key => $value) {
-	foreach($_FILES['uploadedfile']['name'] as $file => $info) {
-		if (file_exists($value."/".$_FILES['uploadedfile']['name'][$file])) {
+	foreach($_FILES['uploadedfilepreproc']['name'] as $file => $info) {
+		if (file_exists($value."/".$_FILES['uploadedfilepreproc']['name'][$file])) {
 			$noFiles ++;
 		}
 	}
 	$dir_path = $value."/";
 	$count = count(glob($dir_path . "*"));
-	if ($noFiles == count($_FILES['uploadedfile']['name']) && $count == count($_FILES['uploadedfile']['name'])) {
+	if ($noFiles == count($_FILES['uploadedfilepreproc']['name']) && $count == count($_FILES['uploadedfilepreproc']['name'])) {
 		$textFilesAddr = $value;
 		break;
 	}
 	$noFiles = 0;
 }
-
+}
+if(!empty($_POST["foldername"])) {
+	$textFilesAddr = $_POST["foldername"] . "";
+}
 date_default_timezone_set('UTC');
 
 if ($textFilesAddr == "") {
@@ -155,14 +159,14 @@ if ($textFilesAddr == "") {
 	$textFilesAddr = $filesdir."TextFiles/".$timestamp;
 	mkdir($textFilesAddr, 0777, true);
 
-	foreach($_FILES['uploadedfile']['name'] as $key => $info) {
+	foreach($_FILES['uploadedfilepreproc']['name'] as $key => $info) {
 		$storageFolder = $textFilesAddr."/";  
-		move_uploaded_file($_FILES['uploadedfile']['tmp_name'][$key], $storageFolder.$_FILES['uploadedfile']['name'][$key]."");
-		$fileid = storePreprocessedFile('uploadedfile', $key, $storageFolder);
+		move_uploaded_file($_FILES['uploadedfilepreproc']['tmp_name'][$key], $storageFolder.$_FILES['uploadedfilepreproc']['name'][$key]."");
+		$fileid = storePreprocessedFile('uploadedfilepreproc', $key, $storageFolder);
 		$lines = getLines($fileid) - 1;
-		$title = $_FILES['uploadedfile']['name'][$key];
+		$title = $_FILES['uploadedfilepreproc']['name'][$key];
 		$comment = $_POST['files_comment'];
-		$fileRelation = getFileRelation($_FILES['uploadedfile']['name'][$key]);
+		$fileRelation = getFileRelation($_FILES['uploadedfilepreproc']['name'][$key]);
 
 		$query="INSERT INTO `raw_file`(`seedrelationname`, `fileid`, `lines`, `comment`, `createdby`) 
 	                VALUES ('".$fileRelation."','".$fileid."','".$lines."','".$comment."','".$_SERVER['REMOTE_USER']."')";

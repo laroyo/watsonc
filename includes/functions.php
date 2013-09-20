@@ -205,30 +205,31 @@ function getLines($id) {
 	
 	return $linecount;
 }
-
+$timezone = date_default_timezone_get();
+date_default_timezone_set($timezone);
+function format_interval_hist(DateInterval $interval) {
+                $result = "";
+                if ($interval->y) { $result .= ""; }
+                if ($interval->m) { $result .= ""; }
+                if ($interval->d) { $result .= $interval->format("%d d "); }
+                if ($interval->h) { $result .= $interval->format("%h h "); }
+                if ($interval->i) { $result .= $interval->format("%i m "); }
+                if ($interval->s) { $result .= ""; }
+                return $result;
+}
 
 function updateRuntime($job_id)
 {
-	
-	// Get current run_time
 	$getCreatedDate = mysql_query("Select created_date From history_table Where job_id = '$job_id' ");
 	list($date1) = mysql_fetch_row ($getCreatedDate);
+        $date2 = date('Y-m-d H:i:s');
+        $first_date = new DateTime($date1);
+        $second_date = new DateTime($date2);
+
+        $difference = $first_date->diff($second_date);
+        $runningtime = format_interval_hist($difference);
 	
-	$date2 = date('Y-m-d H:i:s');
-	$ts1 = strtotime($date1);
-	$ts2 = strtotime($date2);
-	
-	$diff = $ts2 - $ts1;
-	$days = floor($diff/86400);   //24*60*60
-	$hours = round(($diff-$days*60*60*24)/(60*60));
-	if($hours == 24)
-	{
-		$days += 1;
-		$hours = 0;
-	}
-	$run_time = $days."d ".$hours."h";
-	
-	return $run_time;
+	return $runningtime;
 }
 
 
