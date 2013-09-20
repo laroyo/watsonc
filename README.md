@@ -13,7 +13,8 @@ The *Crowd Watson* framework supports the composition of crowd-truth gathering w
 by the general crowd on platforms like CrowdFlower, or by specialized crowd of domain experts on gaming platform as Dr. Detective. *Crowd-Watson* framework focuses
 on micro-tasks for knowledge extraction in medical text. The main steps involved in the *Crowd-Watson* workﬂow are: **pre-processing** of the input, **data collection**, **disagreement analytics** for the results, and ﬁnally **post-processing**. These steps are realized as an automatic end-to-end workﬂow, that can support a continuous collection of high quality gold standard data with feedback loop to all steps of the process. The input consists of medical documents, from various sources such as Wikipedia articles or patient case reports. The output generated through this framework is annotation for medical text, in the form of concepts and the relations between them, together with a collection of visual analytics to explore these results. 
 
-![Crowd Watson architecture](https://github.com/guillelmo/cloudsync/blob/master/docs/imgs/workflow-picture.jpg?raw=true)
+![Crowd Watson architecture](https://raw.github.com/laroyo/watsonc/master/docs/imgs/workflow-picture.jpg)
+
 
 ### Modules
 
