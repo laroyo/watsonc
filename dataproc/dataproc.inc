@@ -1,6 +1,7 @@
 <?php
 
 require_once('dbinfo.php'); 
+require_once('dbquery.php'); 
 require_once('envars.php');
  
 function getSetId($job_ids,$indiv=FALSE){
@@ -40,43 +41,6 @@ function getFilteredSentences($set_id){
        $res[]  = $row; 
      }    
   return $res; 
-}
-
-/**
- * Returns the pivot table for the annotations of a job. 
- **/
-function getPivotTable($job_id){
-  
-  $worker_res = exec('/usr/bin/Rscript '. BASE_PATH .'/dataproc/getPivotTable.R '. $job_id);  
-  $dec = json_decode($worker_res);
-
-  $rels = array('D','S','C','M','L','AW','P','SE','IA','PO','T','CI','OTH','NONE'); 
-  
-  $matrix = array(); 
-  
-  for ($i = 0; $i < sizeof($dec->rownames); $i++){
-    $vector = array(); 
-    
-    foreach ($rels as $rel){
-      $vect = $dec->matrix->$rel;
-      $vector[$rel] = $vect[$i];
-    }
-    $matrix[$dec->rownames[$i]] = $vector;
-    unset($vector);
-  }
-  
-  return($matrix);
-}
-
-/**
- *  Returns the relation(s) majoritarily chosen for each of the sentences of a job
- **/
-function getMajRelations($job_id){
-  
-
-  $worker_res = exec('/usr/bin/Rscript '. BASE_PATH .'/dataproc/getRelationsSentences.R '. $job_id);    
-  $dec = json_decode($worker_res,true);
-  return($dec);
 }
 
 /**
@@ -269,105 +233,4 @@ function getLqc($job_id){
   }
   return $filters;
 }
-
-/**
- * Returns the results of $query as an array. Each array entry corresponds to a row. 
- **/
-function simpleQuery($query){
-
-  //echo $query; 
-  $rs = mysql_query($query); 
- 
-  while($row = mysql_fetch_assoc($rs)){       
-    $res[] = $row;     
-  }  
-  return $res; 
-}
-
-/**
- * Query for obtaining one single value (for instance, a counter)
- **/
-function queryOne($query){
-  $rs = mysql_query($query);   
-  $row = mysql_fetch_assoc($rs);
-  $keys = array_keys($row);
-  return $row[$keys[0]];
-}
-
-/**
- * Returns the results of $query as an associative array [$key => $value]
- * Both $key and $value should be attributes in the query (usually: columns on the queried table). 
- **/
-function queryKeyValue($query, $key, $value){
-
-  $rs = mysql_query($query); 
-  while($row = mysql_fetch_assoc($rs)){
-    $res[$row[$key]] = $row[$value]; 
-  }  
-  return $res; 
-}
-
-/**
- * 
- **/
-function queryKeyList($query, $key){
-  
-  $rs = mysql_query($query); 
-  while($row = mysql_fetch_assoc($rs)){
-    $k = $row[$key]; 
-    unset($row[$key]); 
-    $res[$k] = $row; 
-  }  
-  return $res; 
-}
-
-/**
- * Returns the results of $query as a list. Each entry of the list is a single value (instead of a row). 
- * Used, for instance, to obtain a list of keys (object id's), or a list of values ("all the cosine values for a job")
- * To prevent misuse, the query shouldn't contain more than 1 attribute: select <attribute> from <table>; 
- **/
-function queryList($query){
-  $rs = mysql_query($query); 
-  while($row = mysql_fetch_assoc($rs)){       
-    
-    if(sizeof(array_keys($row)) > 1){
-      throw new Exception("The result set contains more than 1 field"); 
-    } else {
-      $keys = array_keys($row);       
-      $res[] = $row[$keys[0]];     
-    }    
-  }  
-  return $res; 
-}
-
-/**
- * Groups values within the result by $group_key. 
- * Ex: retrieve a list with all the filters of a particular worker (see ex. in analytics/job.php).
- * @param  $value: indicate the field of the row to be listed. If any, the entire rowset will be added. 
- **/
-function queryGroup($query,$group_key, $value=NULL){
-  
-  $rs = mysql_query($query); 
-  $group_id = NULL;
-  while($row = mysql_fetch_assoc($rs)){
-    if($row[$group_key] != $group_id) 
-      $group_id = $row[$group_key]; 
-    
-    unset($row[$group_key]);
-    if($value != NULL)
-      $res[$group_id][] = $row[$value];              
-    else
-      $res[$group_id][] = $row;                 
-  }
-  return $res; 
-}
-
-/**
- * Simple query insert (no parameters). If it's an AUTO_INCREMENT, returns the ID of the inserted element (0 otherwise). 
- **/
-function simpleInsert ($query){
-  $rs = mysql_query($query); 
-  return mysql_insert_id(); 
-}
-
 ?>
