@@ -9,12 +9,12 @@ source(paste(libpath,'/simplify.R',sep=''),chdir=TRUE)
 args <- commandArgs(trailingOnly = TRUE)
 
 if(length(args) > 0){
-  job_id <- args[1]
+  job.id <- args[1]
 }
 
-raw_data <- getJob(job_id)
+raw.data <- getJob(job.id)
 
-sentenceTable <- pivot(raw_data,'unit_id','relation')
+sentenceTable <- pivot(raw.data,'unit_id','relation')
 sentenceDf <- getDf(sentenceTable)
 #cat(paste("{'rownames' :",toJSON(row.names(sentenceDf)),",'annotations' :", toJSON(sentenceDf), "}"),sep='')
 res = list()
