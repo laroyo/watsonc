@@ -1,7 +1,7 @@
 <?php
 
 require_once('dbinfo.php'); 
-require_once('dbquery.php'); 
+require_once('dbquery.inc'); 
 require_once('envars.php');
  
 function getSetId($job_ids,$indiv=FALSE){
