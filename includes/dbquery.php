@@ -1,3 +1,5 @@
+<?php 
+
 /***
  * Library with some simple, commonly used query templates or methods (including one for insertion). 
  **/
