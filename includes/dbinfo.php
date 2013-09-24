@@ -1,7 +1,7 @@
 <?php
 $host = 'localhost'; // Host name Normally 'LocalHost'
-$user = 'root'; // MySQL login username
-$pass = 'william1'; // MySQL login password
+$user = 'watsoncs'; // MySQL login username
+$pass = 'Tre2akEf'; // MySQL login password
 $database = 'watsoncs'; // Database name
 
 $con=mysql_connect($host, $user, $pass) or die("Couldn't make connection.");

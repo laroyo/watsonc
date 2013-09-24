@@ -1,6 +1,5 @@
 #!/usr/bin/Rscript
-#source('/var/www/html/wcs/dataproc/envars.R')
-source('/home/gsc/watson/dataproc/envars.R')
+source('/var/www/html/wcs/dataproc/envars.R')
 
 #Parse a results file from Crowdflower, and generates contingency tables for relations/workers and sentences as an output. 
 library(XLConnect)
