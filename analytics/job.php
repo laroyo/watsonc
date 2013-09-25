@@ -1,7 +1,7 @@
 <?php
 
 require_once('envars.php'); 
-require_once(BASE_PATH . 'dataproc/api/api.inc'); 
+require_once(BASE_PATH . '/dataproc/api/api.inc'); 
 require_once('relations.inc'); 
 require_once('dataproc.inc'); 
 
@@ -49,11 +49,11 @@ $abbr = array('C' =>'[CAUSES]',
 	       'D'=>'[DIAGNOSED_BY_TEST_OR_DRUG]');
 
 
-echo "job_id: $job_id<br>"; 
 $pivot_table = getPivotTable($job_id); 
 $maj_relations = getMajRelations($job_id); 
 
-
+$compTimes = queryGroup("select unit_id,worker_id,UNIX_TIMESTAMP(created_at)-UNIX_TIMESTAMP(started_at) as time from cflower_results where job_id = $job_id 
+   order by unit_id asc,time asc limit 80",'unit_id');
 
 include('header.tpl');
 include('job.tpl');
