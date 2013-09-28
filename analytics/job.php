@@ -48,11 +48,29 @@ $abbr = array('C' =>'[CAUSES]',
 	       'CI'=>'[CONTRAINDICATES]',
 	       'D'=>'[DIAGNOSED_BY_TEST_OR_DRUG]');
 
-
+/* Annotation Distribution*/
 $pivot_table = getPivotTable($job_id); 
+
+/* Annotated Relations */
 $maj_relations = getMajRelations($job_id); 
 
-$compTimes = queryGroup("select unit_id,worker_id,UNIX_TIMESTAMP(created_at)-UNIX_TIMESTAMP(started_at) as time from cflower_results where job_id = $job_id 
+/* Workers*/
+
+$num_spammers = queryOne("select count(distinct(worker_id)) as count from filtered_workers where set_id = $job_id");
+$num_workers = queryOne("select count(distinct(worker_id)) as count from cflower_results where job_id = $job_id");
+$num_sentences = queryOne("select count(distinct(unit_id)) as count from cflower_results where job_id = $job_id");
+
+$worker_filters = queryGroup("select worker_id, filter from filtered_workers where set_id = $job_id order by worker_id asc", 'worker_id', 'filter');
+
+$spam_per_filter = queryGroup("select worker_id, filter from filtered_workers where set_id = $job_id order by filter asc,worker_id asc", 'filter', 'worker_id');
+
+$spam_per_channel = queryGroup("select fw.worker_id as worker_id,external_type from filtered_workers fw left join cflower_results cf ". 
+			     "on cf.worker_id = fw.worker_id where set_id = $job_id group by worker_id", 'external_type', 'worker_id');
+
+$worker_channels = queryGroup("select worker_id,external_type as channel from cflower_results where job_id = $job_id 
+       group by worker_id order by channel asc",'channel','worker_id');
+
+$comp_times = queryGroup("select unit_id,worker_id,UNIX_TIMESTAMP(created_at)-UNIX_TIMESTAMP(started_at) as time from cflower_results where job_id = $job_id 
    order by unit_id asc,time asc limit 80",'unit_id');
 
 include('header.tpl');

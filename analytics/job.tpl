@@ -100,7 +100,7 @@
 	
 	foreach($maj_relations['rels'][$relation] as $sent){
 	  echo "<tr class='".$relation."-row' style='display:none'><td></td>";
-	  echo "<td colspan='2'><a href='#'> Sentence ".$sent['unit_id'] . "</a></td><td>".$sent['clarity']."</td></tr>\n";
+	  echo "<td colspan='2'><a href='sentence.php?sentence_id=".$sent['unit_id']."'> Sentence ".$sent['unit_id'] . "</a></td><td>".$sent['clarity']."</td></tr>\n";
 	}  
       } else {
 	$clarity = $maj_relations['rels'][$relation][0]['clarity'];
@@ -122,7 +122,7 @@
 	} else {
 	  $acum_relations .=  $abbr[$relation] . ", "; 
 	  $acum_clarity .= $clarity . ", ";
-	  $acum_rows .= "<tr class='onerel-row' style='display: none'><td></td><td colspan='2'><a href='#'>Sentence " . $unit_id . "</a> - ". 
+	  $acum_rows .= "<tr class='onerel-row' style='display: none'><td></td><td colspan='2'><a href='sentence.php?sentence_id=".$unit_id."'>Sentence " . $unit_id . "</a> - ". 
 	    $abbr[$relation]. " </td><td>".$clarity."</td></tr>\n";
 	}
       }
@@ -135,22 +135,8 @@
     <!-- Workers
     ================================================== -->
     <?php
-
-    $numSpammers = queryOne("select count(distinct(worker_id)) as count from filtered_workers where set_id = $job_id");
-    $numWorkers = queryOne("select count(distinct(worker_id)) as count from cflower_results where job_id = $job_id");
-    $numSentences = queryOne("select count(distinct(unit_id)) as count from cflower_results where job_id = $job_id");
-        
-    $worker_filters = queryGroup("select worker_id, filter from filtered_workers where set_id = $job_id order by worker_id asc", 'worker_id', 'filter');
-
-    $spamPerFilter = queryGroup("select worker_id, filter from filtered_workers where set_id = $job_id order by filter asc,worker_id asc", 'filter', 'worker_id');
-
-    $spamPerChannel = queryGroup("select fw.worker_id as worker_id,external_type from filtered_workers fw left join cflower_results cf ". 
-				 "on cf.worker_id = fw.worker_id where set_id = $job_id group by worker_id", 'external_type', 'worker_id');
-
-    $worker_channels = queryGroup("select worker_id,external_type as channel from cflower_results where job_id = $job_id 
-       group by worker_id order by channel asc",'channel','worker_id');
     
-    foreach($spamPerChannel as $channel => $spammers){
+    foreach($spam_per_channel as $channel => $spammers){
 
       $row = array();
       $row[] = $channel;
@@ -162,7 +148,7 @@
      
       $row3 = array();
       $row3['label'] =$channel;
-      $row3['value'] = (float)sprintf('%01.2f',sizeof($spammers) /$numSpammers);       
+      $row3['value'] = (float)sprintf('%01.2f',sizeof($spammers) /$num_spammers);       
 
       
       $acum[]  = $row; 
@@ -170,7 +156,7 @@
       $spamSources[] = $row3;
     }
 
-   foreach($spamPerFilter as $filter => $spammers){
+   foreach($spam_per_filter as $filter => $spammers){
   
       $row = array();
       $row[] = $filter;
@@ -182,7 +168,7 @@
      
       $row3 = array();
       $row3['label'] = $filter;
-      $row3['value'] = (float)sprintf('%01.2f',sizeof($spammers) /$numSpammers);       
+      $row3['value'] = (float)sprintf('%01.2f',sizeof($spammers) /$num_spammers);       
 
       
       $acum[]  = $row; 
@@ -202,13 +188,13 @@ function jsonScatterPoint($x, $y, $size){
   return "{'x' : ".sprintf('%01.2f',$x) .",'y' : $y,'size' : $size}"; 	    
 }
 
-$min_unit = min(array_keys($compTimes)); 
+$min_unit = min(array_keys($comp_times)); 
 ?>
 <script>
 <?php
 echo "var compTimes = ["; 
 
-foreach($compTimes as $unit_id => $list){
+foreach($comp_times as $unit_id => $list){
   echo "{'key' : $unit_id, \n";
   echo " 'values': [\n";
 
@@ -307,9 +293,9 @@ echo "]\n";
 	 <tr><td>Jobs in the set: </td><td> <?php echo(sizeof($job_ids)); ?> </td></tr>
 	 <tr><td colspan='2' style='text-align: center;'><?php echo(implode(',' , $job_ids)) ?></td></tr>	   	     
        <?php } ?>
-       <tr><td> Number of sentences in the set:  </td><td> <?php echo($numSentences); ?> </td></tr>
-      <tr><td> Number of workers in the set: </td><td><?php echo($numWorkers); ?> </td></td>
-      <tr><td> Number of LQ candidates in the set: </td><td><?php echo($numSpammers ." (". sprintf('%01.2f', ($numSpammers / $numWorkers) * 100) ."%)"); ?></td</tr>
+       <tr><td> Number of sentences in the set:  </td><td> <?php echo($num_sentences); ?> </td></tr>
+      <tr><td> Number of workers in the set: </td><td><?php echo($num_workers); ?> </td></td>
+      <tr><td> Number of LQ candidates in the set: </td><td><?php echo($num_spammers ." (". sprintf('%01.2f', ($num_spammers / $num_workers) * 100) ."%)"); ?></td</tr>
       <tr><td> Channels used</td><td></td></tr>   
 
 
@@ -414,7 +400,7 @@ echo "]\n";
 	 </select>
 
 	 <script>
-	 <?php echo 'var filteredWorkers = ' . json_encode($spamPerFilter) . ";"; ?>      
+	 <?php echo 'var filteredWorkers = ' . json_encode($spam_per_filter) . ";"; ?>      
 	 loadSelect('filter1', filteredWorkers); 
 	 </script>
 
