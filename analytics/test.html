@@ -8,7 +8,7 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: auto;
   position: relative;
-  width: 960px;
+  width: 470px;
   color: white; 
 }
 
@@ -22,11 +22,11 @@ body {
 /*modified from Mike Bostock at http://bl.ocks.org/3943967 */
 
 var data = [    
-    {'unit_id' : 8421, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46},
-    {'unit_id' : 8422, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 'sum': 37},
-    {'unit_id' : 8423, 'D' : 6,'S' : 14,'C': 14,'M' : 14 ,'L': 20,'AW': 4,'P':8,'SE': 14,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 'sum': 94}
-    // {'unit_id' : 8424, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46},
-    // {'unit_id' : 8425, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46}
+    {'unit_id' : 8421, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46, 'sentClarity' : 0.2},
+    {'unit_id' : 8422, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 'sum': 37, 'sentClarity' : 0.3},
+    {'unit_id' : 8423, 'D' : 6,'S' : 14,'C': 14,'M' : 14 ,'L': 20,'AW': 4,'P':8,'SE': 14,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 'sum': 94, 'sentClarity' : 0.4}
+    //{'unit_id' : 8424, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46, 'sentClarity': 0.5},
+    //{'unit_id' : 8425, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46, 'sentClarity': 0.6}
 ];
 
 var max = 0; 
@@ -40,8 +40,8 @@ var relations = ['D','S','C','M','L','AW','P','SE','IA','PO','T','CI','OTH',"NON
 
 //var relations = ["D","C","AW","P","SE","T","CI","OTH"]; 
 
-var margin = {top: 40, right: 10, bottom: 20, left: 50},
-width = 960 - margin.left - margin.right,
+var margin = {top: 40, right: 20, bottom: 20, left: 50},
+width = 470 - margin.left - margin.right,
 height = 120 - margin.top - margin.bottom;
 
 var normalize = true;  
@@ -143,9 +143,9 @@ var sClarity = [];
 
 for(var i = 0; i < data.length; i++){
     if(normalize){
-	sClarity[i] = {x: width, y: y(width * (i+1)), sentClarity : 0.3};      	
+	sClarity[i] = {x: width+28, y: y(width * (i+1)), sentClarity : data[i].sentClarity};      	
     } else {
-	sClarity[i] = {x: (data[i].sum / max) * width, y: y(width * (i+1)), sentClarity : 0.3};      	
+	sClarity[i] = {x: (data[i].sum / max) * width +28, y: y(width * (i+1)), sentClarity : data[i].sentClarity};      	
     }
 }
 
@@ -159,13 +159,17 @@ chart.selectAll(".bar")
     .attr("dy", ".9em") // vertical-align: middle
     .attr("text-anchor", "end") // text-align: right
     .attr("font-size", "11px") // text-align: right
-    .attr('fill', 'white')
-    .text(function(d) {return d.sentClarity});
+    .attr('fill', 'black')
+    .text(function(d) {return d.sentClarity})
+    .attr("data-toggle", "tooltip")
+    .attr('class','sclaritytooltip')
+    .attr('title', "Sentence Clarity");
 
 </script>
 
 <script type="text/javascript">
     $('.rectooltip').tooltip({'container': 'body', 'placement': 'bottom'});
+    $('.sclaritytooltip').tooltip({'container': 'body', 'placement': 'bottom'});
 </script>
 </body>
 </html>
