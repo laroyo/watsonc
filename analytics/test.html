@@ -13,19 +13,20 @@ body {
 }
 
 </style>
-    <script src="js/d3.v2.js"></script>
+    <script type="text/javascript" src="js/d3.v2.js"></script>
+    <script src="js/jquery-1.9.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 <script>
 
 /*modified from Mike Bostock at http://bl.ocks.org/3943967 */
 
 var data = [    
-    {'unit_id' : 1234, "D" : 3 ,"C" : 7 ,"AW" : 7 ,"P" : 7 ,"SE" : 10 ,"T" : 2 ,"CI" : 4 ,"OTH" : 7, 'sum': 47}, 
-    {'unit_id' : 4567, "D" : 6 ,"C" : 14 ,"AW" : 14 ,"P" : 14 ,"SE" : 20 ,"T" : 4 ,"CI" : 8 ,"OTH" : 14, 'sum': 94},
-    //{'unit_id' : 7891, "D" : 4 ,"C" : 4 ,"AW" : 2 ,"P" : 5 ,"SE" : 8 ,"T" : 1 ,"CI" : 2 ,"OTH" : 4, 'sum': 30},
-    //{'unit_id' : 8291, "D" : 8 ,"C" : 8 ,"AW" : 4 ,"P" : 10 ,"SE" : 16 ,"T" : 2 ,"CI" : 4 ,"OTH" : 8, 'sum': 60},
     {'unit_id' : 8421, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46},
     {'unit_id' : 8422, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 'sum': 37},
-    {'unit_id' : 8422, 'D' : 6,'S' : 14,'C': 14,'M' : 14 ,'L': 20,'AW': 4,'P':8,'SE': 14,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 'sum': 94}
+    {'unit_id' : 8423, 'D' : 6,'S' : 14,'C': 14,'M' : 14 ,'L': 20,'AW': 4,'P':8,'SE': 14,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 'sum': 94}
+    // {'unit_id' : 8424, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46},
+    // {'unit_id' : 8425, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46}
 ];
 
 var max = 0; 
@@ -45,16 +46,6 @@ height = 120 - margin.top - margin.bottom;
 
 var normalize = true;  
 
-var sclarity = []; 
-
-for(var i = 0; i < data.length; i++){
-    if(normalize){
-	sclarity[i] = {x: width, y: 4 + i*14, sentClarity : 0.3};      	
-    } else {
-	sclarity[i] = {x: (data[i].sum / max) * width, y: 4 + i*14, sentClarity : 0.3};      	
-    }
-}
-
 var n = relations.length, // number of layers
 m = data.length, // number of samples per layer
 stack = d3.layout.stack(),
@@ -66,7 +57,7 @@ labels = data.map(function(d) {return d.unit_id;}),
 layers = stack(d3.range(n).map(function(d) { 
     var a = [];
     for (var i = 0; i < m; ++i) {
-        a[i] = {x: i, y: data[i][relations[d]]};  
+        a[i] = {x: i, y: data[i][relations[d]], rel: relations[d]};  
     }
     
     return a;
@@ -86,14 +77,17 @@ var x = d3.scale.linear()
     .domain([0, yStackMax])
     .range([0, width]);
 
-function myscale (value, dom){    
-    var xa = d3.scale.linear().domain([0,dom]).range([0,width]); 
-    return xa(value);
+
+
+function normalizeX(value, dom){    
+    var norm = d3.scale.linear().domain([0,dom]).range([0,width]); 
+    return norm(value);
 }
 
-var color = d3.scale.linear()
-    .domain([0, n - 1])
-    .range(["#aad", "#556"]);
+// var color = d3.scale.linear()
+//     .domain([0, n - 1])
+//     .range(["#aad", "#556"]);
+var color = d3.scale.category20b();
  
 var chart = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -113,9 +107,13 @@ if(normalize) {
         .data(function(d) { return d; })
         .enter().append("rect")
         .attr("y", function(d) {return y(d.x); })
-        .attr("x", function(d) {return myscale(d.y0, data[d.x].sum); })
+        .attr("x", function(d) {return normalizeX(d.y0, data[d.x].sum); })
         .attr("height", y.rangeBand())
-        .attr("width", function(d) { return myscale(d.y, data[d.x].sum);});
+        .attr("width", function(d) { return normalizeX(d.y, data[d.x].sum);})
+	.attr("data-toggle", "tooltip")
+	.attr('class','rectooltip')
+	.attr('title', function(d) {return d.rel});
+
 } else {
     layer.selectAll("rect")
 	.data(function(d) { return d; })
@@ -123,11 +121,36 @@ if(normalize) {
 	.attr("y", function(d) { return y(d.x) })
 	.attr("x", function(d) { return x(d.y0) })
 	.attr("height", y.rangeBand())
-	.attr("width", function(d) { return x(d.y); });
+	.attr("width", function(d) { return x(d.y); })
+	.attr("data-toggle", "tooltip")
+	.attr('class','rectooltip')
+	.attr('title', function(d) {return d.rel});
+}
+
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .tickSize(1)
+    .tickPadding(6)
+    .tickValues(labels)
+    .orient("left");
+
+ chart.append("g")
+    .attr("class", "y axis")
+    .call(yAxis);
+
+var sClarity = []; 
+
+for(var i = 0; i < data.length; i++){
+    if(normalize){
+	sClarity[i] = {x: width, y: y(width * (i+1)), sentClarity : 0.3};      	
+    } else {
+	sClarity[i] = {x: (data[i].sum / max) * width, y: y(width * (i+1)), sentClarity : 0.3};      	
+    }
 }
 
 chart.selectAll(".bar")
-    .data(sclarity)
+    .data(sClarity)
     .enter().append("text")
     .attr("class", "bar")
     .attr("x", function(d) {return d.x- 5})
@@ -139,23 +162,10 @@ chart.selectAll(".bar")
     .attr('fill', 'white')
     .text(function(d) {return d.sentClarity});
 
+</script>
 
-
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .tickSize(1)
-    .tickPadding(6)
-    .tickValues(labels)
-    .orient("left");
-
-
- 
-chart.append("g")
-    .attr("class", "y axis")
-    .call(yAxis);
-
-
+<script type="text/javascript">
+    $('.rectooltip').tooltip({'container': 'body', 'placement': 'bottom'});
 </script>
 </body>
 </html>
