@@ -2,7 +2,9 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <head>
-<script src="js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/d3.v2.js"></script>
 <link href="css/nv.d3.css" rel="stylesheet" type="text/css">
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 <style type="text/css">
