@@ -24,7 +24,7 @@ The sentence has been annotated in the following jobs:
 </div>
 <div class='row'>
     <div class='span4'>
-    <button class='btn'> Normalized view </button>
+    <button class='btn' id='normButton'>Normalize</button>
     </div>
 </div>
 
@@ -61,11 +61,12 @@ var relations = ['D','S','C','M','L','AW','P','SE','IA','PO','T','CI','OTH',"NON
 
 //var relations = ["D","C","AW","P","SE","T","CI","OTH"]; 
 
-var margin = {top: 40, right: 20, bottom: 5, left: 50},
+var margin = {top: 40, right: 25, bottom: 5, left: 50},
 width = 470 - margin.left - margin.right,
 height = 100 - margin.top - margin.bottom;
 
-var normalize = true;  
+// Initially, the graph won't be normalized. 
+var normalize = false;  
 
 var n = relations.length, // number of layers
 m = data.length, // number of samples per layer
@@ -105,9 +106,6 @@ function normalizeX(value, dom){
     return norm(value);
 }
 
-// var color = d3.scale.linear()
-//     .domain([0, n - 1])
-//     .range(["#aad", "#556"]);
 var color = d3.scale.category20b();
  
 var chart = d3.select('#container').append("svg")
@@ -160,14 +158,17 @@ var yAxis = d3.svg.axis()
     .attr("class", "y axis")
     .call(yAxis);
 
+function sentClarity (i, normalized){
+    if(normalized)
+	return ({x: width + 27, y: y(width * (i+1)), sentClarity : data[i].sentClarity});      	
+    else
+	return ({x: (data[i].sum / max) * width +27, y: y(width * (i+1)), sentClarity : data[i].sentClarity});      		
+}
+
 var sClarity = []; 
 
 for(var i = 0; i < data.length; i++){
-    if(normalize){
-	sClarity[i] = {x: width+28, y: y(width * (i+1)), sentClarity : data[i].sentClarity};      	
-    } else {
-	sClarity[i] = {x: (data[i].sum / max) * width +28, y: y(width * (i+1)), sentClarity : data[i].sentClarity};      	
-    }
+    sClarity[i] = sentClarity(i,normalize);
 }
 
 chart.selectAll(".bar")
@@ -187,10 +188,41 @@ chart.selectAll(".bar")
     .attr('title', "Sentence Clarity");
 
 </script>
-
 <script type="text/javascript">
-    $('.rectooltip').tooltip({'container': 'body', 'placement': 'bottom'});
-    $('.sclaritytooltip').tooltip({'container': 'body', 'placement': 'bottom'});
+
+function normalizeGraph(norm){
+    if(norm) {
+	
+	d3.selectAll("rect").transition()    
+	    .duration(500)
+            .attr("x", function(d) {return normalizeX(d.y0, data[d.x].sum); })
+            .attr("width", function(d) { return normalizeX(d.y, data[d.x].sum);})
+    } else  {	      
+	d3.selectAll("rect").transition()    
+	    .duration(500)
+	    .attr("x", function(d) { return x(d.y0) })
+	    .attr("width", function(d) { return x(d.y); });
+	
+    }
+    d3.selectAll('.sclaritytooltip').transition()
+	.attr("x", function(d,i) {return sentClarity(i,norm).x});
+}
+
+$('#normButton').click(function(){
+    
+    if($('#normButton').text() == 'Normalize'){
+	$('#normButton').text('(De) - Normalize ');
+	normalizeGraph(true);
+    } else {
+	$('#normButton').text('Normalize');
+	normalizeGraph(false);
+    }
+});
+
+$('.rectooltip').tooltip({'container': 'body', 'placement': 'bottom'});
+$('.sclaritytooltip').tooltip({'container': 'body', 'placement': 'bottom'});
+
+
 </script>
 </body>
 
