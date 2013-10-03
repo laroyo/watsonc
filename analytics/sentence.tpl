@@ -121,31 +121,17 @@ var layer = chart.selectAll(".layer")
     .style("fill", function(d, i) { return color(i); });
 
 
-if(normalize) {
-    layer.selectAll("rect")
-        .data(function(d) { return d; })
-        .enter().append("rect")
-        .attr("y", function(d) {return y(d.x); })
-        .attr("x", function(d) {return normalizeX(d.y0, data[d.x].sum); })
-        .attr("height", y.rangeBand())
-        .attr("width", function(d) { return normalizeX(d.y, data[d.x].sum);})
-	.attr("data-toggle", "tooltip")
-	.attr('class','rectooltip')
-	.attr('title', function(d) {return d.rel});
-
-} else {
-    layer.selectAll("rect")
-	.data(function(d) { return d; })
-	.enter().append("rect")
-	.attr("y", function(d) { return y(d.x) })
-	.attr("x", function(d) { return x(d.y0) })
-	.attr("height", y.rangeBand())
-	.attr("width", function(d) { return x(d.y); })
-	.attr("data-toggle", "tooltip")
-	.attr('class','rectooltip')
-	.attr('title', function(d) {return d.rel});
-}
-
+layer.selectAll("rect")
+    .data(function(d) { return d; })
+    .enter().append("rect")
+    .attr("y", function(d) {return y(d.x); })
+    .attr("x", function(d) { return (normalize ? normalizeX(d.y0, data[d.x].sum) :  x(d.y0)) })
+    .attr("height", y.rangeBand())
+    .attr("width", function(d) { return (normalize ? normalizeX(d.y, data[d.x].sum) : x(d.y))})
+    .attr("data-toggle", "tooltip")
+    .attr('class','rectooltip')
+    .attr('title', function(d) {return d.rel})
+    .on('click', function(d) { loadAnalyticsPage('relation', d.rel); }); 
 
 var yAxis = d3.svg.axis()
     .scale(y)
@@ -155,8 +141,12 @@ var yAxis = d3.svg.axis()
     .orient("left");
 
  chart.append("g")
-    .attr("class", "y axis")
+    .attr("class", "yaxis")
     .call(yAxis);
+
+// Make the job ids in the y axis clickable (so it redirects to the job page). 
+d3.select('.yaxis').selectAll("text").on('click',function(d){ loadAnalyticsPage('job',d)});
+
 
 function sentClarity (i, normalized){
     if(normalized)

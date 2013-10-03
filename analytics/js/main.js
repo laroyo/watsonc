@@ -1,3 +1,7 @@
+/**
+ * Generic util  functions for the analytics. To be loaded for every analytics page (included in the header). 
+ **/
+
 //  Toggle function for the relation distribution table. 
 function relTableToggle(id){
 
@@ -24,3 +28,17 @@ var abbr = {'C' :'[CAUSES]',
 	    'SE':'[SIDE_EFFECT]',
 	    'CI':'[CONTRAINDICATES]',
 	    'D':'[DIAGNOSED_BY_TEST_OR_DRUG]'};
+
+//For each entity, an analytics page. 
+var entityTypes = ['sentence', 'worker', 'job', 'relation']; 
+
+// Dinamically loads an analytics page. Equivalent to do a redirection. 
+//@param {entityType}  A valid entity type. 
+//@param {entityID} A numeric identifier for the entity to be loaded. 
+function loadAnalyticsPage(entityType,entityID){
+    
+    if($.inArray(entityType, entityTypes) == -1)
+	throw "Invalid entityType"; 
+    
+    window.location.href = "/wcs/analytics/"+entityType+'.php?'+entityType+'_id='+entityID;    
+}
