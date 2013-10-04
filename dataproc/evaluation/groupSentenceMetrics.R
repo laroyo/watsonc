@@ -1,6 +1,5 @@
 #!/usr/bin/Rscript
-#source('/var/www/html/wcs/dataproc/envars.R')
-source('/home/gsc/watson/dataproc/envars.R')
+source('/var/www/html/wcs/dataproc/envars.R')
 
 # This scripts parses a results file from Crowdflower, and generates contingency tables for relations/workers and sentences, and relation clusters as an output.
 # TODO: use only one script for both sets and jobs (merge this and sentenceMetrics.R)
@@ -84,6 +83,10 @@ if(dim(raw_data)[1] == 0){
   equivalences <- dbGetQuery(con, query);
 
   chang.data <- dbGetQuery(con, "select ID as chang_id,relation_type,term1,b1,e1,term2,b2,e2,sentence from chang_data")
+
+  lower.cases <- grep('[a-z]+', chang.data$term1)  
+  chang.data[lower.cases,]$term1 <- paste('[',toupper(chang.data[lower.cases,]$term1),']',sep='')
+  chang.data[lower.cases,]$term2 <- paste('[',toupper(chang.data[lower.cases,]$term2),']',sep='')   
 
 
   #####

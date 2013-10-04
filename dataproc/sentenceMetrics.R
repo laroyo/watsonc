@@ -44,9 +44,13 @@ if(dim(raw_data)[1] == 0){
   
   chang.data <- dbGetQuery(con, "select ID as chang_id,relation_type,term1,b1,e1,term2,b2,e2,sentence from chang_data")
 
+  lower.cases <- grep('[a-z]+', chang.data$term1)  
+  chang.data[lower.cases,]$term1 <- paste('[',toupper(chang.data[lower.cases,]$term1),']',sep='')
+  chang.data[lower.cases,]$term2 <- paste('[',toupper(chang.data[lower.cases,]$term2),']',sep='')   
+
   for (unit_id in equivalences$unit_id){
     if(unit_id %in% raw_data$unit_id){
-      raw_data[raw_data$unit_id == unit_id,]$chang_id <- equivalences[equivalences$unit_id == unit_id,]$chang_id
+      raw_data[raw_data$unit_id == unit_id,]$chang_id <- equivalences[equivalences$unit_id == unit_id,]$chang_id[1]
     }
   }
   
@@ -65,7 +69,7 @@ if(dim(raw_data)[1] == 0){
   
   job.ids <- c(145547,146309,146522,178597,179229,179366,196304,196306,196308,196309,196344,199057)
   #132248,132763,134491,139057,143343,
-  print(sentenceDf)
+  #print(sentenceDf)
   
   
   #Save the initial pivot table (with data from CF)
