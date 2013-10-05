@@ -43,9 +43,9 @@ Overall values, computed across all jobs.
 /*modified from Mike Bostock at http://bl.ocks.org/3943967 */
 
 var data = [    
-    {'unit_id' : 8421, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46, 'sentClarity' : 0.2},
-    {'unit_id' : 8422, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 'sum': 37, 'sentClarity' : 0.3},
-    {'unit_id' : 8423, 'D' : 6,'S' : 14,'C': 14,'M' : 14 ,'L': 20,'AW': 4,'P':8,'SE': 14,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 'sum': 94, 'sentClarity' : 0.4}
+    {'unit_id' : 8421, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'numAnnotators': 15, 'sum': 46, 'sentClarity' : 0.2},
+    {'unit_id' : 8422, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 'numAnnotators': 12, 'sum': 37, 'sentClarity' : 0.3},
+    {'unit_id' : 8423, 'D' : 6,'S' : 14,'C': 14,'M' : 14 ,'L': 20,'AW': 4,'P':8,'SE': 14,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 'numAnnotators': 15, 'sum': 94, 'sentClarity' : 0.4}
     //{'unit_id' : 8424, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46, 'sentClarity': 0.5},
     //{'unit_id' : 8425, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46, 'sentClarity': 0.6}
 ];
@@ -145,8 +145,11 @@ var yAxis = d3.svg.axis()
     .call(yAxis);
 
 // Make the job ids in the y axis clickable (so it redirects to the job page). 
-d3.select('.yaxis').selectAll("text").on('click',function(d){ loadAnalyticsPage('job',d)});
-
+d3.select('.yaxis').selectAll("text")
+    .attr("data-toggle", "tooltip")
+    .attr('class','axistooltip')
+    .attr('title', function(d) {return "Annotated by "+ (data[getByValue(data, 'unit_id', d)].numAnnotators) +' workers'})
+    .on('click',function(d){ loadAnalyticsPage('job',d)});
 
 function sentClarity (i, normalized){
     if(normalized)
@@ -211,6 +214,7 @@ $('#normButton').click(function(){
 
 $('.rectooltip').tooltip({'container': 'body', 'placement': 'bottom'});
 $('.sclaritytooltip').tooltip({'container': 'body', 'placement': 'bottom'});
+$('.axistooltip').tooltip({'container': 'body', 'placement': 'bottom'});
 
 
 </script>

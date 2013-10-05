@@ -2,6 +2,18 @@
  * Generic util  functions for the analytics. To be loaded for every analytics page (included in the header). 
  **/
 
+/**
+ * Returns the position of the object in arr that contains whose value for the key {key} is {value}.  
+ * @returns {pos} The position of the object in the array, or -1 if there's no object with that value. 
+ **/
+
+function getByValue(arr, key, value) {
+    for (var i=0; i<arr.length; i++) {	
+	if (arr[i][key] == value) return i;
+    }
+    return -1; 
+}
+
 //  Toggle function for the relation distribution table. 
 function relTableToggle(id){
 
