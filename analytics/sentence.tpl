@@ -99,6 +99,10 @@ var x = d3.scale.linear()
     .domain([0, yStackMax])
     .range([0, width]);
 
+/* Normalized x. */
+var xnorm = d3.scale.linear()
+    .domain([0, 1])
+    .range([0, width]);
 
 
 function normalizeX(value, dom){    
@@ -144,6 +148,18 @@ var yAxis = d3.svg.axis()
     .attr("class", "yaxis")
     .call(yAxis);
 
+var xAxis = d3.svg.axis()
+  .scale(x)
+  .ticks(5)
+  .tickSize(1)
+  .tickPadding(6)  
+  .orient("bottom");
+
+var gx = chart.append("g")
+    .attr("class", "xaxis")
+    .call(xAxis)
+    .attr('transform', "translate(0,"+height+")")
+		
 // Make the job ids in the y axis clickable (so it redirects to the job page). 
 d3.select('.yaxis').selectAll("text")
     .attr("data-toggle", "tooltip")
@@ -190,11 +206,22 @@ function normalizeGraph(norm){
 	    .duration(500)
             .attr("x", function(d) {return normalizeX(d.y0, data[d.x].sum); })
             .attr("width", function(d) { return normalizeX(d.y, data[d.x].sum);})
+
+	xAxis.scale(xnorm); 
+	gx.transition()
+	.duration(500)
+	.call(xAxis);
+	
     } else  {	      
 	d3.selectAll("rect").transition()    
 	    .duration(500)
 	    .attr("x", function(d) { return x(d.y0) })
 	    .attr("width", function(d) { return x(d.y); });
+
+	xAxis.scale(x); 
+	gx.transition()
+	.duration(500)
+	.call(xAxis);
 	
     }
     d3.selectAll('.sclaritytooltip').transition()
