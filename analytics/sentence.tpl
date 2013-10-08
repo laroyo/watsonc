@@ -61,9 +61,9 @@ var relations = ['D','S','C','M','L','AW','P','SE','IA','PO','T','CI','OTH',"NON
 
 //var relations = ["D","C","AW","P","SE","T","CI","OTH"]; 
 
-var margin = {top: 40, right: 25, bottom: 25, left: 50},
+var margin = {top: 25, right: 25, bottom: 5, left: 50},
 width = 470 - margin.left - margin.right,
-height = 120 - margin.top - margin.bottom;
+height = (data.length * 35); 
 
 // Initially, the graph won't be normalized. 
 var normalize = false;  
@@ -169,11 +169,17 @@ d3.select('.yaxis').selectAll("text")
     .attr('title', function(d) {return "Annotated by "+ (data[getByValue(data, 'unit_id', d)].numAnnotators) +' workers'})
     .on('click',function(d){ loadAnalyticsPage('job',d)});
 
+/**
+ * Computes the coordinates in the graph of the sentenceClarity values. 
+ * When the histogram is normalized, the sentence Clarity values are displayed at the same x (the width of all the bars is the same). 
+ * When it's not normalized, the x is a relative to the bar width. 
+ **/
+    
 function sentClarity (i, normalized){
     if(normalized)
-	return ({x: width + 27, y: y(width * (i+1)), sentClarity : data[i].sentClarity});      	
+	return ({x: width + 27, y: y(width * (i+1))+8, sentClarity : data[i].sentClarity});      	
     else
-	return ({x: (data[i].sum / max) * width +27, y: y(width * (i+1)), sentClarity : data[i].sentClarity});      		
+	return ({x: (data[i].sum / max) * width +27, y: y(width * (i+1))+8, sentClarity : data[i].sentClarity});      		
 }
 
 var sClarity = []; 
@@ -207,20 +213,29 @@ chart.selectAll(".bar")
  * Instead, this function changes the attribute using jQuery selector, by retrieving the object by its coordinates (x,y). 
  **/
 function updateTooltipText(d,i,norm){
-  
-  var x1 = normalizeX(d.y0, data[d.x].sum)
-  var y1 = y(d.x); 
+    
+    var x1,legend; 
 
-  var obj = $("rect[y='"+y1+"'][x='"+x1+"']"); 
-
-  if(!obj)
-    throw 'Wrong coordinates - x: '+d.x+' y: '+d.y;
+    if(norm) {
+	x1 = normalizeX(d.y0, data[d.x].sum)
+	legend = d.rel+' - sent-relation score: '+sentRelScoreFormat(data[d.x][d.rel] / data[d.x].sum); 
+    } else {
+	x1 = x(d.y0); 
+	legend =  d.rel+' - Annotated by '+ data[d.x][d.rel]; 	
+    }
+    
+    var y1 = y(d.x); 
+	
+    
+    var obj = $("rect[y='"+y1+"'][x='"+x1+"']"); 
+    
+    if(!obj)
+	throw 'Wrong coordinates - x: '+d.x+' y: '+d.y;
     
     else {
 	if(!obj.attr('data-original-title'))
 	    throw 'Wrong coordinates - x: '+x1+' y: '+y1;
-	
-	var legend = d.rel+' - sent-relation score: '+sentRelScoreFormat(data[d.x][d.rel] / data[d.x].sum); 
+		
 	obj.attr('title', legend);
 	obj.attr('data-original-title', legend);    
     }
@@ -245,7 +260,8 @@ function normalizeGraph(norm){
 	d3.selectAll("rect").transition()    
 	    .duration(500)
 	    .attr("x", function(d) { return x(d.y0) })
-	    .attr("width", function(d) { return x(d.y); });
+	    .attr("width", function(d) { return x(d.y); })
+	    .each('end',function(d,i){ updateTooltipText(d,i,norm)}); 
 
 	xAxis.scale(x); 
 	gx.transition()
