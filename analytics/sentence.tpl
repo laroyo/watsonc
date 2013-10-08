@@ -61,9 +61,9 @@ var relations = ['D','S','C','M','L','AW','P','SE','IA','PO','T','CI','OTH',"NON
 
 //var relations = ["D","C","AW","P","SE","T","CI","OTH"]; 
 
-var margin = {top: 40, right: 25, bottom: 5, left: 50},
+var margin = {top: 40, right: 25, bottom: 25, left: 50},
 width = 470 - margin.left - margin.right,
-height = 100 - margin.top - margin.bottom;
+height = 120 - margin.top - margin.bottom;
 
 // Initially, the graph won't be normalized. 
 var normalize = false;  
@@ -110,6 +110,8 @@ function normalizeX(value, dom){
     return norm(value);
 }
 
+var sentRelScoreFormat = d3.format('.02f');
+
 var color = d3.scale.category20b();
  
 var chart = d3.select('#container').append("svg")
@@ -134,7 +136,7 @@ layer.selectAll("rect")
     .attr("width", function(d) { return (normalize ? normalizeX(d.y, data[d.x].sum) : x(d.y))})
     .attr("data-toggle", "tooltip")
     .attr('class','rectooltip')
-    .attr('title', function(d) {return d.rel})
+  .attr('title', function(d) {return (normalize ? d.rel + ' Score: '+ data[d.x][d.rel] / data[d.x].sum : d.rel + ' Annotated by '+ data[d.x][d.rel]);})
     .on('click', function(d) { loadAnalyticsPage('relation', d.rel); }); 
 
 var yAxis = d3.svg.axis()
@@ -199,18 +201,45 @@ chart.selectAll(".bar")
 </script>
 <script type="text/javascript">
 
+/**
+ * Callback to update the tooltip text. 
+ * Updating the text by  changing the attribute 'data-original-title' using d3.js is buggy ("ignores" any formatting). 
+ * Instead, this function changes the attribute using jQuery selector, by retrieving the object by its coordinates (x,y). 
+ **/
+function updateTooltipText(d,i,norm){
+  
+  var x1 = normalizeX(d.y0, data[d.x].sum)
+  var y1 = y(d.x); 
+
+  var obj = $("rect[y='"+y1+"'][x='"+x1+"']"); 
+
+  if(!obj)
+    throw 'Wrong coordinates - x: '+d.x+' y: '+d.y;
+    
+    else {
+	if(!obj.attr('data-original-title'))
+	    throw 'Wrong coordinates - x: '+x1+' y: '+y1;
+	
+	var legend = d.rel+' - sent-relation score: '+sentRelScoreFormat(data[d.x][d.rel] / data[d.x].sum); 
+	obj.attr('title', legend);
+	obj.attr('data-original-title', legend);    
+    }
+}
+
 function normalizeGraph(norm){
     if(norm) {
 	
 	d3.selectAll("rect").transition()    
 	    .duration(500)
-            .attr("x", function(d) {return normalizeX(d.y0, data[d.x].sum); })
-            .attr("width", function(d) { return normalizeX(d.y, data[d.x].sum);})
-
+	    .attr("x", function(d) {return normalizeX(d.y0, data[d.x].sum); })
+	  .attr("width", function(d) { return normalizeX(d.y, data[d.x].sum);})
+	  .each('end',function(d,i){ updateTooltipText(d,i,norm)}); 
+	// The tooltip is adjusted after the transition for re-scaling the bars has ended. 	
+        
 	xAxis.scale(xnorm); 
 	gx.transition()
-	.duration(500)
-	.call(xAxis);
+	    .duration(500)
+	    .call(xAxis);
 	
     } else  {	      
 	d3.selectAll("rect").transition()    
@@ -220,8 +249,8 @@ function normalizeGraph(norm){
 
 	xAxis.scale(x); 
 	gx.transition()
-	.duration(500)
-	.call(xAxis);
+	    .duration(500)
+	    .call(xAxis);
 	
     }
     d3.selectAll('.sclaritytooltip').transition()
