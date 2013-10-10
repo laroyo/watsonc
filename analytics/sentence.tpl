@@ -43,23 +43,39 @@ Overall values, computed across all jobs.
 /*modified from Mike Bostock at http://bl.ocks.org/3943967 */
 
 var data = [    
-    {'unit_id' : 8421, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'numAnnotators': 15, 'sum': 46, 'sentClarity' : 0.2},
-    {'unit_id' : 8422, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 'numAnnotators': 12, 'sum': 37, 'sentClarity' : 0.3},
-    {'unit_id' : 8423, 'D' : 6,'S' : 14,'C': 14,'M' : 14 ,'L': 20,'AW': 4,'P':8,'SE': 14,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 'numAnnotators': 15, 'sum': 94, 'sentClarity' : 0.4}
-    //{'unit_id' : 8424, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46, 'sentClarity': 0.5},
-    //{'unit_id' : 8425, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 'sum': 46, 'sentClarity': 0.6}
+    {'jobID' : 8421, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 
+     'annotators' : [14710543, 14710544, 14710545]},
+    {'jobID' : 8422, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 
+     'annotators' : [14710543, 14710546, 14710547]},
+    {'jobID' : 8423, 'D' : 6,'S' : 14,'C': 14,'M' : 14 ,'L': 20,'AW': 4,'P':8,'SE': 14,'IA':0,'PO':0,'T':0,'CI':0,'OTH':0,"NONE":0, 
+     'annotators' : [14710548, 14710549]}
+    //{'unit_id' : 8424, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 
+    //'annotators' : [14710548, 14710549]}},
+    //{'unit_id' : 8425, 'D' : 4,'S' : 12,'C': 4,'M' : 10 ,'L': 1,'AW': 1,'P':2,'SE': 3,'IA':2,'PO':1,'T':1,'CI':2,'OTH':2,"NONE":1, 
+    //'annotators' : [14710548, 14710549]}}
 ];
 
-var max = 0; 
+var relations = ['D','S','C','M','L','AW','P','SE','IA','PO','T','CI','OTH',"NONE"];
+var maxNumAnnotations = 0; 
 
-for(var i = 0; i < data.length; i++){
-    if (data[i].sum > max)
-	max = data[i].sum;         
-}
+data.forEach(function(entry){
+    entry.numAnnotators = entry['annotators'].length;
 
-var relations = ['D','S','C','M','L','AW','P','SE','IA','PO','T','CI','OTH',"NONE"]
+    var max = 0; 
+    entry.numAnnotations = 0; 
+    for(var i = 0; i < relations.length; i++){
+	entry.numAnnotations += entry[relations[i]];
+	if(entry[relations[i]] > max) {
+	    max = entry[relations[i]];	    
+	}		
+    }
+    
 
-//var relations = ["D","C","AW","P","SE","T","CI","OTH"]; 
+    if(entry.numAnnotations > maxNumAnnotations)
+	maxNumAnnotations = entry.numAnnotations; 
+    
+    entry.sentClarity = (max / entry.numAnnotations);     
+});
 
 var margin = {top: 25, right: 25, bottom: 5, left: 50},
 width = 470 - margin.left - margin.right,
@@ -71,7 +87,7 @@ var normalize = false;
 var n = relations.length, // number of layers
 m = data.length, // number of samples per layer
 stack = d3.layout.stack(),
-labels = data.map(function(d) {return d.unit_id;}),
+labels = data.map(function(d) {return d.jobID;}),
 
 //go through each layer (elem11, elem2 etc, that's the range(n) part)
 //then go through each object in data and pull out that objects's population data
@@ -131,12 +147,12 @@ layer.selectAll("rect")
     .data(function(d) { return d; })
     .enter().append("rect")
     .attr("y", function(d) {return y(d.x); })
-    .attr("x", function(d) { return (normalize ? normalizeX(d.y0, data[d.x].sum) :  x(d.y0)) })
+    .attr("x", function(d) { return (normalize ? normalizeX(d.y0, data[d.x].numAnnotations) :  x(d.y0)) })
     .attr("height", y.rangeBand())
-    .attr("width", function(d) { return (normalize ? normalizeX(d.y, data[d.x].sum) : x(d.y))})
+    .attr("width", function(d) { return (normalize ? normalizeX(d.y, data[d.x].numAnnotations) : x(d.y))})
     .attr("data-toggle", "tooltip")
     .attr('class','rectooltip')
-  .attr('title', function(d) {return (normalize ? d.rel + ' Score: '+ data[d.x][d.rel] / data[d.x].sum : d.rel + ' Annotated by '+ data[d.x][d.rel]);})
+  .attr('title', function(d) {return (normalize ? d.rel + ' Score: '+ data[d.x][d.rel] / data[d.x].numAnnotations : d.rel + ' Annotated by '+ data[d.x][d.rel]);})
     .on('click', function(d) { loadAnalyticsPage('relation', d.rel); }); 
 
 var yAxis = d3.svg.axis()
@@ -166,7 +182,7 @@ var gx = chart.append("g")
 d3.select('.yaxis').selectAll("text")
     .attr("data-toggle", "tooltip")
     .attr('class','axistooltip')
-    .attr('title', function(d) {return "Annotated by "+ (data[getByValue(data, 'unit_id', d)].numAnnotators) +' workers'})
+    .attr('title', function(d) {return "Annotated by "+ (data[getByValue(data, 'jobID', d)].numAnnotators) +' workers'})
     .on('click',function(d){ loadAnalyticsPage('job',d)});
 
 /**
@@ -179,7 +195,7 @@ function sentClarity (i, normalized){
     if(normalized)
 	return ({x: width + 27, y: y(width * (i+1))+8, sentClarity : data[i].sentClarity});      	
     else
-	return ({x: (data[i].sum / max) * width +27, y: y(width * (i+1))+8, sentClarity : data[i].sentClarity});      		
+	return ({x: (data[i].numAnnotations / maxNumAnnotations) * width +27, y: y(width * (i+1))+8, sentClarity : data[i].sentClarity});      		
 }
 
 var sClarity = []; 
@@ -192,14 +208,14 @@ chart.selectAll(".bar")
     .data(sClarity)
     .enter().append("text")
     .attr("class", "bar")
-    .attr("x", function(d) {return d.x- 5})
+    .attr("x", function(d) {return d.x})
     .attr("y", function(d) {return d.y})
     .attr("dx", -3) // padding-right
     .attr("dy", ".9em") // vertical-align: middle
     .attr("text-anchor", "end") // text-align: right
     .attr("font-size", "11px") // text-align: right
     .attr('fill', 'black')
-    .text(function(d) {return d.sentClarity})
+    .text(function(d) {return sentRelScoreFormat(d.sentClarity)})
     .attr("data-toggle", "tooltip")
     .attr('class','sclaritytooltip')
     .attr('title', "Sentence Clarity");
@@ -217,8 +233,8 @@ function updateTooltipText(d,i,norm){
     var x1,legend; 
 
     if(norm) {
-	x1 = normalizeX(d.y0, data[d.x].sum)
-	legend = d.rel+' - sent-relation score: '+sentRelScoreFormat(data[d.x][d.rel] / data[d.x].sum); 
+	x1 = normalizeX(d.y0, data[d.x].numAnnotations)
+	legend = d.rel+' - sent-relation score: '+sentRelScoreFormat(data[d.x][d.rel] / data[d.x].numAnnotations); 
     } else {
 	x1 = x(d.y0); 
 	legend =  d.rel+' - Annotated by '+ data[d.x][d.rel]; 	
@@ -246,8 +262,8 @@ function normalizeGraph(norm){
 	
 	d3.selectAll("rect").transition()    
 	    .duration(500)
-	    .attr("x", function(d) {return normalizeX(d.y0, data[d.x].sum); })
-	  .attr("width", function(d) { return normalizeX(d.y, data[d.x].sum);})
+	    .attr("x", function(d) {return normalizeX(d.y0, data[d.x].numAnnotations); })
+	  .attr("width", function(d) { return normalizeX(d.y, data[d.x].numAnnotations);})
 	  .each('end',function(d,i){ updateTooltipText(d,i,norm)}); 
 	// The tooltip is adjusted after the transition for re-scaling the bars has ended. 	
         
