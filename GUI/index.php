@@ -345,7 +345,7 @@ while($row = mysql_fetch_array($result)){
 
         echo "<tr>";
         echo "<td><input type='radio' id='radiofile' name ='radiofile'/>$file_id</label></td>";
-        echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$file_id' class = 'filelinks' >$original_name</a></td>";
+        echo "<td><a href = '/wcs/services/getFile.php?id=$file_id' class = 'filelinks' >$original_name</a></td>";
         echo "<td>$filter_named</td>";
         echo "<td>$batch_size</td>";
 	echo "<td>$job_id</td>";
@@ -668,7 +668,7 @@ while($row = mysql_fetch_array($history)){
 	    extract ( $row );
         echo "<tr>";
         echo "<td style ='font-size: 80%' ><input type='checkbox' $checkbox_check id='checkboxjob' name ='job_ids' value = '$job_id'/></td>";
-        echo "<td style ='font-size: 80%' class='cJobId' title = '$job_title' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
+        echo "<td style ='font-size: 80%' class='cJobId' title = '$job_title' ><a href = '/wcs/services/getFile.php?id=$cfbatch_id' class = 'filelinks' >$job_id</a></td>";
 		echo "<td style ='font-size: 80%' class='cOrigin'>$origin</td>";
   //    echo "<td style ='font-size: 80%' class='cJobTitle' title = '$job_title' >".substr($job_title,0, 6)."</td>";
 	    echo "<td style ='font-size: 80%' class='cCreatedDate' title = '$created_date' >".substr($created_date,2, 8)."</td>";
@@ -700,7 +700,7 @@ while($row = mysql_fetch_array($history)){
 		echo "<td style ='font-size: 80%' class='cNumberofFilteredSentences'>$no_filtered_sentences</td>";
 		echo "<td style ='font-size: 80%' class='cTotalNumberofWorkers' >$no_workers</td>";
 		echo "<td style ='font-size: 80%' class='cNumberofFilteredWorkers'><button class = 'blockspammers' title = '$job_id' $checkbox_check >$no_filtered_workers</button></td>";
-        echo "<td style ='font-size: 80%' class='cStatus' title = '$job_id' ><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$resultsfile_id' class = '$checkbox_check' >$status</a></td>";
+        echo "<td style ='font-size: 80%' class='cStatus' title = '$job_id' ><a href = '/wcs/services/getFile.php?id=$resultsfile_id' class = '$checkbox_check' >$status</a></td>";
         echo "<td style ='font-size: 80%' class='cActions' title = '$job_id' >
         <select $status_change class= 'cActions changeStatus'>
         <option value='ChangeStatus'>-Change-</option>
@@ -767,10 +767,10 @@ while($row = mysql_fetch_array($results)){
 	echo "<td>$avg_time</td>";
 	echo "<td>$actual_time_spent</td>";
 	echo "<td>$max_time</td>";
-	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$origin_file_id' class = 'filelinks' >$origin_file_name</a></td>";
-	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$filtered_sentences_file_id' class = 'filelinks' >$number_filtered_sentences</a></td>";
-	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/getFile.php?id=$filtered_workers_file_id' class = 'filelinks' >$number_filtered_workers</a></td>";
-	echo "<td><a href = 'http://crowd-watson.nl/wcs/services/showImage.php?id=$statistics_image_id' id = 'showimage' class = 'filelinks' value = '$statistics_image' >$statistics_image
+	echo "<td><a href = '/wcs/services/getFile.php?id=$origin_file_id' class = 'filelinks' >$origin_file_name</a></td>";
+	echo "<td><a href = '/wcs/services/getFile.php?id=$filtered_sentences_file_id' class = 'filelinks' >$number_filtered_sentences</a></td>";
+	echo "<td><a href = '/wcs/services/getFile.php?id=$filtered_workers_file_id' class = 'filelinks' >$number_filtered_workers</a></td>";
+	echo "<td><a href = '/wcs/services/showImage.php?id=$statistics_image_id' id = 'showimage' class = 'filelinks' value = '$statistics_image' >$statistics_image
 	</a>
 	</td>";
 	echo "<td title='$job_id'>
@@ -856,7 +856,7 @@ while($row = mysql_fetch_array($results)){
   <div class="push"></div>
   </div> 
   <div class="footer" >
-	<h5 align = "center" class = "copyrightfooter" >Copyright © 2013 <a href = 'http://crowd-watson.nl/wcs/GUI/' target="_blank" class = 'filelinks' title = "http://crowd-watson.nl/wcs/GUI/" >Crowd-Watson</a>. All rights reserved.</h5>
+	<h5 align = "center" class = "copyrightfooter" >Copyright © 2013 <a href = '/wcs/GUI/' target="_blank" class = 'filelinks' title = "/wcs/GUI/" >Crowd-Watson</a>. All rights reserved.</h5>
 <h5 align = "center" class = "copyrightfooter" >
 | <a href = 'http://drwatsonsynonymgame.wordpress.com/about-this-project/' target="_blank" class = 'filelinks' title = 'About Crowd-Watson Project' >About</a> 
 | <a href = 'http://mailman.few.vu.nl/mailman/listinfo/crowd-watson-all' target="_blank" class = 'filelinks' title = "Crowd-watson-all" >Contact</a> 

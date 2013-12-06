@@ -3,8 +3,8 @@
 #Get a data frame with the relations majoritarily chosen for each of the sentences of a job
 #FIXME: extend to set.
 
-#source('/var/www/html/wcs/dataproc/envars.R')
-source('/home/gsc/watson/dataproc/envars.R')
+source('/var/www/html/wcs/dataproc/envars.R')
+#source('/home/gsc/watson/dataproc/envars.R')
 
 source(paste(libpath,'/db.R',sep=''),chdir=TRUE)
 source(paste(libpath,'/simplify.R',sep=''),chdir=TRUE)

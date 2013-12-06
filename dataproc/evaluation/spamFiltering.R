@@ -1,6 +1,6 @@
 # Script for evaluating the spam filtering (given manual annotations. 
 
-source('/home/gsc/watson/dataproc/envars.R')
+source('/var/www/html/wcs/dataproc/envars.R')
 source(paste(libpath,'/db.R',sep=''),chdir=TRUE)
 source(paste(libpath,'/measures.R',sep=''),chdir=TRUE)
 source(paste(libpath,'/filters.R',sep=''),chdir=TRUE)

@@ -7,3 +7,5 @@ define("BASE_PATH",'/var/www/html/wcs');
 define('FILES_PATH', '/var/www/files'); 
 define('IMAGES_PATH', BASE_PATH . '/graphs'); 
 define('IMAGES_ROUTE', '/wcs/graphs');
+
+?>
