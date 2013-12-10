@@ -115,7 +115,7 @@ function storeContentInFile($file_info, $content,$createdby) {
   case 'CFlowerResultFiles': 
     $nline = 0; 
     foreach($content as $row){
-      $q = "insert into cflower_results (job_id,unit_id,worker_id,worker_trust,external_type,relation,selected_words,explanation,started_at,created_at,term1,term2,sentence)".
+      $q = "insert into cflower_results (job_id,unit_id,worker_id,worker_trust,external_type,relation,explanation,selected_words,started_at,created_at,term1,term2,sentence)".
 
 	"values ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')";   
       if($nline > 0){
