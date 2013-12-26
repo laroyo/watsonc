@@ -227,8 +227,8 @@ $included_countries_query = "curl -X PUT -d \"job[included_countries][]=AU&job[i
 exec($included_countries_query);
 
 /* create cURL query for excluding countries */
-$excluded_countries_query = "curl -X PUT -d \"job[excluded_countries][]=IN&job[excluded_countries][]=CN&job[excluded_countries][]=ID\" \"https://api.crowdflower.com/v1/jobs/".$job_id.".json?key=".$api_key."\"";
-exec($excluded_countries_query);
+//$excluded_countries_query = "curl -X PUT -d \"job[excluded_countries][]=IN&job[excluded_countries][]=CN&job[excluded_countries][]=ID\" \"https://api.crowdflower.com/v1/jobs/".$job_id.".json?key=".$api_key."\"";
+//exec($excluded_countries_query);
 
 /* create cURL query for adding options */
 $options_query = "curl -X PUT -d \"job[options][calibrated_unit_time]=$calibrated_unit_time&job[options][mail_to]=oana.inel@gmail.com&job[options][keywords]=relations-annotation natural-language-processing text-annotation medical-relations&job[options][include_unfinished]=true&job[options][tags]=natural-language-processing<br>\" \"https://api.crowdflower.com/v1/jobs/".$job_id.".json?key=".$api_key."\"";
