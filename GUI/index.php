@@ -457,6 +457,14 @@ echo "</table>";
 								<div class = "combinedfield">
 									<input type="radio" name="template" value="t2ab"> T2AB: Relations with (text) definitions and extra without questions and automatic text field  <br /> <br /> 
 								</div>
+
+								<div class = "combinedfield">
+                                                                        <input type="radio" name="template" value="th"> TH: Relations with (mouse-over) definitions, extra questions, automatic text field and words highlighting <br /> <br />
+                                                                </div>
+
+								<div class = "combinedfield">
+                                                                        <input type="radio" name="template" value="td"> TD: Relation direction  <br /> <br />
+                                                                </div>
 								
 								<div class="labelfield">Choose worker channels:</div>
 								<div class="inputfield">&nbsp;</br></div>

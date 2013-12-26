@@ -78,6 +78,20 @@ if ($_POST["template"] == "t1" || $_POST["template"] == "t2" || $_POST["template
 	fclose($fh);
 	$data["instructions"] = htmlspecialchars_decode(htmlspecialchars($theData)); 
 }
+else if ($_POST["template"] == "th") {
+	$myFile = "instructionsWithExtraAndHighlight";
+        $fh = fopen($myFile, 'r');
+        $theData = fread($fh, filesize($myFile));
+        fclose($fh);
+        $data["instructions"] = htmlspecialchars_decode(htmlspecialchars($theData));
+}
+else if ($_POST["template"] == "td") {
+	$myFile = "instructionsDirection";
+        $fh = fopen($myFile, 'r');
+        $theData = fread($fh, filesize($myFile));
+        fclose($fh);
+        $data["instructions"] = htmlspecialchars_decode(htmlspecialchars($theData));
+}
 else {
 	$myFile = "instructionsWithoutExtra";
 	$fh = fopen($myFile, 'r');
@@ -93,6 +107,28 @@ if ($_POST["template"] == "t1b" || $_POST["template"] == "t2b" || $_POST["templa
 	fclose($fh);
 	$data["js"] = htmlspecialchars_decode(htmlspecialchars($theData));
 }
+if ($_POST["template"] == "td") {
+        $myFile = "cssDirection";
+        $fh = fopen($myFile, 'r');
+        $theData = fread($fh, filesize($myFile));
+        fclose($fh);
+        $data["css"] = htmlspecialchars_decode(htmlspecialchars($theData));
+}
+if ($_POST["template"] == "th") {
+        $myFile = "jsRelHighlight";
+        $fh = fopen($myFile, 'r');
+        $theData = fread($fh, filesize($myFile));
+        fclose($fh);
+        $data["js"] = htmlspecialchars_decode(htmlspecialchars($theData));
+
+	$myFile = "cssRelHighlight";
+        $fh = fopen($myFile, 'r');
+        $theData = fread($fh, filesize($myFile));
+        fclose($fh);
+        $data["css"] = htmlspecialchars_decode(htmlspecialchars($theData));
+}
+
+
 
 /* create the job with the specified settings */
 $ch = curl_init();
@@ -167,6 +203,19 @@ else if ($_POST["template"] == "t2ab") {
 	$template_info = "T2AB: Relations with (text) definitions and without extra questions and automatic text field ";
 	$response = exec($update_cml_job);
 }
+else if ($_POST["template"] == "th") {
+        $update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlRelHighlight.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+        $template_used = "TH" ;
+        $template_info = "TH: Relations with (mouse-over) definitions, extra questions, automatic text field and words highlighting";
+        $response = exec($update_cml_job);
+}
+else if ($_POST["template"] == "td") {
+        $update_cml_job = "curl -H \"application/json\" -X PUT -D - -d \"key=$api_key&job[cml]=`php cmlDirection.php`\" \"http://api.crowdflower.com/v1/jobs/$job_id.json\"";
+        $template_used = "TD" ;
+        $template_info = "TD: Relation direction";
+        $response = exec($update_cml_job);
+}
+
 
 //$update_job = "curl -X PUT -d \"job[worker_ui_remix]=false&job[execution_mode]=builder\" \"https://api.crowdflower.com/v1/jobs/".$job_id.".json?key=".$api_key."\"";
 //$response = exec($update_job);
