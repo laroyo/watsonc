@@ -35,11 +35,11 @@ public class AnnotsPerSent implements WorkerMeasure {
 	 * @see edu.vu.crowds.analysis.workers.WorkerMeasure#call(net.sf.javaml.core.Dataset, net.sf.javaml.core.Instance)
 	 */
 	@Override
-	public Double call(Map<Integer,Instance> workerSents,Map<Integer,Map<Integer,Set<String>>> workerAgreement,
-			Map<Integer,Instance> sentSumVectors,Map<Integer, Instance> sentFilters) {
+	public Double call(Map<String, Instance> workerSents,Map<Integer,Map<String,Set<String>>> workerAgreement,
+			Map<String,Instance> sentSumVectors,Map<String, Instance> sentFilters) {
 		Double numsents = 0.0;
 		Double numAnnots = 0.0;
-		for (int sentid : workerSents.keySet()) {
+		for (String sentid : workerSents.keySet()) {
 			if (sentFilters.get(sentid).get(filterIndex) < 1) {
 				numsents++;
 				Instance annots = workerSents.get(sentid);
@@ -56,4 +56,5 @@ public class AnnotsPerSent implements WorkerMeasure {
 	public String label() {
 		return "annots/Sent";
 	}
+
 }

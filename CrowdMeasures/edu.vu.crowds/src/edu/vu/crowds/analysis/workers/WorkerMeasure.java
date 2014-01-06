@@ -20,5 +20,5 @@ public interface WorkerMeasure extends Measure {
 	/**
 	 * Return NaN if all the sentences are filtered.
 	 */
-	public Double call(Map<Integer,Instance> workerSents,Map<Integer,Map<Integer,Set<String>>> workerAgreement,Map<Integer,Instance> sentSumVectors, Map<Integer, Instance> sentFilters);
+	public Double call(Map<String, Instance> map,Map<Integer, Map<String, Set<String>>> map2,Map<String, Instance> sentSumVectors, Map<String, Instance> sentFilters);
 }

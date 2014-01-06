@@ -22,9 +22,8 @@ import net.sf.javaml.core.DefaultDataset;
 import net.sf.javaml.core.DenseInstance;
 import net.sf.javaml.core.Instance;
 import net.sf.javaml.core.SparseInstance;
-
-
 import edu.vu.crowds.analysis.filters.PassAll;
+import edu.vu.crowds.analysis.filters.StdevMRCBelowMean;
 import edu.vu.crowds.analysis.filters.StdevMagBelowMean;
 import edu.vu.crowds.analysis.filters.StdevNormMagBelowMean;
 import edu.vu.crowds.analysis.filters.StdevNormRelMagBelowMean;
@@ -33,14 +32,17 @@ import edu.vu.crowds.analysis.sentences.AggregateSentenceMeasure;
 import edu.vu.crowds.analysis.sentences.SentenceFilter;
 import edu.vu.crowds.analysis.sentences.SentenceMeasure;
 import edu.vu.crowds.analysis.sentences.aggregates.MeanMagnitude;
+import edu.vu.crowds.analysis.sentences.aggregates.MeanMaxRelationCosine;
 import edu.vu.crowds.analysis.sentences.aggregates.MeanNormalizedMagnitude;
 import edu.vu.crowds.analysis.sentences.aggregates.MeanNormalizedRelationMagnitude;
 import edu.vu.crowds.analysis.sentences.aggregates.MeanNormalizedRelationMagnitudeByAll;
 import edu.vu.crowds.analysis.sentences.aggregates.StdDevMagnitude;
+import edu.vu.crowds.analysis.sentences.aggregates.StdDevMaxRelationCosine;
 import edu.vu.crowds.analysis.sentences.aggregates.StdDevNormalizedMagnitude;
 import edu.vu.crowds.analysis.sentences.aggregates.StdDevNormalizedRelationMagnitude;
 import edu.vu.crowds.analysis.sentences.aggregates.StdDevNormalizedRelationMagnitudeByAll;
 import edu.vu.crowds.analysis.sentences.measures.Magnitude;
+import edu.vu.crowds.analysis.sentences.measures.MaxRelationCosine;
 import edu.vu.crowds.analysis.sentences.measures.NormalizedMagnitude;
 import edu.vu.crowds.analysis.sentences.measures.NormalizedRelationMagnitude;
 import edu.vu.crowds.analysis.sentences.measures.NormalizedRelationMagnitudeByAll;
@@ -60,10 +62,15 @@ import edu.vu.crowds.analysis.workers.WorkerMeasure;
  * _unit_id	_worker_id	step_1_select_the_valid_relations	step_2a_copy__paste_only_the_words_from_the_sentence_that_express_the_relation_you_selected_in_step1	step_2b_if_you_selected_none_in_step_1_explain_why	b1	b2	e1	e2	id	relation-type	sentence	term1	term2
 	*	
  * @author welty
+ * @deprecated This has been rplaced by the CrowdTruth abstract class and is no longer working
  *
  */
 public class Clusterv2 {
-
+	
+	/**
+	 * The split char
+	 */
+	final static String SPLIT_CHAR = ",";
 	/**
 	 * Map from workerid -> Map from sent id -> worker annotation vector
 	 */
@@ -106,6 +113,7 @@ public class Clusterv2 {
 			new NormalizedMagnitude(),
 			new NormalizedRelationMagnitude(),
 			new NormalizedRelationMagnitudeByAll(),
+			new MaxRelationCosine(),
 	};
 	/**
 	 * Map from sent id -> instance containing metrics for the sent. 
@@ -128,6 +136,8 @@ public class Clusterv2 {
 			new StdDevNormalizedRelationMagnitude(),
 			new MeanNormalizedRelationMagnitudeByAll(),
 			new StdDevNormalizedRelationMagnitudeByAll(),
+			new MeanMaxRelationCosine(),
+			new StdDevMaxRelationCosine(),
 	};
 	/**
 	 * instance containing aggregate metrics for the collection. 
@@ -147,6 +157,7 @@ public class Clusterv2 {
 				new StdevNormMagBelowMean(),
 				new StdevNormRelMagBelowMean(),
 				new StdevNormRelMagByAllBelowMean(),
+				new StdevMRCBelowMean(),
 	//			new BelowMean()
 		};
 	/**
@@ -188,17 +199,19 @@ public class Clusterv2 {
 		BufferedReader r= new BufferedReader(new FileReader(f));
 		r.readLine(); // skip header
 		int index=0;
+		String splitChar = SPLIT_CHAR;
+		if (f.getName().endsWith(".tsv")) splitChar = "\t";
 		for (String l = r.readLine(); l != null; l=r.readLine()) {
-			String[] lineArray = l.split("\t");
-			while (lineArray.length < 14) {
+			String[] lineArray = l.split(splitChar);
+			while (lineArray.length < 32) {
 				l += r.readLine();
-				lineArray = l.split("\t");
+				lineArray = l.split(splitChar);
 			}
 			// for (int i=0; i<lineArray.length; i++) System.out.println(lineArray[i]);
 			Integer sentId = Integer.decode(lineArray[0]);
-			Integer workId = Integer.decode(lineArray[1]);
-			String choices = lineArray[2].replace("\"", "");
-			String seedRel = lineArray[10];
+			Integer workId = Integer.decode(lineArray[7]);
+			String choices = lineArray[13].replace("\"", "");
+			String seedRel = lineArray[12];
 			String annots[] = choices.split("\\]\\[");
 			for (int i=0; i<annots.length; i++) {
 				annots[i]=annots[i].replaceAll("\\]|\\[", "").toLowerCase();
@@ -331,8 +344,8 @@ public class Clusterv2 {
 				Instance workerMeasuresForFilt = new DenseInstance(workMeasures.length);
 				measuresForAllFilts.put(i, workerMeasuresForFilt);
 				for (WorkerMeasure measure : workMeasures) {
-					workerMeasuresForFilt.put(workerMeasureIndex.get(measure), 
-							measure.call(workers.get(workid), confusionMatrix.get(workid), sentSumVectors, sentFilters));
+//					workerMeasuresForFilt.put(workerMeasureIndex.get(measure), 
+//							measure.call(workers.get(workid), confusionMatrix.get(workid), sentSumVectors, sentFilters));
 				}
 			}
 		}
