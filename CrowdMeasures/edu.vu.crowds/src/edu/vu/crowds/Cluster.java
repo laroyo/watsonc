@@ -55,6 +55,7 @@ import edu.vu.crowds.analysis.sentences.measures.NormalizedRelationMagnitudeByAl
  * @author welty
  * @deprecated
  */
+@SuppressWarnings(value = { "all" })
 public class Cluster {
 
 	/**

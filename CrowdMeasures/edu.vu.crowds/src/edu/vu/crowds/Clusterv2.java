@@ -65,6 +65,7 @@ import edu.vu.crowds.analysis.workers.WorkerMeasure;
  * @deprecated This has been rplaced by the CrowdTruth abstract class and is no longer working
  *
  */
+@SuppressWarnings(value = { "all" })
 public class Clusterv2 {
 	
 	/**
