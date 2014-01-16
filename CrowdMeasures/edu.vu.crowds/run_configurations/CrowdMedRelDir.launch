@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/edu.vu.crowds/src/edu/vu/crowds/CrowdMedRelDir.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="edu.vu.crowds.CrowdMedRelDir"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="&quot;C:\Users\IBM_ADMIN\Desktop\Dropbox\Crowd-Watson\DATA\New-RelDir-Task (CF Output)\tmp Testing\merge-f357177+357208+357236+358231+358789.csv&quot;&#13;&#10;&quot;C:\Users\IBM_ADMIN\Desktop\Dropbox\Crowd-Watson\DATA\New-RelDir-Task (CF Output)\tmp Testing\merge-f357177+357208+357236+358231+358789-workers.csv&quot;&#13;&#10;&quot;C:\Users\IBM_ADMIN\Desktop\Dropbox\Crowd-Watson\DATA\New-RelDir-Task (CF Output)\tmp Testing\merge-f357177+357208+357236+358231+358789-sents.csv&quot;"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="edu.vu.crowds"/>
+</launchConfiguration>
