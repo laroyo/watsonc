@@ -169,7 +169,7 @@ public abstract class CrowdTruth {
 				workerSentAnnot.put(workId, workerSents);
 			}
 			if (workerSents.containsKey(sentId)) {
-				System.err.println("Worker " + workId + " annotated sentence " + sentId + " more than once");
+//				System.err.println("Worker " + workId + " annotated sentence " + sentId + " more than once");
 			} else {
 				workerSents.put(sentId, annotSet);
 			}
@@ -306,10 +306,11 @@ public abstract class CrowdTruth {
 			if (this.isFilteredWorker(workid)) {
 				workSentItor.remove(); 
 				count++;
+//				System.err.println("Filtered out worker: " + workid);
 			}			
 		}
 		if (count > 0)
-			System.err.println("Removed " + count + " low quality workers.");
+			System.err.println("Removed " + count + "/" + workers.size() + " low quality workers.");
 	}
 	
 	/**

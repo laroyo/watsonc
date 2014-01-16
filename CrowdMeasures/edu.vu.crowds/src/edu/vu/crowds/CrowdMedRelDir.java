@@ -38,6 +38,7 @@ import edu.vu.crowds.analysis.sentences.measures.MaxRelationCosine;
 import edu.vu.crowds.analysis.sentences.measures.NormalizedMagnitude;
 import edu.vu.crowds.analysis.sentences.measures.NormalizedRelationMagnitude;
 import edu.vu.crowds.analysis.sentences.measures.NormalizedRelationMagnitudeByAll;
+import edu.vu.crowds.analysis.sentences.measures.NumAnnotators;
 import edu.vu.crowds.analysis.workers.AnnotsPerSent;
 import edu.vu.crowds.analysis.workers.AvgWorkerAgreement;
 import edu.vu.crowds.analysis.workers.NumberOfSents;
@@ -63,7 +64,9 @@ public class CrowdMedRelDir extends CrowdTruth {
 	final static String ARG1 = "ARG1";
 	final static String ARG2 = "ARG2";
 	final static String NIL = "no_relation";
-
+	static final String GS_FAIL = "GS-FAIL";
+	
+	static Integer gsFailIndex = null;
 
 	CrowdMedRelDir(String filename) throws IOException {
 		measures = new SentenceMeasure[] {
@@ -72,6 +75,7 @@ public class CrowdMedRelDir extends CrowdTruth {
 				new NormalizedRelationMagnitude(),
 				new NormalizedRelationMagnitudeByAll(),
 				new MaxRelationCosine(),
+				new NumAnnotators(),
 		};
 		aggregates = new AggregateSentenceMeasure[] {
 				new MeanMagnitude(), 
@@ -104,6 +108,7 @@ public class CrowdMedRelDir extends CrowdTruth {
 		vectorIndex.put(ARG1, 0);
 		vectorIndex.put(ARG2, 1);
 		vectorIndex.put(NIL, 2);
+		vectorIndex.put(GS_FAIL, 3);
 		init(new File(filename));
 	}
 	
@@ -151,53 +156,88 @@ public class CrowdMedRelDir extends CrowdTruth {
 		out.println();
 	}
 	
-@Override	
+	@Override	
 	protected void printSentenceMeasures(File f, boolean printVectors) throws FileNotFoundException {
 		PrintStream out;
 		if (f == null) out = System.out;
 		else out = new PrintStream(f);
-	
+
+		String sep = ",";
+		if (f.getName().endsWith(".tsv")) sep="\t";
+
+		int[] origCols = {17,18,22,23,26,15,29};
+		String[] origLabels = {"b1","b2","e1","e2","rel","dir","sent"};
+
 		out.print("Sent id");
 		if (printVectors) {
 			for (int i=0; i<vectorIndex.size();i++) {
 				for (String label : vectorIndex.keySet()) {
-					if (vectorIndex.get(label) == i) out.print(","+label);
+					if (vectorIndex.get(label) == i) out.print(sep+label+sep+label+"-cos");
 				}
 			}
 		}
-		for (int i=0; i<measureIndex.size();i++) out.print(","+measures[i].label());
-		for (int i=0; i<filterIndex.size();i++) out.print(","+filters[i].label());
+		out.print(sep+"MaxRelCos" + sep + "NumAnnots");
+		for (int i=0;i<origCols.length;i++) out.print(sep+origLabels[i]);
 		out.println();
-		
+
 		for (String sentid : sentSumVectors.keySet()) {
-			out.print(sentid+",");
-			if (printVectors) out.print(JavaMlUtils.instanceString(sentSumVectors.get(sentid))+",");
-			out.println(JavaMlUtils.instanceString(sentMeasures.get(sentid))+","+
-					JavaMlUtils.instanceString(sentFilters.get(sentid)));
+			out.print(sentid+sep);
+			if (printVectors) {
+				Instance sumVector = sentSumVectors.get(sentid);
+				MaxRelationCosine relCos = (MaxRelationCosine) measures[4];
+				for (int rel = 0; rel<sumVector.keySet().size(); rel++) {
+					out.print(sumVector.get(rel) + sep+relCos.relationCosine(sumVector, rel)+sep);
+				}
+			}
+
+			Instance meas = sentMeasures.get(sentid);
+			out.print(meas.get(4)+sep+meas.get(5));
+
+			ArrayList<String> sentInput = sentsMap.get(sentid);
+			for (int i=0;i<origCols.length;i++) {
+				String content = sentInput.get(origCols[i]);
+				try {
+					Integer.decode(content);
+					out.print(sep + content);
+				} catch (NumberFormatException e) {
+					out.print(sep + "\"" + content.replaceAll("\"", "") + "\""); // quote strings in case they contain commas
+				}
+			}
+			out.println();
 		}
-	
-		out.println();
-		for (int i=0; i<aggIndex.size();i++) out.print(","+aggregates[i].label());
-		out.println();
-		for (int i=0; i<aggIndex.size();i++) out.print(","+aggMeasures.get(i));
-		out.println();
 	}
 
 	@Override
 	protected Integer getNumCols() {
 		return 32;
 	}
+	
 	@Override
 	protected Set<String> getAnnots(ArrayList<String> lineArray) {
 		Set<String> annots = new HashSet<String>();
-		String dir = lineArray.get(15);
-		if (NIL.equals(dir)) annots.add(NIL);
+		String dir = lineArray.get(15);//.replaceAll("[\\[\\]]", "");
+		if (NIL.equalsIgnoreCase(dir)) annots.add(NIL);
 		else {
+			String dirArg1 = dir.substring(dir.indexOf('['),dir.indexOf(']')+1);
 			int arg1Beg = Integer.decode(lineArray.get(17));
+//			int arg1End = Integer.decode(lineArray.get(22));
 			int arg2Beg = Integer.decode(lineArray.get(18));
-			if (arg1Beg < arg2Beg) annots.add(ARG1);
-			else annots.add(ARG2);
+//			int arg2End = Integer.decode(lineArray.get(23));
+			int loc = lineArray.get(29).indexOf(dirArg1);
+//			String arg1 = lineArray.get(29).replaceAll("[\\[\\]]", "").substring(arg1Beg+1, arg1End);
+			// The offsets are a bit off, pick the one that is closest...
+			System.out.print("Selected arg offset: "+loc+", ");
+			if (Math.abs(loc-arg1Beg) < Math.abs(loc-arg2Beg)) {
+				annots.add(ARG1);
+				System.out.println(arg1Beg);
+			} else {
+				annots.add(ARG2);
+				System.out.println(arg2Beg);
+			}
 		}
+
+		if ("TRUE".equalsIgnoreCase(lineArray.get(5))) annots.add(GS_FAIL); // failed GS test
+		// annots will have 1-2 members, the direction and GS_FAIL if failed
 		return annots;
 	}
 
@@ -224,7 +264,14 @@ public class CrowdMedRelDir extends CrowdTruth {
 			c.computeSentenceFilters();
 			c.computeWorkerMeasures();
 			c.printWorkerMeasures(new File(args[1]));
+//			c.printSentenceMeasures(new File(args[2]),true);
+			c.filterWorkers();
+			c.buildConfusionMatrix();
+			c.buildSentenceClusters();
+			c.computeSentenceMeasures();
+			c.computeAggregateSentenceMeasures();
 			c.printSentenceMeasures(new File(args[2]),true);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -232,7 +279,29 @@ public class CrowdMedRelDir extends CrowdTruth {
 
 	@Override
 	protected boolean isFilteredWorker(Integer workid) {
-		// TODO Auto-generated method stub
+		List<SentenceFilter> filterList = getMeasuresByIndex(filterIndex);
+		List<WorkerMeasure> measureList = getMeasuresByIndex(workerMeasureIndex);
+		int findex = filterIndex.get(filterList.get(5)); // the MRC<STDEV sentence filter
+		Map<Integer,Instance> w = workerMeasures.get(workid);
+		Instance measures = w.get(findex);
+		Double numSents = measures.get(workerMeasureIndex.get(measureList.get(0)));
+		if (numSents < 2) return true; // too few annots
+//		Integer idx = vectorIndex.get(GS_FAIL);
+//		if (idx != null) { // if at least one person failed a GS test
+//			Map<String, Instance> workerSents = workers.get(workid);
+//			for (Instance annots : workerSents.values()) {
+//				if(annots.get(idx) > 0) return true; // this guy failed a GS test
+//			}	
+//		}		
+		Double annotsPerSent = measures.get(workerMeasureIndex.get(measureList.get(3)));
+		if (annotsPerSent > 1) return true; // this guy failed a GS test
+		
+		Double agree = measures.get(workerMeasureIndex.get(measureList.get(2)));
+		if (agree < .6f) return true; //very disagreeable worker
+
+		Double cos = measures.get(workerMeasureIndex.get(measureList.get(1)));  
+		if (cos > .4) return true; // does not appear to have signal for this task
+		
 		return false;
 	}
 }
