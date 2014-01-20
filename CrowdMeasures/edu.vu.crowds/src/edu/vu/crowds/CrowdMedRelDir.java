@@ -165,7 +165,7 @@ public class CrowdMedRelDir extends CrowdTruth {
 		String sep = ",";
 		if (f.getName().endsWith(".tsv")) sep="\t";
 
-		int[] origCols = {17,18,22,23,26,15,29};
+		int[] origCols = {17,18,22,23,35,15,29};
 		String[] origLabels = {"b1","b2","e1","e2","rel","dir","sent"};
 
 		out.print("Sent id");
@@ -209,36 +209,56 @@ public class CrowdMedRelDir extends CrowdTruth {
 
 	@Override
 	protected Integer getNumCols() {
-		return 32;
+		return 36;
 	}
 	
 	@Override
 	protected Set<String> getAnnots(ArrayList<String> lineArray) {
 		Set<String> annots = new HashSet<String>();
+		try {
 		String dir = lineArray.get(15);//.replaceAll("[\\[\\]]", "");
 		if (NIL.equalsIgnoreCase(dir)) annots.add(NIL);
 		else {
-			String dirArg1 = dir.substring(dir.indexOf('['),dir.indexOf(']')+1);
+			String dirArg1 = processQuotes(dir.substring(dir.indexOf('[')+1,dir.indexOf(']')));
+			String dirArg2 = processQuotes(dir.substring(dir.lastIndexOf('[')+1,dir.lastIndexOf(']')));
+			String sent = lineArray.get(29).replaceAll("[\\[\\]]", "");
+			sent = processQuotes(sent);
+
 			int arg1Beg = Integer.decode(lineArray.get(17));
-//			int arg1End = Integer.decode(lineArray.get(22));
-			int arg2Beg = Integer.decode(lineArray.get(18));
+			int arg1End = Integer.decode(lineArray.get(22));
+			String arg1 = sent.substring(arg1Beg, arg1End);
+//			int arg2Beg = Integer.decode(lineArray.get(18));
 //			int arg2End = Integer.decode(lineArray.get(23));
-			int loc = lineArray.get(29).indexOf(dirArg1);
-//			String arg1 = lineArray.get(29).replaceAll("[\\[\\]]", "").substring(arg1Beg+1, arg1End);
-			// The offsets are a bit off, pick the one that is closest...
-			System.out.print("Selected arg offset: "+loc+", ");
-			if (Math.abs(loc-arg1Beg) < Math.abs(loc-arg2Beg)) {
-				annots.add(ARG1);
-				System.out.println(arg1Beg);
-			} else {
-				annots.add(ARG2);
-				System.out.println(arg2Beg);
+//			String arg2 = sent.substring(arg2Beg, arg2End);
+			
+			if (arg1.equalsIgnoreCase(dirArg1)) annots.add(ARG1);
+			else if (arg1.equalsIgnoreCase(dirArg2)) annots.add(ARG2);
+			else { 
+				System.err.println("Args don't match sent: " + dir);
+				return null;
 			}
+
+			//			int loc = lineArray.get(29).indexOf(dirArg1);
+//			System.out.println(dirArg1 + "," + dirArg2 + "," + arg1 + "," + arg2);
+			// The offsets are a bit off, pick the one that is closest...
+//			System.out.print("Selected arg offset: "+loc+", ");
+//			if (Math.abs(loc-arg1Beg) < Math.abs(loc-arg2Beg)) {
+//				annots.add(ARG1);
+//				System.out.println(arg1Beg);
+//			} else {
+//				annots.add(ARG2);
+//				System.out.println(arg2Beg);
+//			}
 		}
 
-		if ("TRUE".equalsIgnoreCase(lineArray.get(5))) annots.add(GS_FAIL); // failed GS test
+		if ("TRUE".equalsIgnoreCase(lineArray.get(5)) || "1".equalsIgnoreCase(lineArray.get(5)))
+			annots.add(GS_FAIL); // failed GS test
+		
 		// annots will have 1-2 members, the direction and GS_FAIL if failed
 		return annots;
+		} catch (StringIndexOutOfBoundsException e) { 
+			return null; 
+		}
 	}
 
 	@Override

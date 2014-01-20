@@ -125,7 +125,7 @@ public class CrowdMedRelEx12 extends CrowdTruth {
 				out.print("," + measureList.get(j).label());
 			}
 		}
-		out.println();
+		out.println(",Filtered");
 		
 		for (int workid : workerMeasures.keySet()) {
 			out.print(workid);
@@ -140,7 +140,7 @@ public class CrowdMedRelEx12 extends CrowdTruth {
 					if (!val.isNaN()) out.print(val);
 				}
 			}
-			out.println();
+			out.println( (this.isFilteredWorker(workid) ? ",1" : ",0") );
 		}
 		out.println();
 	}
@@ -261,7 +261,7 @@ public class CrowdMedRelEx12 extends CrowdTruth {
 			c.computeAggregateSentenceMeasures();
 			c.computeSentenceFilters();
 			c.computeWorkerMeasures();
-//			c.printWorkerMeasures(new File(args[1]));
+			c.printWorkerMeasures(new File(args[1]));
 //			c.printSentenceMeasures(new File(args[2]),true);
 			c.filterWorkers();
 			c.buildConfusionMatrix();

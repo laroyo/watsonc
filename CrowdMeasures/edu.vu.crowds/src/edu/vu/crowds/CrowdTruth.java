@@ -129,32 +129,33 @@ public abstract class CrowdTruth {
 	 * Map from measure to measure index
 	 */
 	protected Map<WorkerMeasure,Integer> workerMeasureIndex = new HashMap<WorkerMeasure, Integer>();
+	/**
+	 * The header labels from the input file
+	 */
+	protected ArrayList<String> header;
 
 	public void init(File f) throws IOException {
 		MakeIndexMap(measures,measureIndex);
 		MakeIndexMap(filters,filterIndex);
 		MakeIndexMap(aggregates,aggIndex);
 		MakeIndexMap(workMeasures,workerMeasureIndex);		
+		char splitChar = getSplitCharFromFilename(f.getName(), SPLIT_CHAR.charAt(0));
 	
 		BufferedReader r= new BufferedReader(new FileReader(f));
-		r.readLine(); // skip header
-		char splitChar = SPLIT_CHAR.charAt(0);
-		if (f.getName().endsWith(".tsv")) splitChar = '\t';
+		this.header = parseCsvLine(r, r.readLine(), splitChar);
+		if (this.header.size() != this.getNumCols()) 
+			System.err.println("Number of columns ("+ this.header.size() + ") doesn't match expected"); 
 		for (String l = r.readLine(); l != null; l=r.readLine()) {
-			ArrayList<String> lineArray = new ArrayList<String>();
-			boolean inQuote = false;
-			for (int start=0,end=0; start<l.length(); start=end+1) {
-				for (end=start; end<l.length() && (inQuote || l.charAt(end) != splitChar); end++) {
-					if (l.charAt(end) == '"') inQuote = !inQuote;
-					if (inQuote && end == l.length()-1) l += r.readLine(); //line break in the middle of a quote
-				}
-				lineArray.add(l.substring(start,end));
-			}
+			ArrayList<String> lineArray = parseCsvLine(r,l,splitChar);
 //			System.out.println(lineArray);
 			
 			String sentId = this.getSentId(lineArray);
 			Integer workId = this.getWorkId(lineArray);
 			Set<String> annotSet = this.getAnnots(lineArray);
+			if (annotSet == null) {
+				System.err.println("Unable to process: " + lineArray);
+				continue; // don't process lines with bad data
+			}
 			
 //			System.out.print(sentId+","+workId);
 //			for (String s : annotSet) System.out.print("," + s);
@@ -177,9 +178,22 @@ public abstract class CrowdTruth {
 		r.close();
 	}
 	
+	/**
+	 * Clean up opening and embedded "" in csv field strings
+	 * @param str
+	 * @return
+	 */
+	protected String processQuotes(String str) {
+		if (str.startsWith("\"")) str = str.substring(1,str.lastIndexOf('"')); // eat delimiting quotes in csv
+		str = str.replaceAll("\"\"", "\""); // double "" means a single one
+		return str;
+	}
+
+
+
 	protected abstract void printWorkerMeasures(File f) throws FileNotFoundException;
 	protected abstract void printSentenceMeasures(File f, boolean printVectors) throws FileNotFoundException;
-	protected abstract Set<String> getAnnots(ArrayList<String> lineArray);
+	protected abstract Set<String> getAnnots(ArrayList<String> lineArray); // return null if bad data
 	protected abstract Integer getWorkId(ArrayList<String> lineArray);
 	protected abstract String getSentId(ArrayList<String> lineArray);
 	protected abstract Integer getNumCols();
@@ -339,5 +353,26 @@ public abstract class CrowdTruth {
 	protected <T> void MakeIndexMap(T[] indices,	Map<T, Integer> map) {
 		for (int i=0; i<indices.length; i++) map.put(indices[i], i);
 	}
-
+	/**
+	 * Will eat newlines but other whtsp and quote will remain
+	 */
+	static public ArrayList<String> parseCsvLine(BufferedReader r, String l, char splitChar) throws IOException {
+		ArrayList<String> lineArray = new ArrayList<String>();
+		boolean inQuote = false;
+		for (int start=0,end=0; start<l.length(); start=end+1) {
+			for (end=start; end<l.length() && (inQuote || l.charAt(end) != splitChar); end++) {
+				if (l.charAt(end) == '"') inQuote = !inQuote;
+				if (inQuote && end == l.length()-1) l += r.readLine(); //line break in the middle of a quote
+			}
+			lineArray.add(l.substring(start,end));
+		}
+		
+		return lineArray;
+	}
+	static public char getSplitCharFromFilename(String name,char def) {
+		char splitChar = def;
+		if (name.endsWith(".tsv") || name.endsWith(".tsf")) splitChar = '\t';
+		if (name.endsWith(".csv")) splitChar = ',';
+		return splitChar;
+	}
 }
