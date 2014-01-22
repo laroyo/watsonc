@@ -208,8 +208,8 @@ public class CrowdMedRelEx12 extends CrowdTruth {
 
 	@Override
 	protected Set<String> getAnnots(ArrayList<String> lineArray) {
-		String choices = lineArray.get(13).replace("\"", "");
-		String annots[] = choices.split("\\]\\[");
+		String choices = lineArray.get(12).replace("\"", "");
+		String annots[] = choices.split("\\]\\s*\\[");
 		for (int i=0; i<annots.length; i++) {
 			annots[i]=annots[i].replaceAll("\\]|\\[", "").toLowerCase();
 			if (!vectorIndex.containsKey(annots[i])) {
