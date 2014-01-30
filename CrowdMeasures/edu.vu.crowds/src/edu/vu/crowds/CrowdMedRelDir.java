@@ -138,7 +138,7 @@ public class CrowdMedRelDir extends CrowdTruth {
 		}
 		out.println();
 		
-		for (int workid : workerMeasures.keySet()) {
+		for (String workid : workerMeasures.keySet()) {
 			out.print(workid);
 			for (int i=0; i<filters.length; i++) {
 				for (int j=0; j<workMeasures.length; j++) {
@@ -262,8 +262,8 @@ public class CrowdMedRelDir extends CrowdTruth {
 	}
 
 	@Override
-	protected Integer getWorkId(ArrayList<String> lineArray) {
-		return Integer.decode(lineArray.get(10));
+	protected String getWorkId(ArrayList<String> lineArray) {
+		return lineArray.get(10);
 	}
 
 	@Override
@@ -298,14 +298,16 @@ public class CrowdMedRelDir extends CrowdTruth {
 	}
 
 	@Override
-	protected boolean isFilteredWorker(Integer workid) {
+	protected boolean isFilteredWorker(String workid) {
 		List<SentenceFilter> filterList = getMeasuresByIndex(filterIndex);
 		List<WorkerMeasure> measureList = getMeasuresByIndex(workerMeasureIndex);
 		int findex = filterIndex.get(filterList.get(5)); // the MRC<STDEV sentence filter
 		Map<Integer,Instance> w = workerMeasures.get(workid);
 		Instance measures = w.get(findex);
 		Double numSents = measures.get(workerMeasureIndex.get(measureList.get(0)));
-		if (numSents < 2) return true; // too few annots
+		
+		// System.err.println("WORKER: " + workid + ", JUDGEMENTS: " + numSents);
+		// if (numSents < 2) return true; // too few annots
 //		Integer idx = vectorIndex.get(GS_FAIL);
 //		if (idx != null) { // if at least one person failed a GS test
 //			Map<String, Instance> workerSents = workers.get(workid);
@@ -315,12 +317,15 @@ public class CrowdMedRelDir extends CrowdTruth {
 //		}		
 		Double annotsPerSent = measures.get(workerMeasureIndex.get(measureList.get(3)));
 		if (annotsPerSent > 1) return true; // this guy failed a GS test
+		// System.err.println("PASSED GS");
 		
 		Double agree = measures.get(workerMeasureIndex.get(measureList.get(2)));
 		if (agree < .6f) return true; //very disagreeable worker
+		// System.err.println("PASSED AGREEMENT");
 
 		Double cos = measures.get(workerMeasureIndex.get(measureList.get(1)));  
 		if (cos > .4) return true; // does not appear to have signal for this task
+		// System.err.println("PASSED TASK SIGNAL");
 		
 		return false;
 	}

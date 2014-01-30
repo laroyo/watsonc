@@ -33,7 +33,7 @@ public class NumberOfSents implements WorkerMeasure {
 	 * @see edu.vu.crowds.analysis.workers.WorkerMeasure#call(net.sf.javaml.core.Dataset, net.sf.javaml.core.Instance)
 	 */
 	@Override
-	public Double call(Map<String, Instance> workerSents,Map<Integer,Map<String,Set<String>>> workerAgreement,
+	public Double call(Map<String, Instance> workerSents,Map<String,Map<String,Set<String>>> workerAgreement,
 			Map<String,Instance> sentSumVectors,Map<String, Instance> sentFilters) {
 		Double count = 0.0;
 		for (String sentid : workerSents.keySet()) {

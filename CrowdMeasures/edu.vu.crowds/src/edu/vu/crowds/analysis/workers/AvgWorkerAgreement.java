@@ -33,7 +33,7 @@ public class AvgWorkerAgreement implements WorkerMeasure {
 	 * @see edu.vu.crowds.analysis.workers.WorkerMeasure#call(net.sf.javaml.core.Dataset, net.sf.javaml.core.Instance)
 	 */
 	@Override
-	public Double call(Map<String, Instance> workerSents,Map<Integer,Map<String,Set<String>>> workerAgreement,
+	public Double call(Map<String, Instance> workerSents,Map<String,Map<String,Set<String>>> workerAgreement,
 			Map<String,Instance> sentSumVectors,Map<String, Instance> sentFilters) {
 		Double weightedSum = 0.0;
 		Double weightedCount = 0.0;
@@ -43,7 +43,7 @@ public class AvgWorkerAgreement implements WorkerMeasure {
 		 * workerid1 -> workerid2 = empty Map if they annotated no sentences in common
 		 * workerid1 -> workerid2 -> sentid = empty Set if they did not agree on that sent
 		 */
-		for (int workid2 : workerAgreement.keySet()) {
+		for (String workid2 : workerAgreement.keySet()) {
 			Map<String,Set<String>> w2Agreement = workerAgreement.get(workid2);
 			int sentsInCommon = 0;
 			int hitCount = 0;

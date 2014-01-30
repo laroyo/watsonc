@@ -127,7 +127,7 @@ public class CrowdMedRelEx12 extends CrowdTruth {
 		}
 		out.println(",Filtered");
 		
-		for (int workid : workerMeasures.keySet()) {
+		for (String workid : workerMeasures.keySet()) {
 			out.print(workid);
 			for (int i=0; i<filters.length; i++) {
 				for (int j=0; j<workMeasures.length; j++) {
@@ -220,8 +220,8 @@ public class CrowdMedRelEx12 extends CrowdTruth {
 	}
 
 	@Override
-	protected Integer getWorkId(ArrayList<String> lineArray) {
-		return Integer.decode(lineArray.get(7));
+	protected String getWorkId(ArrayList<String> lineArray) {
+		return lineArray.get(7);
 	}
 
 	@Override
@@ -233,7 +233,7 @@ public class CrowdMedRelEx12 extends CrowdTruth {
 	protected Integer getNumCols() { return 32; }
 
 	@Override
-	protected boolean isFilteredWorker(Integer workid) {
+	protected boolean isFilteredWorker(String workid) {
 		List<SentenceFilter> filterList = getMeasuresByIndex(filterIndex);
 		List<WorkerMeasure> measureList = getMeasuresByIndex(workerMeasureIndex);
 		int findex = filterIndex.get(filterList.get(5)); // the MRC<STDEV sentence filter

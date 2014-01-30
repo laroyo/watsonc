@@ -48,13 +48,13 @@ public abstract class CrowdTruth {
 	/**
 	 * Map from workerid -> Map from sent id -> worker annotation vector
 	 */
-	protected Map<Integer,Map<String,Instance>> workers;
+	protected Map<String, Map<String, Instance>> workers;
 	/**
 	 * Map from worker id -> Map from sent id -> set of annotations
 	 * This is for reading in the csv data
 	 * TODO probably this can be removed and read data directly into workers field above
 	 */
-	protected Map<Integer,Map<String,Set<String>>> workerSentAnnot = new HashMap<Integer,Map<String,Set<String>>>();
+	protected Map<String,Map<String,Set<String>>> workerSentAnnot = new HashMap<String,Map<String,Set<String>>>();
 	/**
 	 * Map from sentid -> Dataset of worker annotation vectors
 	 */
@@ -65,7 +65,7 @@ public abstract class CrowdTruth {
 	 * workerid1 -> workerid2 = empty Map if they annotated no sentences in common
 	 * workerid1 -> workerid2 -> sentid = empty Set if they did not agree on that sent
 	 */
-	protected Map<Integer,Map<Integer,Map<String,Set<String>>>> confusionMatrix;
+	protected Map<String, Map<String, Map<String, Set<String>>>> confusionMatrix;
 	/**
 	 * Map from relation names to vector index
 	 */
@@ -124,7 +124,7 @@ public abstract class CrowdTruth {
 	/**
 	 * Map from workerid -> filter index -> worker measure with this sentence filter
 	 */
-	protected Map<Integer,Map<Integer,Instance>> workerMeasures = new HashMap<Integer,Map<Integer,Instance>>();
+	protected Map<String,Map<Integer,Instance>> workerMeasures = new HashMap<String,Map<Integer,Instance>>();
 	/**
 	 * Map from measure to measure index
 	 */
@@ -143,14 +143,17 @@ public abstract class CrowdTruth {
 	
 		BufferedReader r= new BufferedReader(new FileReader(f));
 		this.header = parseCsvLine(r, r.readLine(), splitChar);
-		if (this.header.size() != this.getNumCols()) 
-			System.err.println("Number of columns ("+ this.header.size() + ") doesn't match expected"); 
+		if (this.header.size() != this.getNumCols()) {
+			System.err.println("Columns in header: " + this.header.size());
+			System.err.println("Columns in function: " + this.getNumCols());
+			System.err.println("Number of columns ("+ this.header.size() + ") doesn't match expected");
+		}
 		for (String l = r.readLine(); l != null; l=r.readLine()) {
 			ArrayList<String> lineArray = parseCsvLine(r,l,splitChar);
 //			System.out.println(lineArray);
 			
 			String sentId = this.getSentId(lineArray);
-			Integer workId = this.getWorkId(lineArray);
+			String workId = this.getWorkId(lineArray);
 			Set<String> annotSet = this.getAnnots(lineArray);
 			if (annotSet == null) {
 				System.err.println("Unable to process: " + lineArray);
@@ -194,19 +197,19 @@ public abstract class CrowdTruth {
 	protected abstract void printWorkerMeasures(File f) throws FileNotFoundException;
 	protected abstract void printSentenceMeasures(File f, boolean printVectors) throws FileNotFoundException;
 	protected abstract Set<String> getAnnots(ArrayList<String> lineArray); // return null if bad data
-	protected abstract Integer getWorkId(ArrayList<String> lineArray);
+	protected abstract String getWorkId(ArrayList<String> lineArray);
 	protected abstract String getSentId(ArrayList<String> lineArray);
 	protected abstract Integer getNumCols();
-	protected abstract boolean isFilteredWorker(Integer workid);
+	protected abstract boolean isFilteredWorker(String workid);
 
 	public void buildConfusionMatrix() {
-		confusionMatrix  = new HashMap<Integer,Map<Integer,Map<String,Set<String>>>>();
-		for (int workid1 : workerSentAnnot.keySet()) {
+		confusionMatrix  = new HashMap<String,Map<String,Map<String,Set<String>>>>();
+		for (String workid1 : workerSentAnnot.keySet()) {
 			Map<String,Set<String>> work1Sents = workerSentAnnot.get(workid1);
-			Map<Integer,Map<String,Set<String>>> work1row = new HashMap<Integer,Map<String,Set<String>>>();
+			Map<String,Map<String,Set<String>>> work1row = new HashMap<String,Map<String,Set<String>>>();
 			confusionMatrix.put(workid1, work1row);
-			for (int workid2 : workerSentAnnot.keySet()) {
-				if (workid1 == workid2) continue;
+			for (String workid2 : workerSentAnnot.keySet()) {
+				if (workid1.equals(workid2)) continue;
 				Map<String,Set<String>> work2Sents = workerSentAnnot.get(workid2);
 				Map<String,Set<String>> work1work2row = new HashMap<String, Set<String>>();
 				work1row.put(workid2, work1work2row);
@@ -223,8 +226,8 @@ public abstract class CrowdTruth {
 	
 	public void buildSentenceClusters() {
 		sentClusters = new HashMap<String,Dataset>();
-		workers = new HashMap<Integer,Map<String,Instance>>();
-		for (int workid1 : workerSentAnnot.keySet()) {
+		workers = new HashMap<String,Map<String,Instance>>();
+		for (String workid1 : workerSentAnnot.keySet()) {
 			Map<String,Set<String>> work1Sents = workerSentAnnot.get(workid1);
 			Map<String,Instance> workerInstancesBySent = workers.get(workid1);
 			if (workerInstancesBySent == null) {
@@ -286,11 +289,11 @@ public abstract class CrowdTruth {
 	
 	public void computeWorkerMeasures() {
 		// Map from workerid -> filter index -> worker measure with this sentence filter
-		workerMeasures = new HashMap<Integer,Map<Integer,Instance>>();
+		workerMeasures = new HashMap<String,Map<Integer,Instance>>();
 		for (int i=0; i<filters.length; i++) {
 			for (WorkerMeasure m : workMeasures) m.init(i);
-			for (int workid : workers.keySet()) {
-				Map<Integer,Instance> measuresForAllFilts;
+			for (String workid : workers.keySet()) {
+				Map<Integer, Instance> measuresForAllFilts;
 				if (workerMeasures.containsKey(workid)) {
 					measuresForAllFilts = workerMeasures.get(workid);
 				}
@@ -314,9 +317,9 @@ public abstract class CrowdTruth {
 	 */
 	public void filterWorkers() {
 		int count = 0;
-		for (Iterator<Entry<Integer, Map<String, Set<String>>>> workSentItor = workerSentAnnot.entrySet().iterator(); 
+		for (Iterator<Entry<String, Map<String, Set<String>>>> workSentItor = workerSentAnnot.entrySet().iterator(); 
 				workSentItor.hasNext();) {
-			int workid = workSentItor.next().getKey();
+			String workid = workSentItor.next().getKey();
 			if (this.isFilteredWorker(workid)) {
 				workSentItor.remove(); 
 				count++;
