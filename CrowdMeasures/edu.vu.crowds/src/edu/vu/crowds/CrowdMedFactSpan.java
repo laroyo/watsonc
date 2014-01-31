@@ -207,6 +207,7 @@ public class CrowdMedFactSpan extends CrowdTruth {
 					index = workerMeasureIndex.get(measureList.get(j));
 					Double val = in.get(index);	
 					out.print(",");
+					// TODO: check why it's not printing for all workers
 					if (!val.isNaN()) out.print(val);
 				}
 			}
@@ -275,15 +276,189 @@ public class CrowdMedFactSpan extends CrowdTruth {
 //		for (int i=0; i<aggIndex.size();i++) out.print(sep+aggMeasures.get(i));
 //		out.println();
 	}
+	
+	protected static List<String> addSeparators(List<String> terms, boolean isLeft) {
+		String[] separators = {" ", "-"};
+		List<String> newV = new ArrayList<String>(terms);
+		//newV.add("");
+		for (String tl : terms) {
+			if (tl.compareTo("") != 0) {
+				for (int i = 0; i < separators.length; i++) {
+					if (isLeft) tl += " ";
+					else tl = " " + tl;
+					newV.add(tl);
+				}
+			}
+		}
+		return newV;
+	}
+	
+	protected void printRelEx(File f) throws FileNotFoundException {
+		PrintStream out;
+		if (f == null) out = System.out;
+		else out = new PrintStream(f);
+		
+		String sep = ",";
+		if (f.getName().endsWith(".tsv")) sep="\t";
+		
+		//int[] origCols = {12,13,18,19,28,39,40};
+		String[] origLabels = {"Sent_id","term1","term2","b1","b2","e1","e2","sentence"};
+		
+		for (int i=0;i<origLabels.length - 1;i++) out.print(origLabels[i] + sep);
+		out.print(origLabels[origLabels.length - 1]);
+		out.println();
+		
+		Map<String, ArrayList<String> > sentTerm1Set = new HashMap<String, ArrayList<String> >();
+		Map<String, ArrayList<String> > sentTerm2Set = new HashMap<String, ArrayList<String> >();
+		
+		for (String sentid : sentSumVectors.keySet()) {
+			ArrayList<String> sentInput = sentsMap.get(sentid);
+			String sentence = sentInput.get(28);
+			String[] argCompVec = new String[7];
+			String term;
+			if (sentid.endsWith("1")) {
+				int arg1Beg = Integer.decode(sentInput.get(12));
+				int arg1End = Integer.decode(sentInput.get(18));
+				term = sentInput.get(39);
+				//String term1 = sentence.substring(arg1Beg, arg1End+1);
+				argCompVec = getCompVector(1, sentence, arg1Beg, arg1End, term, false);
+			}
+			else {
+				int arg2Beg = Integer.decode(sentInput.get(13));
+				int arg2End = Integer.decode(sentInput.get(19));
+				term = sentInput.get(40);
+				//String term1 = sentence.substring(arg1Beg, arg1End+1);
+				argCompVec = getCompVector(1, sentence, arg2Beg, arg2End, term, false);
+			}
+			
+			//out.print(sentid+sep);
+			
+			Instance sumVector = sentSumVectors.get(sentid);
+			MaxRelationCosine relCos = (MaxRelationCosine) measures[4];
+			List<String> leftVersions = new ArrayList<String>();
+			leftVersions.add("");
+			for (int rel = 0; rel < 3; rel++) {
+				//out.print(relCos.relationCosine(sumVector, rel)+sep);
+				String termLeft = "";
+				if (relCos.relationCosine(sumVector, rel) >= .4f) {
+					// System.out.println(sentid + ": " + rel + " = " + relCos.relationCosine(sumVector, rel));
+					for (int i = rel; i < 2; i++) {
+						termLeft += argCompVec[i] + " ";
+					}
+					termLeft += argCompVec[2];
+				}
+				if (termLeft.compareTo("") != 0) {
+					// System.out.println(termLeft);
+					leftVersions.add(termLeft);
+				}
+			}
+			
+			List<String> rightVersions = new ArrayList<String>();
+			rightVersions.add("");
+			for (int rel = 5; rel > 2; rel--) {
+				//out.print(relCos.relationCosine(sumVector, rel)+sep);
+				String termRight = "";
+				if (relCos.relationCosine(sumVector, rel) >= .4f) {
+					// System.out.println(sentid + ": " + rel + " = " + relCos.relationCosine(sumVector, rel));
+					for (int i = 3; i < rel; i++) {
+						termRight += argCompVec[i + 1] + " ";
+					}
+					termRight += argCompVec[rel + 1];
+				}
+				if (termRight.compareTo("") != 0) {
+					//System.out.println(termRight);
+					rightVersions.add(termRight);
+				}
+			}
+			
+			leftVersions = addSeparators(leftVersions, true);
+			rightVersions = addSeparators(rightVersions, false);
+			
+			for (String tl : leftVersions) {
+				for (String tr : rightVersions) {
+					String newTerm = "";
+					if (tl.compareTo("") != 0) newTerm += tl;
+					newTerm += argCompVec[3];
+					if (tr.compareTo("") != 0) newTerm += tr;
+					
+					if (sentence.indexOf(newTerm) != -1) {
+						// System.out.println(newTerm.toUpperCase() + ": " + sentence.indexOf(newTerm));
+						String trimSentId = sentid.substring(0, sentid.length() - 3);
+						
+						if (sentid.endsWith("1")) { 
+							if (sentTerm1Set.containsKey(trimSentId)) {
+								sentTerm1Set.get(trimSentId).add(newTerm);
+							}
+							else {
+								List<String> aux = new ArrayList<String>();
+								aux.add(newTerm);
+								sentTerm1Set.put(trimSentId, (ArrayList<String>) aux);
+							}
+						}
+						else {
+							if (sentTerm2Set.containsKey(trimSentId)) {
+								sentTerm2Set.get(trimSentId).add(newTerm);
+							}
+							else {
+								List<String> aux = new ArrayList<String>();
+								aux.add(newTerm);
+								sentTerm2Set.put(trimSentId, (ArrayList<String>) aux);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		for (String sen : sentTerm1Set.keySet()) {
+			int newSenID = 1;
+			for (String t1 : sentTerm1Set.get(sen)) {
+				for (String t2 : sentTerm2Set.get(sen)) {
+					//System.out.println(sen + ": [" + t1.toUpperCase() + "] --- [" + t2.toUpperCase() + "]");
+					
+					String sentence = sentsMap.get(sen+"-T1").get(28);
+					int b1 = sentence.indexOf(t1);
+					int e1 = b1 + t1.length();
+					
+					int b2 = sentence.indexOf(t2);
+					int e2 = b2 + t2.length();
+					
+					if ((b1 >= b2 && b1 <= e2) || (b2 >= b1 && b2 <= e1)) {
+						System.err.println("Overlapping Terms (ID = " + sen 
+								+ "): [" + t1.toUpperCase() + "] --- [" + t2.toUpperCase() + "]");
+					}
+					else {
+						String capT1 = "[" + t1.toUpperCase() + "]";
+						String capT2 = "[" + t2.toUpperCase() + "]";
+						
+						if (b1 < b2)
+							sentence = sentence.substring(0, b1) + capT1 + sentence.substring(e1, b2) +
+							capT2 + sentence.substring(e2, sentence.length());
+						else
+							sentence = sentence.substring(0, b2) + capT2 + sentence.substring(e2, b1) +
+							capT1 + sentence.substring(e1, sentence.length());
+						
+						out.print(sen + "-FS" + newSenID + sep + capT1 + sep + 
+								capT2 + sep + b1 + sep + b2 + sep 
+								+ e1 + sep + e2 + sep + sentence);
+						out.println();
+						
+						newSenID++;				
+					}
+				}
+			}
+		}
+	}
 
 	
-	protected static String[] getCompVector(int an, String sentence, int argBeg, int argEnd, String term) {
+	protected static String[] getCompVector(int an, String sentence, int argBeg, int argEnd, String term, boolean noPunct) {
 		String[] argCompVec = new String[7];
 		for (int i = 0; i < 7; i++) {
 			argCompVec[i] = "";
 		}
 		
-		String argLeft = sentence.substring(0, argBeg).replaceAll("[^a-zA-Z ]", "").toLowerCase();
+		String argLeft = sentence.substring(0, argBeg);
+		if (noPunct) argLeft = argLeft.replaceAll("[^a-zA-Z ]", "").toLowerCase();
 		String[] argLeftWords = argLeft.split(" ");
 		
 		List<String> list = new ArrayList<String>(Arrays.asList(argLeftWords));
@@ -297,7 +472,9 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		argCompVec[3] = term;
 		
 		if (argEnd+1 < sentence.length() - 1) {
-			String argRight = sentence.substring(argEnd+1, sentence.length() - 1).replaceAll("[^a-zA-Z ]", "").toLowerCase();
+
+			String argRight = sentence.substring(argEnd+1, sentence.length() - 1);
+			if (noPunct) argRight = argRight.replaceAll("[^a-zA-Z ]", "").toLowerCase();
 			String[] argRightWords = argRight.split(" ");
 			
 			// change term to plural form for comparison purposes
@@ -349,7 +526,7 @@ public class CrowdMedFactSpan extends CrowdTruth {
 			int arg1End = Integer.decode(lineArray.get(18));
 			term = lineArray.get(20);
 			//String term1 = sentence.substring(arg1Beg, arg1End+1);
-			argCompVec = getCompVector(1, sentence, arg1Beg, arg1End, term);
+			argCompVec = getCompVector(1, sentence, arg1Beg, arg1End, term, true);
 		}
 		else {
 			argDecision = lineArray.get(24);
@@ -364,7 +541,7 @@ public class CrowdMedFactSpan extends CrowdTruth {
 			int arg2End = Integer.decode(lineArray.get(19));
 			term = lineArray.get(21);
 			//String term2 = sentence.substring(arg2Beg, arg2End);
-			argCompVec = getCompVector(2, sentence, arg2Beg, arg2End, term);
+			argCompVec = getCompVector(2, sentence, arg2Beg, arg2End, term, true);
 		}
 		
 		
@@ -449,6 +626,11 @@ public class CrowdMedFactSpan extends CrowdTruth {
 			
 			//System.err.println(userAnswer);
 			//System.err.println(annots.toString());
+			
+			if (annots.size() == 0) {
+				//System.out.println("FAILED: " + Arrays.asList(userWords).toString());
+				annots.add("CHECK_FAILED");
+			}
 		}
 		
 		return annots;
@@ -492,7 +674,7 @@ public class CrowdMedFactSpan extends CrowdTruth {
 //			}	
 //		}		
 		Double checkFailed = measures.get(workerMeasureIndex.get(measureList.get(4)));
-		if (checkFailed > .1f) {
+		if (checkFailed > .3f) {
 			//System.out.println( workid + " failed");
 			return true; // this guy failed a GS test
 		}
@@ -531,6 +713,12 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		c1.computeAggregateSentenceMeasures();
 		try {
 			c1.printSentenceMeasures(new File(args[2]),true);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			c1.printRelEx(new File(args[3]));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
