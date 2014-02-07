@@ -50,6 +50,21 @@ import edu.vu.crowds.analysis.workers.WorkerMeasure;
 public class CrowdMedFactSpan extends CrowdTruth {
 	
 	protected int argNo;
+	
+	final static int B1 = 12;
+	final static int B2 = 13;
+	final static int E1 = 18;
+	final static int E2 = 19;
+	final static int SENTENCE = 28;
+	final static int TERM1 = 20;
+	final static int TERM2 = 21;
+	final static int USER_TERM1 = 22;
+	final static int USER_TERM2 = 27;
+	final static int USER_CHECK_TERM1 = 14;
+	final static int USER_CHECK_TERM2 = 17;
+	final static int USER_DECISION1 = 23;
+	final static int USER_DECISION2 = 24;
+	
 
 	public CrowdMedFactSpan(String filename) {
 		measures = new SentenceMeasure[] {
@@ -118,8 +133,8 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		BufferedReader r= new BufferedReader(new FileReader(f));
 		this.header = parseCsvLine(r, r.readLine(), splitChar);
 		if (this.header.size() != this.getNumCols()) {
-			System.err.println("Columns in header: " + this.header.size());
-			System.err.println("Columns in function: " + this.getNumCols());
+			//System.err.println("Columns in header: " + this.header.size());
+			//System.err.println("Columns in function: " + this.getNumCols());
 			System.err.println("Number of columns ("+ this.header.size() + ") doesn't match expected");
 		}
 		
@@ -206,8 +221,8 @@ public class CrowdMedFactSpan extends CrowdTruth {
 					Instance in = w.get(index);
 					index = workerMeasureIndex.get(measureList.get(j));
 					Double val = in.get(index);	
+					
 					out.print(",");
-					// TODO: check why it's not printing for all workers
 					if (!val.isNaN()) out.print(val);
 				}
 			}
@@ -225,7 +240,7 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		String sep = ",";
 		if (f.getName().endsWith(".tsv")) sep="\t";
 	
-		int[] origCols = {12,13,18,19,28,39,40};
+		int[] origCols =      { B1,  B2,  E1,  E2,  SENTENCE,  TERM1,  TERM2};
 		String[] origLabels = {"b1","b2","e1","e2","sentence","term1","term2"};
 		
 		out.print("Sent id");
@@ -238,8 +253,6 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		}
 		out.print(sep+"MaxRelCos" + sep + "NumAnnots");
 		for (int i=0;i<origCols.length;i++) out.print(sep+origLabels[i]);
-//		for (int i=0; i<measureIndex.size();i++) out.print(sep+measures[i].label());
-//		for (int i=0; i<filterIndex.size();i++) out.print(sep+filters[i].label());
 		out.println();
 		
 		for (String sentid : sentSumVectors.keySet()) {
@@ -266,15 +279,7 @@ public class CrowdMedFactSpan extends CrowdTruth {
 				}
 			}
 			out.println();
-//			out.println(JavaMlUtils.instanceString(sentMeasures.get(sentid))+sep+
-//					JavaMlUtils.instanceString(sentFilters.get(sentid)));
 		}
-	
-//		out.println();
-//		for (int i=0; i<aggIndex.size();i++) out.print(sep+aggregates[i].label());
-//		out.println();
-//		for (int i=0; i<aggIndex.size();i++) out.print(sep+aggMeasures.get(i));
-//		out.println();
 	}
 	
 	protected static List<String> addSeparators(List<String> terms, boolean isLeft) {
@@ -313,21 +318,20 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		
 		for (String sentid : sentSumVectors.keySet()) {
 			ArrayList<String> sentInput = sentsMap.get(sentid);
-			String sentence = sentInput.get(28);
+			String sentence = sentInput.get(SENTENCE);
 			String[] argCompVec = new String[7];
 			String term;
 			if (sentid.endsWith("1")) {
-				int arg1Beg = Integer.decode(sentInput.get(12));
-				int arg1End = Integer.decode(sentInput.get(18));
-				term = sentInput.get(39);
+				int arg1Beg = Integer.decode(sentInput.get(B1));
+				int arg1End = Integer.decode(sentInput.get(E1));
+				term = sentInput.get(TERM1);
 				//String term1 = sentence.substring(arg1Beg, arg1End+1);
 				argCompVec = getCompVector(1, sentence, arg1Beg, arg1End, term, false);
 			}
 			else {
-				int arg2Beg = Integer.decode(sentInput.get(13));
-				int arg2End = Integer.decode(sentInput.get(19));
-				term = sentInput.get(40);
-				//String term1 = sentence.substring(arg1Beg, arg1End+1);
+				int arg2Beg = Integer.decode(sentInput.get(B2));
+				int arg2End = Integer.decode(sentInput.get(E2));
+				term = sentInput.get(TERM2);
 				argCompVec = getCompVector(1, sentence, arg2Beg, arg2End, term, false);
 			}
 			
@@ -416,12 +420,25 @@ public class CrowdMedFactSpan extends CrowdTruth {
 				for (String t2 : sentTerm2Set.get(sen)) {
 					//System.out.println(sen + ": [" + t1.toUpperCase() + "] --- [" + t2.toUpperCase() + "]");
 					
-					String sentence = sentsMap.get(sen+"-T1").get(28);
-					int b1 = sentence.indexOf(t1);
-					int e1 = b1 + t1.length();
+					String sentence = sentsMap.get(sen+"-T1").get(SENTENCE);
+					Integer oldB1 = Integer.decode(sentsMap.get(sen+"-T1").get(B1));
+					Integer oldB2 = Integer.decode(sentsMap.get(sen+"-T1").get(B2));
+					Integer oldE1 = Integer.decode(sentsMap.get(sen+"-T1").get(E1));
+					Integer oldE2 = Integer.decode(sentsMap.get(sen+"-T1").get(E2));
 					
-					int b2 = sentence.indexOf(t2);
-					int e2 = b2 + t2.length();
+					int b1 = 0;
+					int e1 = 0;
+					while (b1 > oldB1 || e1 < oldE1 ) {
+							b1 = sentence.indexOf(t1, b1);
+							e1 = b1 + t1.length();
+					}
+					
+					int b2 = 0;
+					int e2 = 0;
+					while (b2 > oldB2 || e2 < oldE2 ) {
+							b2 = sentence.indexOf(t2, b2);
+							e2 = b2 + t2.length();
+					}
 					
 					if ((b1 >= b2 && b1 <= e2) || (b2 >= b1 && b2 <= e1)) {
 						System.err.println("Overlapping Terms (ID = " + sen 
@@ -438,9 +455,11 @@ public class CrowdMedFactSpan extends CrowdTruth {
 							sentence = sentence.substring(0, b2) + capT2 + sentence.substring(e2, b1) +
 							capT1 + sentence.substring(e1, sentence.length());
 						
-						out.print(sen + "-FS" + newSenID + sep + capT1 + sep + 
-								capT2 + sep + b1 + sep + b2 + sep 
-								+ e1 + sep + e2 + sep + sentence);
+						out.print(sen + "-FS" + newSenID + sep + "\"" + capT1.replaceAll("\"", "") + "\"" +
+								sep + "\"" + capT2.replaceAll("\"", "") + "\"" +
+								sep + b1 + sep + b2 + sep 
+								+ e1 + sep + e2 +
+								sep + "\"" + sentence.replaceAll("\"", "") + "\"");
 						out.println();
 						
 						newSenID++;				
@@ -497,15 +516,17 @@ public class CrowdMedFactSpan extends CrowdTruth {
 			}
 		}
 		
-		 //System.out.println(an + ": " + argCompVec[0] + " + " + argCompVec[1] + " + " + argCompVec[2] + " + " 
-		 //+ argCompVec[3] + " + " + argCompVec[4] + " + " + argCompVec[5] + " + " + argCompVec[6]);
+		/* if (noPunct == true) {
+		 System.err.println(an + ": " + argCompVec[0] + " + " + argCompVec[1] + " + " + argCompVec[2] + " + " 
+		 + argCompVec[3] + " + " + argCompVec[4] + " + " + argCompVec[5] + " + " + argCompVec[6]);
+		}*/
 		
 		return argCompVec;
 	}
 	
 	@Override
 	protected Set<String> getAnnots(ArrayList<String> lineArray) {
-		String sentence = lineArray.get(38);
+		String sentence = lineArray.get(SENTENCE);
 		Set<String> annots = new HashSet<String>();
 		String[] argCompVec = new String[7];
 		String argDecision;
@@ -514,44 +535,47 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		//System.err.println(sentence);
 		
 		if (argNo == 1) {
-			argDecision = lineArray.get(23);
+			argDecision = lineArray.get(USER_DECISION1);
 			if (argDecision.compareTo("no") == 0) {
-				userAnswer = lineArray.get(22).replaceAll("[^a-zA-Z ]", "").toLowerCase();
+				userAnswer = lineArray.get(USER_TERM1).replaceAll("[^a-zA-Z ]", "").toLowerCase();
 			}
 			else {
-				userAnswer = lineArray.get(14).replaceAll("[^a-zA-Z ]", "").toLowerCase();
+				userAnswer = lineArray.get(USER_CHECK_TERM1).replaceAll("[^a-zA-Z ]", "").toLowerCase();
 			}
 				
-			int arg1Beg = Integer.decode(lineArray.get(12));
-			int arg1End = Integer.decode(lineArray.get(18));
-			term = lineArray.get(20);
+			int arg1Beg = Integer.decode(lineArray.get(B1));
+			int arg1End = Integer.decode(lineArray.get(E1));
+			term = lineArray.get(TERM1);
 			//String term1 = sentence.substring(arg1Beg, arg1End+1);
 			argCompVec = getCompVector(1, sentence, arg1Beg, arg1End, term, true);
 		}
 		else {
-			argDecision = lineArray.get(24);
+			argDecision = lineArray.get(USER_DECISION2);
 			if (argDecision.compareTo("no") == 0) {
-				userAnswer = lineArray.get(27).replaceAll("[^a-zA-Z ]", "").toLowerCase();
+				userAnswer = lineArray.get(USER_TERM2).replaceAll("[^a-zA-Z ]", "").toLowerCase();
 			}
 			else {
-				userAnswer = lineArray.get(17).replaceAll("[^a-zA-Z ]", "").toLowerCase();
+				userAnswer = lineArray.get(USER_CHECK_TERM2).replaceAll("[^a-zA-Z ]", "").toLowerCase();
 			}
 				
-			int arg2Beg = Integer.decode(lineArray.get(13));
-			int arg2End = Integer.decode(lineArray.get(19));
-			term = lineArray.get(21);
+			int arg2Beg = Integer.decode(lineArray.get(B2));
+			int arg2End = Integer.decode(lineArray.get(E2));
+			term = lineArray.get(TERM2);
 			//String term2 = sentence.substring(arg2Beg, arg2End);
 			argCompVec = getCompVector(2, sentence, arg2Beg, arg2End, term, true);
 		}
 		
 		
 		if (argDecision.compareTo("yes") == 0) {
-			if (userAnswer.compareTo(argCompVec[3].replaceAll("[^a-zA-Z ]", "").toLowerCase()) == 0) {
+			argCompVec[3] = argCompVec[3].replaceAll("[^a-zA-Z ]", "").toLowerCase().trim();
+			userAnswer = userAnswer.replaceAll("[^a-zA-Z ]", "").toLowerCase();
+			if (userAnswer.compareTo(argCompVec[3]) == 0) {
 				annots.add("NIL");
 			}
 			else {
 				annots.add("CHECK_FAILED");
-				// System.out.println(userAnswer + " - " + term);
+				// System.out.println(argDecision + " : " + userAnswer + " - " + argCompVec[3] + " / " + term );
+				 //System.out.println(userAnswer + " - " + term);
 			}
 		}
 		else {
@@ -562,7 +586,7 @@ public class CrowdMedFactSpan extends CrowdTruth {
 			
 			// remove main term
 			List<String> list = new ArrayList<String>(Arrays.asList(userWords));
-			String[] factorWords = argCompVec[3].split(" ");
+			String[] factorWords = argCompVec[3].replaceAll("[^a-zA-Z ]", "").split(" ");
 			//System.out.println("BEFORE:" + argCompVec[3] + " "  + list.toString());
 			for (int i = 0; i < factorWords.length; i++) 
 				list.remove(factorWords[i]);
@@ -624,14 +648,15 @@ public class CrowdMedFactSpan extends CrowdTruth {
 				// vectorIndex.put("WORD_OTHER",vectorIndex.size());
 			}
 			
-			//System.err.println(userAnswer);
-			//System.err.println(annots.toString());
 			
 			if (annots.size() == 0) {
-				//System.out.println("FAILED: " + Arrays.asList(userWords).toString());
+				//System.out.println("FAILED: " + userAnswer + " :-: " + argCompVec[3] + " -> " + sentence);
 				annots.add("CHECK_FAILED");
 			}
 		}
+		
+		//System.err.println(userAnswer);
+		//System.err.println(annots.toString());
 		
 		return annots;
 	}
@@ -651,8 +676,7 @@ public class CrowdMedFactSpan extends CrowdTruth {
 
 	@Override
 	protected Integer getNumCols() {
-		// TODO Auto-generated method stub
-		return 41;
+		return 43;
 	}
 
 	@Override
@@ -665,7 +689,7 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		Double numSents = measures.get(workerMeasureIndex.get(measureList.get(0)));
 		
 		// System.err.println("WORKER: " + workid + ", JUDGEMENTS: " + numSents);
-		// if (numSents < 2) return true; // too few annots
+		if (numSents < 2) return true; // too few annots
 //		Integer idx = vectorIndex.get(GS_FAIL);
 //		if (idx != null) { // if at least one person failed a GS test
 //			Map<String, Instance> workerSents = workers.get(workid);

@@ -166,7 +166,7 @@ public class CrowdMedRelDir extends CrowdTruth {
 		if (f.getName().endsWith(".tsv")) sep="\t";
 
 		int[] origCols = {17,18,22,23,35,15,29};
-		String[] origLabels = {"b1","b2","e1","e2","rel","dir","sent"};
+		String[] origLabels = {"b1","b2","e1","e2","rel","sent"};
 
 		out.print("Sent id");
 		if (printVectors) {
@@ -176,7 +176,7 @@ public class CrowdMedRelDir extends CrowdTruth {
 				}
 			}
 		}
-		out.print(sep+"MaxRelCos" + sep + "NumAnnots");
+		out.print(sep+"MaxRelCos" + sep + "NumAnnots" + sep + "dir");
 		for (int i=0;i<origCols.length;i++) out.print(sep+origLabels[i]);
 		out.println();
 
@@ -226,29 +226,23 @@ public class CrowdMedRelDir extends CrowdTruth {
 
 			int arg1Beg = Integer.decode(lineArray.get(17));
 			int arg1End = Integer.decode(lineArray.get(22));
-			String arg1 = sent.substring(arg1Beg, arg1End);
+			
+			
+			String arg1 = sent.substring(arg1Beg, arg1End).trim();
 //			int arg2Beg = Integer.decode(lineArray.get(18));
 //			int arg2End = Integer.decode(lineArray.get(23));
 //			String arg2 = sent.substring(arg2Beg, arg2End);
 			
+			
+			
 			if (arg1.equalsIgnoreCase(dirArg1)) annots.add(ARG1);
 			else if (arg1.equalsIgnoreCase(dirArg2)) annots.add(ARG2);
-			else { 
+			else {
+				//System.out.println(arg1 + ": " + dirArg1 + ", " + dirArg2);
 				System.err.println("Args don't match sent: " + dir);
 				return null;
 			}
 
-			//			int loc = lineArray.get(29).indexOf(dirArg1);
-//			System.out.println(dirArg1 + "," + dirArg2 + "," + arg1 + "," + arg2);
-			// The offsets are a bit off, pick the one that is closest...
-//			System.out.print("Selected arg offset: "+loc+", ");
-//			if (Math.abs(loc-arg1Beg) < Math.abs(loc-arg2Beg)) {
-//				annots.add(ARG1);
-//				System.out.println(arg1Beg);
-//			} else {
-//				annots.add(ARG2);
-//				System.out.println(arg2Beg);
-//			}
 		}
 
 		if ("TRUE".equalsIgnoreCase(lineArray.get(5)) || "1".equalsIgnoreCase(lineArray.get(5)))
@@ -256,7 +250,12 @@ public class CrowdMedRelDir extends CrowdTruth {
 		
 		// annots will have 1-2 members, the direction and GS_FAIL if failed
 		return annots;
+		
 		} catch (StringIndexOutOfBoundsException e) { 
+			int arg1Beg = Integer.decode(lineArray.get(17));
+			int arg1End = Integer.decode(lineArray.get(22));
+			//System.out.println(arg1Beg + ", " + arg1End);
+			
 			return null; 
 		}
 	}

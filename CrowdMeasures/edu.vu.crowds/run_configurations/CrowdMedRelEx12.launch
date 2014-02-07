@@ -6,6 +6,6 @@
 <listEntry value="1"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="edu.vu.crowds.CrowdMedRelEx12"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="&quot;C:\Users\IBM_ADMIN\Desktop\Dropbox\Crowd-Watson\DATA\New-RelEx-Task (CF Output)\f365038-RelExUncorrectedArgs-b9.csv&quot;&#13;&#10;&quot;C:\Users\IBM_ADMIN\Desktop\Dropbox\Crowd-Watson\DATA\New-RelEx-Task (CF Output)\Analysis Results (Chris)\f365038-RelExUncorrectedArgs-b9-workers.csv&quot;&#13;&#10;&quot;C:\Users\IBM_ADMIN\Desktop\Dropbox\Crowd-Watson\DATA\New-RelEx-Task (CF Output)\Analysis Results (Chris)\f365038-RelExUncorrectedArgs-b9-sents.csv&quot;"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="&quot;/home/anca/Dropbox/Watson-Crowdsourcing/DATA/Paper-Data/preliminary-1-ManualSpan/CF_RelEx_Uncorrected.csv&quot;&#13;&#10;&quot;/home/anca/Dropbox/Watson-Crowdsourcing/DATA/Paper-Data/preliminary-1-ManualSpan/CF_RelEx_Uncorrected-workers.csv&quot;&#13;&#10;&quot;/home/anca/Dropbox/Watson-Crowdsourcing/DATA/Paper-Data/preliminary-1-ManualSpan/CF_RelEx_Uncorrected-sents.csv&quot;"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="edu.vu.crowds"/>
 </launchConfiguration>
