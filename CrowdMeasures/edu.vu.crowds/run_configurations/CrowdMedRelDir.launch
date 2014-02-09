@@ -6,6 +6,6 @@
 <listEntry value="1"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="edu.vu.crowds.CrowdMedRelDir"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="&quot;/home/anca/Dropbox/Watson-Crowdsourcing/DATA/Paper-Data/preliminary-1-RelDir-ManualSpan/CF_RelDir_Uncorrected.csv&quot;&#13;&#10;&quot;/home/anca/Dropbox/Watson-Crowdsourcing/DATA/Paper-Data/preliminary-1-RelDir-ManualSpan/CF_RelDir_Uncorrected-workers.csv&quot;&#13;&#10;&quot;/home/anca/Dropbox/Watson-Crowdsourcing/DATA/Paper-Data/preliminary-1-RelDir-ManualSpan/CF_RelDir_Uncorrected-sents.csv&quot;"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="&quot;/home/anca/Dropbox/Watson-Crowdsourcing/DATA/Paper-Data/preliminary-1-RelDir-ManualSpan/CF_RelDir_ManuallyCorrected.csv&quot;&#13;&#10;&quot;/home/anca/Dropbox/Watson-Crowdsourcing/DATA/Paper-Data/preliminary-1-RelDir-ManualSpan/CF_RelDir_ManuallyCorrected-workers.csv&quot;&#13;&#10;&quot;/home/anca/Dropbox/Watson-Crowdsourcing/DATA/Paper-Data/preliminary-1-RelDir-ManualSpan/CF_RelDir_ManuallyCorrected-sents.csv&quot;"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="edu.vu.crowds"/>
 </launchConfiguration>

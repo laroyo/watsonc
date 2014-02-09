@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,8 @@ public class CrowdMedRelDir extends CrowdTruth {
 	static final String GS_FAIL = "GS-FAIL";
 	
 	static Integer gsFailIndex = null;
+	
+	HashMap<String, String[]> dirMap;
 
 	CrowdMedRelDir(String filename) throws IOException {
 		measures = new SentenceMeasure[] {
@@ -109,6 +112,9 @@ public class CrowdMedRelDir extends CrowdTruth {
 		vectorIndex.put(ARG2, 1);
 		vectorIndex.put(NIL, 2);
 		vectorIndex.put(GS_FAIL, 3);
+		
+		dirMap = new HashMap<String, String[] >();
+		
 		init(new File(filename));
 	}
 	
@@ -165,8 +171,8 @@ public class CrowdMedRelDir extends CrowdTruth {
 		String sep = ",";
 		if (f.getName().endsWith(".tsv")) sep="\t";
 
-		int[] origCols = {17,18,22,23,35,15,29};
-		String[] origLabels = {"b1","b2","e1","e2","rel","sent"};
+		int[] origCols = {      17,  18,  22,  23,  35,  31, 32, 29};
+		String[] origLabels = {"b1","b2","e1","e2","rel", "term1", "term2", "sent"};
 
 		out.print("Sent id");
 		if (printVectors) {
@@ -182,16 +188,22 @@ public class CrowdMedRelDir extends CrowdTruth {
 
 		for (String sentid : sentSumVectors.keySet()) {
 			out.print(sentid+sep);
+			Instance meas = sentMeasures.get(sentid);
+			String dir = "";
+			
 			if (printVectors) {
 				Instance sumVector = sentSumVectors.get(sentid);
 				MaxRelationCosine relCos = (MaxRelationCosine) measures[4];
 				for (int rel = 0; rel<sumVector.keySet().size(); rel++) {
 					out.print(sumVector.get(rel) + sep+relCos.relationCosine(sumVector, rel)+sep);
+					
+					if (Math.abs(meas.get(4) - relCos.relationCosine(sumVector, rel)) < .1f 
+							&& rel < 4 && dirMap.containsKey(sentid) && dir.compareTo("") == 0) {
+						dir = dirMap.get(sentid)[rel];
+					}
 				}
 			}
-
-			Instance meas = sentMeasures.get(sentid);
-			out.print(meas.get(4)+sep+meas.get(5));
+			out.print(meas.get(4)+sep+meas.get(5) + sep + dir);
 
 			ArrayList<String> sentInput = sentsMap.get(sentid);
 			for (int i=0;i<origCols.length;i++) {
@@ -217,6 +229,10 @@ public class CrowdMedRelDir extends CrowdTruth {
 		Set<String> annots = new HashSet<String>();
 		try {
 		String dir = lineArray.get(15);//.replaceAll("[\\[\\]]", "");
+		String sentid = lineArray.get(19);
+		if (dirMap.containsKey(sentid) == false) {
+			dirMap.put(sentid, new String[]{"", "", "no_relation", ""});
+		}
 		if (NIL.equalsIgnoreCase(dir)) annots.add(NIL);
 		else {
 			String dirArg1 = processQuotes(dir.substring(dir.indexOf('[')+1,dir.indexOf(']')));
@@ -235,8 +251,14 @@ public class CrowdMedRelDir extends CrowdTruth {
 			
 			
 			
-			if (arg1.equalsIgnoreCase(dirArg1)) annots.add(ARG1);
-			else if (arg1.equalsIgnoreCase(dirArg2)) annots.add(ARG2);
+			if (arg1.equalsIgnoreCase(dirArg1)) {
+				annots.add(ARG1);
+				dirMap.get(sentid)[0] = dir;
+			}
+			else if (arg1.equalsIgnoreCase(dirArg2)) {
+				annots.add(ARG2);
+				dirMap.get(sentid)[1] = dir;
+			}
 			else {
 				//System.out.println(arg1 + ": " + dirArg1 + ", " + dirArg2);
 				System.err.println("Args don't match sent: " + dir);
