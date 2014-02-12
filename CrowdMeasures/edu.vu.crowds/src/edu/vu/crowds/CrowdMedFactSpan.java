@@ -261,10 +261,6 @@ public class CrowdMedFactSpan extends CrowdTruth {
 			if (printVectors) {
 				Instance sumVector = sentSumVectors.get(sentid);
 				
-				if (sentid.contains("156-T1")) {
-					System.out.println(sumVector.toString());
-				}
-				
 				MaxRelationCosine relCos = (MaxRelationCosine) measures[4];
 				for (int rel = 0; rel<sumVector.keySet().size(); rel++) {
 					out.print(relCos.relationCosine(sumVector, rel)+sep);
@@ -350,7 +346,7 @@ public class CrowdMedFactSpan extends CrowdTruth {
 			for (int rel = 0; rel < 3; rel++) {
 				//out.print(relCos.relationCosine(sumVector, rel)+sep);
 				String termLeft = "";
-				if (relCos.relationCosine(sumVector, rel) >= .4f) {
+				if (relCos.relationCosine(sumVector, rel) >= .5f) {
 					// System.out.println(sentid + ": " + rel + " = " + relCos.relationCosine(sumVector, rel));
 					for (int i = rel; i < 2; i++) {
 						termLeft += argCompVec[i] + " ";
@@ -464,8 +460,12 @@ public class CrowdMedFactSpan extends CrowdTruth {
 								+ "): [" + t1.toUpperCase() + "] --- [" + t2.toUpperCase() + "]");
 					}
 					else {
-						String capT1 = "[" + t1.toUpperCase() + "]";
-						String capT2 = "[" + t2.toUpperCase() + "]";
+						String capT1 = "[" +
+								t1.toUpperCase().replace(",","").replace(".","")
+								+ "]";
+						String capT2 = "[" + 
+								t2.toUpperCase().replace(",","").replace(".","")
+								+ "]";
 						
 						if (b1 < b2)
 							sentence = sentence.substring(0, b1) + capT1 + sentence.substring(e1, b2) +
@@ -473,6 +473,12 @@ public class CrowdMedFactSpan extends CrowdTruth {
 						else
 							sentence = sentence.substring(0, b2) + capT2 + sentence.substring(e2, b1) +
 							capT1 + sentence.substring(e1, sentence.length());
+						
+						b1 = sentence.indexOf(capT1) - 1;
+						e1 = b1 + capT1.length();
+						
+						b2 = sentence.indexOf(capT2) - 1;
+						e2 = b1 + capT2.length();
 						
 						out.print(sen + "-FS" + newSenID + sep + "\"" + capT1.replaceAll("\"", "") + "\"" +
 								sep + "\"" + capT2.replaceAll("\"", "") + "\"" +
@@ -613,10 +619,14 @@ public class CrowdMedFactSpan extends CrowdTruth {
 			userWords = list.toArray(new String[0]);
 			
 			
+			int currPosJ = 0;
 			for (int i = 0; i < 3; i++) {
 				boolean found = false;
-				for (int j = 0; j < userWords.length && found != true; j++) {
-					if (userWords[j].compareTo(argCompVec[i]) == 0) found = true;
+				for (int j = currPosJ; j < userWords.length && found != true; j++) {
+					if (userWords[j].compareTo(argCompVec[i]) == 0) {
+						found = true;
+						currPosJ = j;
+					}
 				}
 				if (found == true) {
 					int index = 3 - i;
@@ -630,11 +640,14 @@ public class CrowdMedFactSpan extends CrowdTruth {
 					// annots.add("");
 				}
 			}
-
+			
 			for (int i = 4; i < 7; i++) {
 				boolean found = false;
-				for (int j = 0; j < userWords.length && found != true; j++) {
-					if (userWords[j].compareTo(argCompVec[i]) == 0) found = true;
+				for (int j = currPosJ; j < userWords.length && found != true; j++) {
+					if (userWords[j].compareTo(argCompVec[i]) == 0) {
+						found = true;
+						currPosJ = j;
+					}
 				}
 				if (found == true) {
 					//annots.add(argCompVec[i]);
@@ -672,17 +685,7 @@ public class CrowdMedFactSpan extends CrowdTruth {
 				//System.out.println("FAILED: " + userAnswer + " :-: " + argCompVec[3] + " -> " + sentence);
 				annots.add("CHECK_FAILED");
 			}
-			
-			/*if (userAnswer.contains("lung cancer")) {
-				//System.out.println(argDecision + " : " + userAnswer + " - " + argCompVec[3] + " / " + term );
-				System.out.println(annots.toString() + " :" + argCompVec[3] + " - "  +list.toString() + " - " + userAnswer);
-			}*/
 		}
-		
-		/*if (sentence.contains("pregnancy is") == true)
-		{
-			System.err.println(userAnswer + " = " + annots.toString());
-		}*/
 		
 		return annots;
 	}
@@ -724,18 +727,16 @@ public class CrowdMedFactSpan extends CrowdTruth {
 //			}	
 //		}		
 		Double checkFailed = measures.get(workerMeasureIndex.get(measureList.get(4)));
-		if (checkFailed > .3f) {
-			//System.out.println( workid + " failed");
-			return true; // this guy failed a GS test
-		}
-		// System.err.println("PASSED GS");
 		
 		Double agree = measures.get(workerMeasureIndex.get(measureList.get(2)));
-		//if (agree < .3f) return true; //very disagreeable worker
+		
+		if (agree < .3f) return true; //very disagreeable worker
+		if (agree < .5f && checkFailed > .3f) return true; //very disagreeable worker
 		// System.err.println("PASSED AGREEMENT");
 
 		Double cos = measures.get(workerMeasureIndex.get(measureList.get(1)));  
-		if (cos > .4) return true; // does not appear to have signal for this task
+		if (cos > .6) return true; // does not appear to have signal for this task
+		if (cos > .4 && checkFailed > .3f) return true; // does not appear to have signal for this task
 		// System.err.println("PASSED TASK SIGNAL");
 		
 		return false;
