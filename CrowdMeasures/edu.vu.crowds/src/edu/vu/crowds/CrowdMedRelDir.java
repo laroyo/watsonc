@@ -142,7 +142,7 @@ public class CrowdMedRelDir extends CrowdTruth {
 				out.print("," + measureList.get(j).label());
 			}
 		}
-		out.println();
+		out.println(",Filtered");
 		
 		for (String workid : workerMeasures.keySet()) {
 			out.print(workid);
@@ -157,7 +157,7 @@ public class CrowdMedRelDir extends CrowdTruth {
 					if (!val.isNaN()) out.print(val);
 				}
 			}
-			out.println();
+			out.println( (this.isFilteredWorker(workid) ? ",1" : ",0") );
 		}
 		out.println();
 	}

@@ -51,6 +51,8 @@ public class CrowdMedFactSpan extends CrowdTruth {
 	
 	protected int argNo;
 	
+	final static double FACTOR_SPAN_AGREEMENT_THRESHOLD = .3f;
+	
 	final static int B1 = 12;
 	final static int B2 = 13;
 	final static int E1 = 18;
@@ -187,6 +189,32 @@ public class CrowdMedFactSpan extends CrowdTruth {
 				workerSents.put(sentId2, annotSet2);
 			}
 		}
+		
+		for (String s1 : sentsMap.keySet()) {
+			for (String s2 : sentsMap.keySet()) {
+				if (s1 != s2) {
+					String t1 = "";
+					String t2 = "";
+					String sen1 = "";
+					String sen2 = "";
+					String workId = "";
+					
+					if (s1.endsWith("1")) t1 = sentsMap.get(s1).get(TERM1);
+					else t1 = sentsMap.get(s1).get(TERM2);
+					if (s2.endsWith("1")) t2 = sentsMap.get(s2).get(TERM1);
+					else t2 = sentsMap.get(s2).get(TERM2);
+					sen1 = sentsMap.get(s1).get(SENTENCE);
+					sen2 = sentsMap.get(s2).get(SENTENCE);
+					workId = this.getWorkId(sentsMap.get(s2));
+					
+					if (t1.compareTo(t2) == 0 && sen1.compareTo(sen2) == 0) {
+						Map<String,Set<String>> workerSents = workerSentAnnot.get(workId);
+						workerSents.put(s1, workerSents.get(s2));
+					}
+				}
+			}
+		}
+		
 		r.close();
 	}
 
@@ -300,6 +328,58 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		return newV;
 	}
 	
+	protected static ArrayList<String> getTermVariants(String newTerm, String mainTerm) {
+		ArrayList<String> termVariants = new ArrayList<String>();
+		// termVariants.add(newTerm);
+		
+		ArrayList<String> separators = new ArrayList<String>();
+		separators.add(" "); separators.add(""); separators.add("-");
+		
+		for (String sep1 : separators) {
+			for (String sep2 : separators) {
+				if (newTerm.compareTo(mainTerm) == 0)
+					termVariants.add(newTerm.replace(mainTerm,
+							sep1 + mainTerm + sep2));
+				else if (newTerm.startsWith(mainTerm))
+					termVariants.add(newTerm.replace(mainTerm + " ",
+							mainTerm + sep2));
+				else if (newTerm.endsWith(mainTerm))
+					termVariants.add(newTerm.replace(" " + mainTerm,
+							sep1 + mainTerm));
+				else
+					termVariants.add(newTerm.replace(" " + mainTerm + " ",
+						sep1 + mainTerm + sep2));
+			}
+		}
+		
+		return termVariants;
+	}
+	
+	protected static HashMap<String, Double> removeDuplicateScores(List<String> newTerms,
+			List<Double> newTermScores) {
+		HashMap<String, Double> res = new HashMap<String, Double>();
+		//res.put(newTerms.get(0), newTermScores.get(0));
+		
+		for (int i = 0; i < newTerms.size(); i++) {
+			double score = newTermScores.get(i);
+			String term = newTerms.get(i);
+			
+			for (int j = 1; j < newTerms.size(); j++) {
+				if (i != j && 
+						Math.abs(score - newTermScores.get(j))  < .1f &&
+						term.length() < newTerms.get(j).length()) {
+					term = "";
+				}
+			}
+			
+			if (term.compareTo("") != 0) {
+				res.put(term, score);
+			}
+		}
+		
+		return res;
+	}
+	
 	protected void printRelEx(File f) throws FileNotFoundException {
 		PrintStream out;
 		if (f == null) out = System.out;
@@ -309,14 +389,16 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		if (f.getName().endsWith(".tsv")) sep="\t";
 		
 		//int[] origCols = {12,13,18,19,28,39,40};
-		String[] origLabels = {"Sent_id","term1","term2","b1","b2","e1","e2","sentence"};
+		String[] origLabels = {"Sent_id","term1","term2","b1","b2","e1","e2","sentence","rel-type"};
 		
 		for (int i=0;i<origLabels.length - 1;i++) out.print(origLabels[i] + sep);
 		out.print(origLabels[origLabels.length - 1]);
 		out.println();
 		
 		Map<String, ArrayList<String> > sentTerm1Set = new HashMap<String, ArrayList<String> >();
+		Map<String, ArrayList<Double> > sentTerm1Score = new HashMap<String, ArrayList<Double> >();
 		Map<String, ArrayList<String> > sentTerm2Set = new HashMap<String, ArrayList<String> >();
+		Map<String, ArrayList<Double> > sentTerm2Score = new HashMap<String, ArrayList<Double> >();
 		
 		for (String sentid : sentSumVectors.keySet()) {
 			ArrayList<String> sentInput = sentsMap.get(sentid);
@@ -341,74 +423,88 @@ public class CrowdMedFactSpan extends CrowdTruth {
 			
 			Instance sumVector = sentSumVectors.get(sentid);
 			MaxRelationCosine relCos = (MaxRelationCosine) measures[4];
-			List<String> leftVersions = new ArrayList<String>();
-			leftVersions.add("");
-			for (int rel = 0; rel < 3; rel++) {
-				//out.print(relCos.relationCosine(sumVector, rel)+sep);
-				String termLeft = "";
-				if (relCos.relationCosine(sumVector, rel) >= .5f) {
-					// System.out.println(sentid + ": " + rel + " = " + relCos.relationCosine(sumVector, rel));
-					for (int i = rel; i < 2; i++) {
-						termLeft += argCompVec[i] + " ";
-					}
-					termLeft += argCompVec[2];
-				}
-				if (termLeft.compareTo("") != 0) {
-					// System.out.println(termLeft);
-					leftVersions.add(termLeft);
-				}
-			}
+			List<String> newTerms =  new ArrayList<String>();
+			List<Double> newTermScores = new ArrayList<Double>();
 			
-			List<String> rightVersions = new ArrayList<String>();
-			rightVersions.add("");
-			for (int rel = 5; rel > 2; rel--) {
-				//out.print(relCos.relationCosine(sumVector, rel)+sep);
-				String termRight = "";
-				if (relCos.relationCosine(sumVector, rel) >= .4f) {
-					// System.out.println(sentid + ": " + rel + " = " + relCos.relationCosine(sumVector, rel));
-					for (int i = 3; i < rel; i++) {
-						termRight += argCompVec[i + 1] + " ";
-					}
-					termRight += argCompVec[rel + 1];
-				}
-				if (termRight.compareTo("") != 0) {
-					//System.out.println(termRight);
-					rightVersions.add(termRight);
-				}
-			}
+			//newTerms.add(argCompVec[3]);
+			//newTermScores.add(relCos.relationCosine(sumVector, 8));
 			
-			leftVersions = addSeparators(leftVersions, true);
-			rightVersions = addSeparators(rightVersions, false);
-			
-			for (String tl : leftVersions) {
-				for (String tr : rightVersions) {
+			int termsLeft = 0;
+			for (int wordPos = 0; wordPos < 6; wordPos++) {
+				if (relCos.relationCosine(sumVector, wordPos) >= FACTOR_SPAN_AGREEMENT_THRESHOLD) {
 					String newTerm = "";
-					if (tl.compareTo("") != 0) newTerm += tl;
-					newTerm += argCompVec[3];
-					if (tr.compareTo("") != 0) newTerm += tr;
+					double factSpanAgr = relCos.relationCosine(sumVector, wordPos);
 					
-					if (sentence.indexOf(newTerm) != -1) {
-						String trimSentId = sentid.substring(0, sentid.length() - 3);
-					//	System.out.println(trimSentId + "- " + newTerm.toUpperCase() + ": " + sentence.indexOf(newTerm));
+					// get word combinations to the left of the term
+					if (wordPos < 3) {
+						for (int i = wordPos; i < 3; i++) {
+							newTerm += argCompVec[i] + " ";
+						}
 						
-						if (sentid.endsWith("1")) {
-							if (sentTerm1Set.containsKey(trimSentId)) {
-								sentTerm1Set.get(trimSentId).add(newTerm);
-							}
-							else {
-								sentTerm1Set.put(trimSentId, new ArrayList<String>());
-								sentTerm1Set.get(trimSentId).add(newTerm);
-							}
+						for (int i = 1; i < newTermScores.size(); i++) {
+						//	factSpanAgr = Math.min(factSpanAgr, newTermScores.get(i));
 						}
-						else {
-							if (sentTerm2Set.containsKey(trimSentId)) {
-								sentTerm2Set.get(trimSentId).add(newTerm);
-							}
-							else {
-								sentTerm2Set.put(trimSentId, new ArrayList<String>());
-								sentTerm2Set.get(trimSentId).add(newTerm);
-							}
+						
+						newTerm += argCompVec[3];
+						termsLeft++;
+					}
+					// get word combinations to the right of the term
+					else {
+						for (int i = 3; i <= wordPos; i++) {
+							newTerm += " " + argCompVec[i + 1];
 						}
+						
+						for (int i = termsLeft; i < newTermScores.size(); i++) {
+							//factSpanAgr = Math.min(factSpanAgr, newTermScores.get(i));
+						}
+						
+						// combine words to the right with words to the left
+						for (int i = 0; i < termsLeft; i++) {
+							newTerms.add(newTerms.get(i) + newTerm);
+							newTermScores.add(Math.min(factSpanAgr, newTermScores.get(i)));
+						}
+						
+						newTerm = argCompVec[3] + newTerm;
+					}
+					
+					newTerms.add(newTerm);
+					newTermScores.add(factSpanAgr);
+				}
+			}
+			
+			HashMap<String,Double> newTermScoresMap = this.removeDuplicateScores(newTerms, newTermScores);
+			String trimSentId = sentid.substring(0, sentid.length() - 3);
+			
+			// add original factor version
+			if (sentid.endsWith("1")) {
+				sentTerm1Set.put(trimSentId, new ArrayList<String>());
+				sentTerm1Set.get(trimSentId).add(argCompVec[3]);
+			}
+			else {
+				sentTerm2Set.put(trimSentId, new ArrayList<String>());
+				sentTerm2Set.get(trimSentId).add(argCompVec[3]);
+			}
+			
+			for (String newTerm : newTermScoresMap.keySet()) {
+				ArrayList<String> termVariants = getTermVariants(newTerm, argCompVec[3]);
+				boolean foundPositionInSentence = false;
+				for (String t : termVariants) {
+					if (sentence.contains(t)) {
+						foundPositionInSentence = true;
+						newTerm = t;
+					}
+				}
+				
+				if (foundPositionInSentence == false) {
+					System.err.println("BAD SELECTION IN SENTENCE " + sentid + ": " + newTerm);
+					//System.out.println(argCompVec[3] + " :::: " + termVariants.toString() + " :::: " + sentence);
+				}
+				else {
+					if (sentid.endsWith("1")) {
+						sentTerm1Set.get(trimSentId).add(newTerm);
+					}
+					else {
+						sentTerm2Set.get(trimSentId).add(newTerm);
 					}
 				}
 			}
@@ -418,7 +514,7 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		for (String sentid : sentSumVectors.keySet()) {
 			sentid = sentid.substring(0, sentid.length() - 3);
 			if (sentTerm1Set.containsKey(sentid) == false) {
-				System.err.println("ERROR PROCESSING: " + sentid);
+				System.err.println("NO FACTORS FOUND FOR: " + sentid);
 			}
 		}
 		
@@ -426,46 +522,59 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		for (String sen : sentTerm1Set.keySet()) {
 			int newSenID = 1;
 			//System.out.println(sen);
+			int i = 0;
 			for (String t1 : sentTerm1Set.get(sen)) {
+				int j = 0;
 				for (String t2 : sentTerm2Set.get(sen)) {
+					if (newSenID > 1) {
 					//System.out.println(sen + ": [" + t1.toUpperCase() + "] --- [" + t2.toUpperCase() + "]");
 					
-					String sentence = sentsMap.get(sen+"-T1").get(SENTENCE);
+					String sentence = sentsMap.get(sen+"-T1").get(SENTENCE).replaceAll("[\\[\\]]", "");
 					Integer oldB1 = Integer.decode(sentsMap.get(sen+"-T1").get(B1));
 					Integer oldB2 = Integer.decode(sentsMap.get(sen+"-T1").get(B2));
 					Integer oldE1 = Integer.decode(sentsMap.get(sen+"-T1").get(E1));
 					Integer oldE2 = Integer.decode(sentsMap.get(sen+"-T1").get(E2));
 					
+					
+					
 					int b1 = -1;
 					int e1 = 0;
 					int b2 = -1;
 					int e2 = 0;
-					while (b1 > oldB1 + 2 || e1 < oldE1 - 2 ) {
+					while (e1 <= oldE1) {
 							int nb1 = sentence.indexOf(t1, b1 + 1);
 							if (nb1 == -1) break;
 							b1 = nb1;
 							e1 = b1 + t1.length();
 					}
-					while (b2 > oldB2 + 2 || e2 < oldE2 - 2 ) {
+					while (e2 <= oldE2) {
 							int nb2 = sentence.indexOf(t2, b2 + 1);
 							if (nb2 == -1) break;
 							b2 = nb2;
 							e2 = b2 + t2.length();
+							if (t2.contains("bromide"))
+								System.out.println(oldB1 + " " + oldB2 + " " + oldE1 + " " + oldE2 + " - " +
+										b2 + " " + e2);
 					}
 					
 					//System.out.println(b1 + " " + e1 + " - " + b2 + " " + e2);
+
+					String capT1 = "[" +
+							t1.toUpperCase().replace(",","").replace(".","")
+							+ "]";
+					String capT2 = "[" + 
+							t2.toUpperCase().replace(",","").replace(".","")
+							+ "]";
 					
 					if ((b1 >= b2 && b1 <= e2) || (b2 >= b1 && b2 <= e1)) {
 						System.err.println("Overlapping Terms (ID = " + sen 
 								+ "): [" + t1.toUpperCase() + "] --- [" + t2.toUpperCase() + "]");
 					}
+					else if (capT1.compareTo(capT2) == 0) {
+						System.err.println("Same Terms (ID = " + sen 
+								+ "): [" + t1.toUpperCase() + "] --- [" + t2.toUpperCase() + "]");
+					}
 					else {
-						String capT1 = "[" +
-								t1.toUpperCase().replace(",","").replace(".","")
-								+ "]";
-						String capT2 = "[" + 
-								t2.toUpperCase().replace(",","").replace(".","")
-								+ "]";
 						
 						if (b1 < b2)
 							sentence = sentence.substring(0, b1) + capT1 + sentence.substring(e1, b2) +
@@ -474,22 +583,25 @@ public class CrowdMedFactSpan extends CrowdTruth {
 							sentence = sentence.substring(0, b2) + capT2 + sentence.substring(e2, b1) +
 							capT1 + sentence.substring(e1, sentence.length());
 						
-						b1 = sentence.indexOf(capT1) - 1;
+						/*b1 = sentence.indexOf(capT1);
 						e1 = b1 + capT1.length();
 						
-						b2 = sentence.indexOf(capT2) - 1;
-						e2 = b1 + capT2.length();
+						b2 = sentence.indexOf(capT2);
+						e2 = b2 + capT2.length();*/
 						
 						out.print(sen + "-FS" + newSenID + sep + "\"" + capT1.replaceAll("\"", "") + "\"" +
 								sep + "\"" + capT2.replaceAll("\"", "") + "\"" +
 								sep + b1 + sep + b2 + sep 
 								+ e1 + sep + e2 +
-								sep + "\"" + sentence.replaceAll("\"", "") + "\"");
+								sep + "\"" + sentence.replaceAll("\"", "") + "\"" +
+								sep + sentsMap.get(sen+"-T1").get(39));
 						out.println();
-						
-						newSenID++;				
+					}	
 					}
+					newSenID++;	
+					j++;
 				}
+				i++;
 			}
 		}
 	}
@@ -501,6 +613,7 @@ public class CrowdMedFactSpan extends CrowdTruth {
 			argCompVec[i] = "";
 		}
 		
+		sentence = sentence.replaceAll("[\\[\\]]", "");
 		String argLeft = sentence.substring(0, argBeg);
 		if (noPunct) argLeft = argLeft.replaceAll("[^a-zA-Z0-9 ]", "").toLowerCase();
 		String[] argLeftWords = argLeft.split(" ");
@@ -560,7 +673,8 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		//System.err.println(sentence);
 		
 		if (argNo == 1) {
-			argDecision = lineArray.get(USER_DECISION1);
+			//System.out.println(lineArray.toString());
+			argDecision = lineArray.get(USER_DECISION1).toLowerCase().replaceAll("\"", "");
 			if (argDecision.compareTo("no") == 0) {
 				userAnswer = lineArray.get(USER_TERM1).replaceAll("[^a-zA-Z0-9 ]", "").toLowerCase();
 			}
@@ -571,11 +685,10 @@ public class CrowdMedFactSpan extends CrowdTruth {
 			int arg1Beg = Integer.decode(lineArray.get(B1));
 			int arg1End = Integer.decode(lineArray.get(E1));
 			term = lineArray.get(TERM1);
-			//String term1 = sentence.substring(arg1Beg, arg1End+1);
 			argCompVec = getCompVector(1, sentence, arg1Beg, arg1End, term, true);
 		}
 		else {
-			argDecision = lineArray.get(USER_DECISION2);
+			argDecision = lineArray.get(USER_DECISION2).toLowerCase().replaceAll("\"", "");
 			if (argDecision.compareTo("no") == 0) {
 				userAnswer = lineArray.get(USER_TERM2).replaceAll("[^a-zA-Z0-9 ]", "").toLowerCase();
 			}
@@ -586,107 +699,58 @@ public class CrowdMedFactSpan extends CrowdTruth {
 			int arg2Beg = Integer.decode(lineArray.get(B2));
 			int arg2End = Integer.decode(lineArray.get(E2));
 			term = lineArray.get(TERM2);
-			//String term2 = sentence.substring(arg2Beg, arg2End);
 			argCompVec = getCompVector(2, sentence, arg2Beg, arg2End, term, true);
 		}
-		
+
+		//userAnswer = userAnswer.replaceAll("[^a-zA-Z0-9 ]", "").toLowerCase();
+		argCompVec[3] = argCompVec[3].replaceAll("[^a-zA-Z0-9 ]", "").toLowerCase().trim();
 		
 		if (argDecision.compareTo("yes") == 0) {
-			argCompVec[3] = argCompVec[3].replaceAll("[^a-zA-Z0-9 ]", "").toLowerCase().trim();
-			userAnswer = userAnswer.replaceAll("[^a-zA-Z0-9 ]", "").toLowerCase();
 			if (userAnswer.compareTo(argCompVec[3]) == 0) {
 				annots.add("NIL");
 			}
 			else {
 				annots.add("CHECK_FAILED");
-				// System.out.println(argDecision + " : " + userAnswer + " - " + argCompVec[3] + " / " + term );
-				 //System.out.println(userAnswer + " - " + term);
-			}
-		}
-		else {
-			int[] vec = new int[7];
-			int wordsInRange = 0;
-			for (int i = 0; i < 7; i++) vec[i] = 0;
-			String[] userWords = userAnswer.split(" ");
-			
-			// remove main term
-			List<String> list = new ArrayList<String>(Arrays.asList(userWords));
-			String[] factorWords = argCompVec[3].replaceAll("[^a-zA-Z0-9 ]", "").split(" ");
-			//System.out.println("BEFORE:" + argCompVec[3] + " "  + list.toString());
-			for (int i = 0; i < factorWords.length; i++) 
-				list.remove(factorWords[i]);
-			//System.out.println("AFTER:" + argCompVec[3] + " "  +list.toString());
-			userWords = list.toArray(new String[0]);
-			
-			
-			int currPosJ = 0;
-			for (int i = 0; i < 3; i++) {
-				boolean found = false;
-				for (int j = currPosJ; j < userWords.length && found != true; j++) {
-					if (userWords[j].compareTo(argCompVec[i]) == 0) {
-						found = true;
-						currPosJ = j;
-					}
-				}
-				if (found == true) {
-					int index = 3 - i;
-					//annots.add(argCompVec[i]);
-					annots.add("WORD_-" + index);
-					// vectorIndex.put("WORD_-" + index,vectorIndex.size());
-					
-					wordsInRange++;
-				}
-				else {
-					// annots.add("");
-				}
-			}
-			
-			for (int i = 4; i < 7; i++) {
-				boolean found = false;
-				for (int j = currPosJ; j < userWords.length && found != true; j++) {
-					if (userWords[j].compareTo(argCompVec[i]) == 0) {
-						found = true;
-						currPosJ = j;
-					}
-				}
-				if (found == true) {
-					//annots.add(argCompVec[i]);
-					
-					int index = i - 3;
-					annots.add("WORD_+" + index);
-					// vectorIndex.put("WORD_+" + index,vectorIndex.size());
-					
-					wordsInRange++;
-				}
-				else {
-					// annots.add("");
-				}
-			}
-			
-			String otherWords = "";
-			if (wordsInRange < userWords.length) {
-				for (int i = 0; i < userWords.length; i++) {
-					if (!argCompVec[3].contains(userWords[i]) && 
-							!Arrays.asList(argCompVec).contains(userWords[i]))
-						otherWords += userWords[i] + " ";
-				}
-			}
-			
-			//System.err.println(otherWords);
-			
-			if (otherWords.compareTo("") != 0) {
-				//annots.add(otherWords);
-				annots.add("WORD_OTHER");
-				// vectorIndex.put("WORD_OTHER",vectorIndex.size());
-			}
-			
-			
-			if (annots.size() == 0) {
-				//System.out.println("FAILED: " + userAnswer + " :-: " + argCompVec[3] + " -> " + sentence);
-				annots.add("CHECK_FAILED");
 			}
 		}
 		
+		else {
+			String[] userSpan = userAnswer.split(" ");
+			
+			// remove main factor span from user span
+			ArrayList<Integer> wordsInMainTermPos = JavaMlUtils.longestSubstr(userSpan,
+					argCompVec[3].split(" "), 0, 0, new ArrayList<Integer>());
+			ArrayList<String> uw = new ArrayList<String>(Arrays.asList(userSpan));
+			for (int i = 0; i < wordsInMainTermPos.size(); i++) {
+				int val = wordsInMainTermPos.get(i) - i;
+				uw.remove(val);
+			}
+			userSpan = uw.toArray(new String[0]);
+			
+			// compute annotation set based on word positioning
+			ArrayList<Integer> newWordsPos = JavaMlUtils.longestSubstr(argCompVec,
+					userSpan, 0, 0, new ArrayList<Integer>());
+			if (newWordsPos.size() == 0) {
+				annots.add("CHECK_FAILED");
+			}
+			else {
+				for (int i : newWordsPos) {
+					if (i < 3) {
+						int index = 3 - i;
+						annots.add("WORD_-" + index);
+					}
+					else if (i > 3) {
+						int index = i - 3;
+						annots.add("WORD_+" + index);
+					}
+				}
+				if (newWordsPos.size() < userSpan.length) {
+					annots.add("WORD_OTHER");
+				}
+			}
+		}
+		
+		//System.out.println(userAnswer + " :-: " + argCompVec[3] + " -> " + annots.toString());
 		return annots;
 	}
 
@@ -742,7 +806,9 @@ public class CrowdMedFactSpan extends CrowdTruth {
 		return false;
 	}
 	
+	
 	public static void main(String[] args) {
+		
 		// Process first factor
 		CrowdMedFactSpan c1 = new CrowdMedFactSpan(args[0]);
 		c1.buildConfusionMatrix();

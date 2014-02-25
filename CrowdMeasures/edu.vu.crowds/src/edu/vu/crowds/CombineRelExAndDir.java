@@ -14,6 +14,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import net.sf.javaml.core.Instance;
+import net.sf.javaml.core.SparseInstance;
+import net.sf.javaml.distance.CosineDistance;
+import net.sf.javaml.distance.CosineSimilarity;
 
 /**
  * @author welty
@@ -27,7 +33,7 @@ public class CombineRelExAndDir {
 	public CombineRelExAndDir() {
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	/**
 	 * Creates a new RelEx file. Zeros out all sentence relation scores unless there has been a 
 	 * RelDir task for that relation on that sentence. All SR scores are weighted by their 
@@ -41,70 +47,81 @@ public class CombineRelExAndDir {
 	public static void main(String[] args) {
 		File relDirFile = new File(args[0]);
 		File relExFile = new File(args[1]);
-		int[] relExRelFields = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
-		List<String> relDirLabels = new ArrayList<String>();
-		List<String> relExLabels = new ArrayList<String>();
-		Map<String,List<String>> relDirMap = new HashMap<String,List<String>>();
-		Map<String,List<String>> relExMap = new HashMap<String,List<String>>();
-		Map<String,List<String>> relExInvMap = new HashMap<String,List<String>>();
-		Map<String,List<String>> relExNewMap = new HashMap<String,List<String>>();
-		buildMapFromFile(relDirMap,relDirFile,0,relDirLabels);
-		buildMapFromFile(relExMap,relExFile,0,relExLabels);
-		for (String sentid : relDirMap.keySet()) {
-			List<String> relDirList = relDirMap.get(sentid);
-			List<String> relExList = relExMap.get(sentid);
-			if (relExList == null) System.err.println("Unable to find matching relex sent: " + sentid);
-			else {
-				String rel = relDirList.get(15);
-				Integer relIdx = relExLabels.indexOf(rel);
-				Float relScore = Float.parseFloat(relExList.get(relIdx));
-				if (!"0".equals(relDirList.get(2))) { // ARG1 is support for the inverted order
-					List<String> relExInvList = relExInvMap.get(sentid);
-					if (relExInvList == null) {
-						relExInvList = copyRow(relExList,relExRelFields);
-						relExInvMap.put(sentid, relExInvList);
-						Integer b1Idx = relExLabels.indexOf("b1");
-						Integer b2Idx = relExLabels.indexOf("b2");
-						Integer e1Idx = relExLabels.indexOf("e1");
-						Integer e2Idx = relExLabels.indexOf("e2");
-						relExInvList.add(b1Idx,relExList.get(b2Idx));
-						relExInvList.add(b2Idx,relExList.get(b1Idx));
-						relExInvList.add(e1Idx,relExList.get(e2Idx));
-						relExInvList.add(e2Idx,relExList.get(e1Idx));
-						relExInvList.add(0,relExList.get(0)+"-inv");
-					}
-					float argScore = Float.parseFloat(relDirList.get(2));
-					relExInvList.add(relIdx,(new Float(argScore*relScore)).toString());
-				}
-				boolean relScoreChanged = false;
-				if (!"0".equals(relDirList.get(4))) { // ARG2 is support for the orig. order
-					float argScore = Float.parseFloat(relDirList.get(4));
-					relScoreChanged = true;
-					relScore = argScore*relScore;
-				}
-				if (!"0".equals(relDirList.get(6))) { // noRel is support for no relation
-					float argScore = Float.parseFloat(relDirList.get(6));
-					relScoreChanged = true;
-					relScore = argScore*relScore;
-					// TODO maybe give the lost amount to NONE & OTHER?
-				}
-				if (relScoreChanged) {
-					List<String> relExNewList = relExNewMap.get(sentid);
-					if (relExNewList == null) {
-						relExNewList = copyRow(relExList,relExRelFields);
-						relExNewMap.put(sentid, relExNewList);
-					}
-					relExNewList.add(relIdx,relScore.toString());
-				}
-			}
-		}
+		AnnFile relDir = buildMapFromFile(relDirFile,0);
+		AnnFile relEx = buildMapFromFile(relExFile,0);
+		
+
+		List<String> relDirLabels = relDir.getHeader();
+		List<String> relExLabels = relEx.getHeader();
+		Map<String,List<String>> relDirMap = relDir.getRelMap();
+		Map<String,List<String>> relExMap = relEx.getRelMap();
+
+			
 		
 		try {
-			char splitChar = CrowdTruth.getSplitCharFromFilename(args[2], ',');
+			CosineSimilarity cosineMeasure = new CosineSimilarity();
+			
+			char sep = CrowdTruth.getSplitCharFromFilename(args[2], ',');
 			PrintStream o = new PrintStream(args[2]);
-			writeMapToFile(o, (Map<String,List<String>>)Collections.singletonMap("head", relExLabels),splitChar);
-			writeMapToFile(o,relExNewMap,splitChar);
-			writeMapToFile(o, relExInvMap, splitChar);
+			o.println("Sent_id" + sep + "RelSum_RelEx" + sep + "NoRel_RelEx" + sep +
+					"RelSum_RelDir" + sep + "NoRel_RelDir" + sep + 
+					"CosSim" + sep +
+					"RelScore_RelEx" + sep + "RelScore_RelDir" + sep +
+					"relation" + sep + "term1" + sep + "term2" + sep + "sentence");
+			
+			for (String sentid : relExMap.keySet()) {
+				//List<String> relDirList = relDirMap.get(sentid);
+				List<String> relExList = relExMap.get(sentid);
+				
+				boolean found = false;
+				for (Entry<String, List<String>> e : relDirMap.entrySet()) {
+					String sentidRD = e.getKey().replaceAll("\"", "");
+					
+					if (sentidRD.startsWith(sentid)) {
+						found = true;
+						List<String> relDirList = e.getValue();
+						String rel = relDirList.get(16).replaceAll("\"", "");
+						Integer relIdx = relExLabels.indexOf(rel);
+							
+						Integer relScoreRE = Integer.parseInt(relExList.get(relIdx));
+						Integer noRelScoreRE = 
+								Integer.parseInt(relExList.get(relExLabels.indexOf("NumAnnots"))) 
+								- relScoreRE;
+							
+							
+						Integer noRelScoreRD = Integer.parseInt(relDirList.get(5));
+						Integer relScoreRD = Integer.parseInt(relDirList.get(1)) + 
+								Integer.parseInt (relDirList.get(3));
+						
+						Instance relExVec = new SparseInstance(2);
+						relExVec.put(0, (double)relScoreRE);
+						relExVec.put(1, (double)noRelScoreRE);
+						Instance relDirVec = new SparseInstance(2);
+						relDirVec.put(0, (double)relScoreRD);
+						relDirVec.put(1, (double)noRelScoreRD);
+						Double cosDis = cosineMeasure.measure(relExVec, relDirVec);
+						
+						Instance relVec = new SparseInstance(2);
+						relVec.put(0, 1.0);
+						
+						o.println(sentidRD + sep + relScoreRE + sep + noRelScoreRE + sep +
+								relScoreRD + sep + noRelScoreRD + sep + cosDis + sep +
+								relExList.get(relExLabels.indexOf(rel + "_relscore")) + sep + 
+								cosineMeasure.measure(relVec, relDirVec) + sep + 
+								rel + sep +
+								relDirList.get(relDirLabels.indexOf("term1")) + sep +
+								relDirList.get(relDirLabels.indexOf("term2")) + sep +
+								relDirList.get(relDirLabels.indexOf("sent")) + sep);
+					}
+				}
+				
+				if (found == false)
+					System.err.println("Unable to find matching relex sent: " + sentid);
+			}
+			
+			//writeMapToFile(o, (Map<String,List<String>>)Collections.singletonMap("head", relExLabels),splitChar);
+			//writeMapToFile(o,relExNewMap,splitChar);
+			//writeMapToFile(o, relExInvMap, splitChar);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -126,9 +143,11 @@ public class CombineRelExAndDir {
 		return newList;
 	}
 
-	private static void buildMapFromFile(Map<String, List<String>> relDirMap,
-			File f, int keyidx, List<String> header) {
+	private static AnnFile buildMapFromFile(File f, int keyidx) {
 		char splitChar = CrowdTruth.getSplitCharFromFilename(f.getName(), ',');
+		
+		Map<String, List<String>> relMap =  new HashMap<String,List<String>>();
+		List<String> header = new ArrayList<String>();
 
 		try {
 			BufferedReader r = new BufferedReader(new FileReader(f));
@@ -136,7 +155,7 @@ public class CombineRelExAndDir {
 			for (String l = r.readLine(); l != null; l=r.readLine()) {
 				ArrayList<String> lineArray = CrowdTruth.parseCsvLine(r,l,splitChar);
 				String sentId = lineArray.get(keyidx);
-				relDirMap.put(sentId, lineArray);
+				relMap.put(sentId, lineArray);
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -145,5 +164,8 @@ public class CombineRelExAndDir {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		//System.out.println(header.toString());
+		return new AnnFile(header, relMap);
 	}
 }

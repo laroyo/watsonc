@@ -1,6 +1,8 @@
 package edu.vu.crowds;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.Instance;
@@ -30,5 +32,25 @@ public class JavaMlUtils {
 			sum += i.next();
 		}
 		return sum;
+	}
+	
+	public static ArrayList<Integer> longestSubstr(String[] factSpan, String[] userSpan, 
+			int factSpanStart, int userSpanStart,
+			ArrayList<Integer> pos) {
+		ArrayList<Integer> bestList = new ArrayList<Integer>(pos);
+		//System.out.println(factSpanStart + ", " + userSpanStart + " - " + pos.toString());
+		for (int i = factSpanStart; i < factSpan.length; i++) {
+			for (int j = userSpanStart; j < userSpan.length; j++) {
+				if (factSpan[i].compareTo(userSpan[j]) == 0) {
+					pos.add(i);
+					ArrayList<Integer> newPos = longestSubstr(factSpan, userSpan, i + 1, j + 1, pos);
+					if (bestList.size() <= newPos.size()) {
+						bestList = new ArrayList(newPos);
+					}
+					pos.remove(pos.size() - 1);
+				}
+			}
+		}
+		return bestList;
 	}
 }
