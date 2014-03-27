@@ -545,13 +545,13 @@ public class CrowdMedFactSpan extends CrowdTruth {
 							int nb1 = sentence.indexOf(t1, b1 + 1);
 							if (nb1 == -1) break;
 							b1 = nb1;
-							e1 = b1 + t1.length();
+							e1 = b1 + t1.length() - 1;
 					}
 					while (e2 <= oldE2) {
 							int nb2 = sentence.indexOf(t2, b2 + 1);
 							if (nb2 == -1) break;
 							b2 = nb2;
-							e2 = b2 + t2.length();
+							e2 = b2 + t2.length() - 1;
 							if (t2.contains("bromide"))
 								System.out.println(oldB1 + " " + oldB2 + " " + oldE1 + " " + oldE2 + " - " +
 										b2 + " " + e2);
@@ -559,12 +559,8 @@ public class CrowdMedFactSpan extends CrowdTruth {
 					
 					//System.out.println(b1 + " " + e1 + " - " + b2 + " " + e2);
 
-					String capT1 = "[" +
-							t1.toUpperCase().replace(",","").replace(".","")
-							+ "]";
-					String capT2 = "[" + 
-							t2.toUpperCase().replace(",","").replace(".","")
-							+ "]";
+					String capT1 = t1.toUpperCase().replace(",","").replace(".","");
+					String capT2 = t2.toUpperCase().replace(",","").replace(".","");
 					
 					if ((b1 >= b2 && b1 <= e2) || (b2 >= b1 && b2 <= e1)) {
 						System.err.println("Overlapping Terms (ID = " + sen 
@@ -576,12 +572,20 @@ public class CrowdMedFactSpan extends CrowdTruth {
 					}
 					else {
 						
-						if (b1 < b2)
-							sentence = sentence.substring(0, b1) + capT1 + sentence.substring(e1, b2) +
-							capT2 + sentence.substring(e2, sentence.length());
-						else
-							sentence = sentence.substring(0, b2) + capT2 + sentence.substring(e2, b1) +
-							capT1 + sentence.substring(e1, sentence.length());
+						if (b1 < b2) {
+							sentence = sentence.substring(0, b1) + 
+									"[" + capT1 + "]" +
+									sentence.substring(e1 + 1, b2) +
+									"[" + capT2 + "]" +
+									sentence.substring(e2 + 1, sentence.length());
+						}
+						else {
+							sentence = sentence.substring(0, b2) + 
+							"[" + capT2 + "]" +
+							sentence.substring(e2 + 1, b1) +
+							"[" + capT1 + "]" +
+							sentence.substring(e1 + 1, sentence.length());
+						}
 						
 						/*b1 = sentence.indexOf(capT1);
 						e1 = b1 + capT1.length();
@@ -589,8 +593,9 @@ public class CrowdMedFactSpan extends CrowdTruth {
 						b2 = sentence.indexOf(capT2);
 						e2 = b2 + capT2.length();*/
 						
-						out.print(sen + "-FS" + newSenID + sep + "\"" + capT1.replaceAll("\"", "") + "\"" +
-								sep + "\"" + capT2.replaceAll("\"", "") + "\"" +
+						out.print(sen + "-FS" + newSenID +
+								sep + "\"[" + capT1.replaceAll("\"", "") + "]\"" +
+								sep + "\"[" + capT2.replaceAll("\"", "") + "]\"" +
 								sep + b1 + sep + b2 + sep 
 								+ e1 + sep + e2 +
 								sep + "\"" + sentence.replaceAll("\"", "") + "\"" +
