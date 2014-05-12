@@ -31,4 +31,13 @@ public class JavaMlUtils {
 		}
 		return sum;
 	}
+	
+	public static Double max(Instance inst) {
+		Double max = 0.0;
+		for (Iterator<Double> i = inst.iterator(); i.hasNext();) {
+			Double val = i.next();
+			if (val > max) max = val;
+		}
+		return max;
+	}
 }
