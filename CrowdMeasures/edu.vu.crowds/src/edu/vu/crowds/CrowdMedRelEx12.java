@@ -61,6 +61,8 @@ public class CrowdMedRelEx12 extends CrowdTruth {
 	final static String SPLIT_CHAR = ",";
 
 
+	CrowdMedRelEx12() {}
+	
 	CrowdMedRelEx12(String filename) throws IOException {
 		measures = new SentenceMeasure[] {
 				new Magnitude(),
