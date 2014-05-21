@@ -154,8 +154,8 @@ public class CrowdMedRelEx12 extends CrowdTruth {
 		String sep = ",";
 		if (f.getName().endsWith(".tsv")) sep="\t";
 	
-		int[] origCols = {16,17,18,19,20,23,24,26,28,29};
-		String[] origLabels = {"b1","b2","id","e1","e2","rel","twrel","sent","arg1","arg2"};
+		int[] origCols = {16,17,18,19,20,21,22,23,24};
+		String[] origLabels = {"b1","b2","e1","e2","id","rel","sent","arg1","arg2"};
 		
 		out.print("Sent id");
 		if (printVectors) {
@@ -216,6 +216,7 @@ public class CrowdMedRelEx12 extends CrowdTruth {
 				vectorIndex.put(annots[i],vectorIndex.size());
 			}
 		}
+		System.out.println(getSentId(lineArray) + ": " + (Arrays.asList(annots)).toString());
 		return new HashSet<String>(Arrays.asList(annots));
 	}
 
@@ -226,11 +227,11 @@ public class CrowdMedRelEx12 extends CrowdTruth {
 
 	@Override
 	protected String getSentId(ArrayList<String> lineArray) {
-		return lineArray.get(18);
+		return lineArray.get(20);
 	}
 	
 	@Override
-	protected Integer getNumCols() { return 32; }
+	protected Integer getNumCols() { return 25; }
 
 	@Override
 	protected boolean isFilteredWorker(String workid) {

@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,26 +53,34 @@ public class CombineRelExAndDir {
 		
 
 		List<String> relDirLabels = relDir.getHeader();
-		List<String> relExLabels = relEx.getHeader();
 		Map<String,List<String>> relDirMap = relDir.getRelMap();
 		Map<String,List<String>> relExMap = relEx.getRelMap();
+		
+		ArrayList<String> bidirRels = new ArrayList<String>();
+		bidirRels.add("none");
+		bidirRels.add("other");
+		bidirRels.add("associated_with");
 
-			
+		List<String> relExLabels = relEx.getHeader();
 		
 		try {
 			CosineSimilarity cosineMeasure = new CosineSimilarity();
 			
 			char sep = CrowdTruth.getSplitCharFromFilename(args[2], ',');
 			PrintStream o = new PrintStream(args[2]);
-			o.println("Sent_id" + sep + "RelSum_RelEx" + sep + "NoRel_RelEx" + sep +
-					"RelSum_RelDir" + sep + "NoRel_RelDir" + sep + 
-					"CosSim" + sep +
-					"RelScore_RelEx" + sep + "RelScore_RelDir" + sep +
-					"relation" + sep + "term1" + sep + "term2" + sep + "sentence");
 			
+			o.print("Sent_id" + sep);
+			for (int i = 1; i < 15; i++) {
+				o.print(relExLabels.get(i) + "1" + sep + relExLabels.get(i) + "2" + sep);
+			}
+			o.print("\n");
+
 			for (String sentid : relExMap.keySet()) {
+				
 				//List<String> relDirList = relDirMap.get(sentid);
 				List<String> relExList = relExMap.get(sentid);
+				double[] relVals = new double[28];
+				for (int i = 0; i < relVals.length; i++) relVals[i] = 0;
 				
 				boolean found = false;
 				for (Entry<String, List<String>> e : relDirMap.entrySet()) {
@@ -80,10 +89,18 @@ public class CombineRelExAndDir {
 					if (sentidRD.startsWith(sentid)) {
 						found = true;
 						List<String> relDirList = e.getValue();
+						
 						String rel = relDirList.get(16).replaceAll("\"", "");
 						Integer relIdx = relExLabels.indexOf(rel);
+						
+						System.out.println(rel + " " + relIdx);
+						
+						Double relScoreRE = Double.parseDouble(relExList.get(relIdx));
+						
+						relVals[2 * relIdx - 2] += Double.parseDouble(relDirList.get(2));
+						relVals[2 * relIdx - 1] += Double.parseDouble(relDirList.get(4));						
 							
-						Integer relScoreRE = Integer.parseInt(relExList.get(relIdx));
+						/*
 						Integer noRelScoreRE = 
 								Integer.parseInt(relExList.get(relExLabels.indexOf("NumAnnots"))) 
 								- relScoreRE;
@@ -111,11 +128,19 @@ public class CombineRelExAndDir {
 								rel + sep +
 								relDirList.get(relDirLabels.indexOf("term1")) + sep +
 								relDirList.get(relDirLabels.indexOf("term2")) + sep +
-								relDirList.get(relDirLabels.indexOf("sent")) + sep);
+								relDirList.get(relDirLabels.indexOf("sent")) + sep);*/
 					}
 				}
 				
-				if (found == false)
+				if (found == true) {
+					o.print(sentid + sep);
+					for (int i = 0; i < relVals.length; i++) {
+						o.print("\"" + relVals[i] + "\"" + sep);
+					}
+					o.print("\n");
+				}
+				
+				else 
 					System.err.println("Unable to find matching relex sent: " + sentid);
 			}
 			
