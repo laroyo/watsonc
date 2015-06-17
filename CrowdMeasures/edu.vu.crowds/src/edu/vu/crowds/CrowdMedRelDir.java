@@ -129,24 +129,25 @@ public class CrowdMedRelDir extends CrowdTruth {
 		
 		out.print("Worker ID");
 		List<SentenceFilter> filterList = getMeasuresByIndex(filterIndex);
-		for (int i=0; i<filters.length; i++) {
+		/*for (int i=0; i<filters.length; i++) {
 			out.print("," + filterList.get(i).label());
 			for (int j=1; j<workMeasures.length; j++) {
 				out.print(",");
 			}
 		}
-		out.println();
+		out.println();*/
 		List<WorkerMeasure> measureList = getMeasuresByIndex(workerMeasureIndex);
-		for (int i=0; i<filters.length; i++) {
+	//	for (int i=0; i<filters.length; i++) {
 			for (int j=0; j<workMeasures.length; j++) {
 				out.print("," + measureList.get(j).label());
 			}
-		}
+	//	}
 		out.println(",Filtered");
 		
 		for (String workid : workerMeasures.keySet()) {
 			out.print(workid);
-			for (int i=0; i<filters.length; i++) {
+		//	for (int i=0; i<filters.length; i++) {
+				int i = filters.length - 1;
 				for (int j=0; j<workMeasures.length; j++) {
 					Map<Integer,Instance> w = workerMeasures.get(workid);
 					int index = filterIndex.get(filterList.get(i));
@@ -156,7 +157,7 @@ public class CrowdMedRelDir extends CrowdTruth {
 					out.print(",");
 					if (!val.isNaN()) out.print(val);
 				}
-			}
+			//}
 			out.println( (this.isFilteredWorker(workid) ? ",1" : ",0") );
 		}
 		out.println();
@@ -341,11 +342,11 @@ public class CrowdMedRelDir extends CrowdTruth {
 		// System.err.println("PASSED GS");
 		
 		Double agree = measures.get(workerMeasureIndex.get(measureList.get(2)));
-		if (agree < .6f) return true; //very disagreeable worker
+		if (agree < .4f) return true; //very disagreeable worker
 		// System.err.println("PASSED AGREEMENT");
 
 		Double cos = measures.get(workerMeasureIndex.get(measureList.get(1)));  
-		if (cos > .4) return true; // does not appear to have signal for this task
+		if (cos > .6) return true; // does not appear to have signal for this task
 		// System.err.println("PASSED TASK SIGNAL");
 		
 		return false;

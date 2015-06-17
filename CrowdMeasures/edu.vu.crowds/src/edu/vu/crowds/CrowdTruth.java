@@ -22,6 +22,8 @@ import net.sf.javaml.core.DefaultDataset;
 import net.sf.javaml.core.DenseInstance;
 import net.sf.javaml.core.Instance;
 import net.sf.javaml.core.SparseInstance;
+import edu.vu.crowds.analysis.relation.RelationMeasure;
+import edu.vu.crowds.analysis.relation.RelationRelationMeasure;
 import edu.vu.crowds.analysis.sentences.AggregateSentenceMeasure;
 import edu.vu.crowds.analysis.sentences.SentenceFilter;
 import edu.vu.crowds.analysis.sentences.SentenceMeasure;
@@ -130,6 +132,31 @@ public abstract class CrowdTruth {
 	 */
 	protected Map<WorkerMeasure,Integer> workerMeasureIndex = new HashMap<WorkerMeasure, Integer>();
 	/**
+	 * The relation metrics, these are the indexes of relMeasures instances. This should be done with an enum!
+	 */
+	protected RelationMeasure[] relMeasures = {	};
+	/**
+	 * Map from relid -> instance containing the values for each measure for that rel
+	 */
+	protected Map<String,Instance> relationScores = new HashMap<String,Instance>();
+	/**
+	 * Map from relmeasure id -> relation measure index 
+	 */
+	protected Map<RelationMeasure, Integer> relMeasureIndex = new HashMap<RelationMeasure,Integer>();
+	/**
+	 * The relation-relation metrics, these are the indexes of rel-relMeasures instances. This should be done with an enum!
+	 */
+	protected RelationRelationMeasure[] relRelMeasures = {	};
+	/**
+	 * Map from relid -> Map from relid -> instance containing the values for each measure for that rel,rel pair
+	 */
+	protected Map<String,Map<String,Instance>> relationRelationScores = new HashMap<String,Map<String,Instance>>();
+	/**
+	 * Map from measure -> measure index 
+	 */
+	protected Map<RelationRelationMeasure, Integer> relRelMeasureIndex = new HashMap<RelationRelationMeasure,Integer>();
+
+	/**
 	 * The header labels from the input file
 	 */
 	protected ArrayList<String> header;
@@ -138,7 +165,9 @@ public abstract class CrowdTruth {
 		MakeIndexMap(measures,measureIndex);
 		MakeIndexMap(filters,filterIndex);
 		MakeIndexMap(aggregates,aggIndex);
-		MakeIndexMap(workMeasures,workerMeasureIndex);		
+		MakeIndexMap(workMeasures,workerMeasureIndex);	
+		MakeIndexMap(relMeasures,relMeasureIndex);
+		MakeIndexMap(relRelMeasures,relRelMeasureIndex);
 		char splitChar = getSplitCharFromFilename(f.getName(), SPLIT_CHAR.charAt(0));
 	
 		BufferedReader r= new BufferedReader(new FileReader(f));
@@ -148,8 +177,13 @@ public abstract class CrowdTruth {
 			System.err.println("Columns in function: " + this.getNumCols());
 			System.err.println("Number of columns ("+ this.header.size() + ") doesn't match expected");
 		}
+		int lineNum = 1;
 		for (String l = r.readLine(); l != null; l=r.readLine()) {
+			lineNum++;
 			ArrayList<String> lineArray = parseCsvLine(r,l,splitChar);
+			if (lineArray.size() != this.header.size()) {
+				System.out.println("Irregular line length ("+lineNum+"): " + l);
+			}
 //			System.out.println(lineArray);
 			
 			String sentId = this.getSentId(lineArray);
@@ -245,8 +279,40 @@ public abstract class CrowdTruth {
 				workerInstancesBySent.put(sentid,sentVec);
 			}
 		}
+		System.out.println("Workers: " + workers.size());
 	}
 	
+	// Relation measures are computed, per relation, over the sentence & worder vectors
+	public void computeRelationMeasures() {
+		relationScores = new HashMap<String,Instance>();
+		for (RelationMeasure m : relMeasures) m.init(vectorIndex);
+		for (String rel : vectorIndex.keySet()) {
+			Instance relScore = new DenseInstance(relMeasures.length);
+			relationScores.put(rel,relScore);
+			for (RelationMeasure m : relMeasures) { // go in the order of the array
+				relScore.put(relMeasureIndex.get(m), m.call(vectorIndex.get(rel),sentSumVectors));
+			}
+		}
+	}
+	
+	// Aggregate relation measures are computed, per relation pair, over the sentence vectors
+	public void computeRelationRelationMeasures() {
+		relationRelationScores = new HashMap<String,Map<String,Instance>>();
+		for (RelationRelationMeasure rrm : relRelMeasures) rrm.init(vectorIndex,sentSumVectors);
+		for (String rel1 : vectorIndex.keySet()) {
+			Map<String,Instance> relationRelationRow = new HashMap<String,Instance>();
+			relationRelationScores.put(rel1, relationRelationRow);
+			for (String rel2 : vectorIndex.keySet()) {
+				Instance rrscore = new DenseInstance(relRelMeasures.length);
+				relationRelationRow.put(rel2, rrscore);
+				for (RelationRelationMeasure rrm : relRelMeasures)
+					rrscore.put(relRelMeasureIndex.get(rrm), rrm.call(vectorIndex.get(rel1), vectorIndex.get(rel2),
+								sentSumVectors, relationScores));
+			}
+		}
+	}
+
+	// TODO: move the computation of sentSumVectors out of here, its not a metric
 	public void computeSentenceMeasures() {
 		sentSumVectors = new HashMap<String,Instance>();
 		sentMeasures = new HashMap<String,Instance>();
@@ -260,6 +326,7 @@ public abstract class CrowdTruth {
 				sentMeasure.put(measureIndex.get(measure), measure.call(sentClusters.get(sentid),sumVec));
 			}
 		}
+		System.out.println("Sentences: " + sentSumVectors.size());
 	}
 	
 	public void computeAggregateSentenceMeasures() {
@@ -365,7 +432,7 @@ public abstract class CrowdTruth {
 		for (int start=0,end=0; start<l.length(); start=end+1) {
 			for (end=start; end<l.length() && (inQuote || l.charAt(end) != splitChar); end++) {
 				if (l.charAt(end) == '"') inQuote = !inQuote;
-				if (inQuote && end == l.length()-1) l += r.readLine(); //line break in the middle of a quote
+				while (inQuote && end == l.length()-1) l += r.readLine(); //line break in the middle of a quote, guard against multiple blank lines!
 			}
 			lineArray.add(l.substring(start,end));
 		}

@@ -6,6 +6,8 @@ package edu.vu.crowds.analysis.workers;
 import java.util.Map;
 import java.util.Set;
 
+import edu.vu.crowds.JavaMlUtils;
+
 import net.sf.javaml.core.Instance;
 import net.sf.javaml.distance.CosineDistance;
 
@@ -44,9 +46,13 @@ public class WorkerCosine implements WorkerMeasure {
 			if (sentFilters.get(sentid).get(filterIndex) < 1) {
 				Instance sentSumVec = sentSumVectors.get(sentid);
 				Instance workSent = workerSents.get(sentid);
-				sentSumVec = sentSumVec.minus(workSent);
-				sumCos += cos.measure(sentSumVec,workSent);
-				count++;
+				if (JavaMlUtils.max(workSent) == 0 || JavaMlUtils.max(sentSumVec) == 0) {
+					System.err.println("Zero vector at sent " + sentid);
+				} else {
+					sentSumVec = sentSumVec.minus(workSent);
+					sumCos += cos.measure(sentSumVec,workSent);
+					count++;
+				}
 			}
 		}
 		return sumCos/count;

@@ -55,4 +55,11 @@ public class MaxRelationCosine implements SentenceMeasure {
 		relUnitVec.put(rel,1.0);
 		return 1-cosineMeasure.measure(sumVector, relUnitVec);		
 	}
+	
+	public Double factorCosine(Instance sumVector, String fact) {
+		Instance factVec = zeroVec.copy();
+		for (int i = 0; i < fact.length(); i++)
+			factVec.put(Character.getNumericValue(fact.charAt(i)), 1.0);
+		return 1-cosineMeasure.measure(sumVector, factVec);		
+	}
 }
