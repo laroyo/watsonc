@@ -830,7 +830,6 @@ public class CrowdTruthRelEx extends CrowdTruth {
 				
 				System.err.println("Processing " + inputFile + "...");
 				
-				// CrowdTruthRelEx c = new CrowdTruthRelEx(inputFile + ".csv");
 				CrowdTruthRelEx c = new CrowdTruthRelEx(inputFile);
 				c.buildConfusionMatrix();
 				c.buildSentenceClusters();

@@ -809,7 +809,7 @@ public class CrowdTruthRelEx extends CrowdTruth {
 			String inputFolder = args[0];
 			String inputFile = args[1];
 			
-			//int num = Integer.parseInt(args[2]);
+			int num = Integer.parseInt(args[2]);
 			
 			
 			
@@ -830,8 +830,7 @@ public class CrowdTruthRelEx extends CrowdTruth {
 				
 				System.err.println("Processing " + inputFile + "...");
 				
-				// CrowdTruthRelEx c = new CrowdTruthRelEx(inputFile + ".csv");
-				CrowdTruthRelEx c = new CrowdTruthRelEx(inputFile);
+				CrowdTruthRelEx c = new CrowdTruthRelEx(inputFile + ".csv");
 				c.buildConfusionMatrix();
 				c.buildSentenceClusters();
 				c.computeSentenceMeasures();

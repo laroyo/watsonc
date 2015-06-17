@@ -79,8 +79,8 @@ public class CrowdTruthRelEx extends CrowdTruth {
 	final static int REL = 38;
 	final static int TWREX = 35;
 	final static int SOURCE = 36;
-	final static int SENT_ID = 27;
-	final static int WORKER_ID = 15;
+	final static int SENID = 27;
+	final static int WID = 15;
 	final static int NUMCOLS = 39;*/
 	
 	// CF
@@ -94,10 +94,10 @@ public class CrowdTruthRelEx extends CrowdTruth {
 	final static int REL = 13;
 	final static int TWREX = 21;
 	final static int SOURCE = 20;
-	final static int SENT_ID = 22;
-	final static int WORKER_ID = 7;
+	final static int SENID = 22;
+	final static int WID = 7;
 	final static int NUMCOLS = 26;
-	final static int BASELINE_VALUE = 18; 
+	final static int BASE_DEC = 18; 
 	
 	HashMap<String, Integer> mapSentidToRel = new HashMap<String, Integer>();
 	
@@ -273,7 +273,7 @@ public class CrowdTruthRelEx extends CrowdTruth {
 		String sep = ",";
 		if (f.getName().endsWith(".tsv")) sep="\t";
 	
-		int[] origCols = {B1, B2, E1, E2, TWREX, BASELINE_VALUE, SENTENCE, TERM1, TERM2};
+		int[] origCols = {B1, B2, E1, E2, TWREX, BASE_DEC, SENTENCE, TERM1, TERM2};
 		String[] origLabels = {"b1","b2","e1","e2","rel","baseline_dec", "sent","arg1","arg2"};
 		
 		out.print("Sent id");
@@ -660,8 +660,8 @@ public class CrowdTruthRelEx extends CrowdTruth {
 			}
 		}
 		
-		String worker = lineArray.get(WORKER_ID);
-		String senid = lineArray.get(SENT_ID);
+		String worker = lineArray.get(WID);
+		String senid = lineArray.get(SENID);
 		
 		//System.out.println(getSentId(lineArray) + ": " + (Arrays.asList(annots)).toString());
 		return new HashSet<String>(Arrays.asList(annots));
@@ -669,12 +669,12 @@ public class CrowdTruthRelEx extends CrowdTruth {
 
 	@Override
 	protected String getWorkId(ArrayList<String> lineArray) {
-		return lineArray.get(WORKER_ID);
+		return lineArray.get(WID);
 	}
 
 	@Override
 	protected String getSentId(ArrayList<String> lineArray) {
-		return lineArray.get(SENT_ID);
+		return lineArray.get(SENID);
 	}
 	
 	@Override
@@ -806,18 +806,17 @@ public class CrowdTruthRelEx extends CrowdTruth {
 	public static void main(String[] args) {
 		try {
 			
-			String inputFolder = args[0];
-			String inputFile = args[1];
-			
-			//int num = Integer.parseInt(args[2]);
-			
+			String in = args[0];
+			String out = args[1];
+			int num = Integer.parseInt(args[2]);
 			
 			
-			//for (int i = 1; i <= num; i++) {
+			
+			for (int i = 1; i <= num; i++) {
 			//	String inputFile = in + i + "/RelEx_batch_" + i + "_";
 			//  String inputFile = in + i + "/RelEx_" + i + "_";
 				
-			//	String inputFile = in + i + "/RelEx_" + i;
+				String inputFile = in + i + "/RelEx_" + i;
 				
 				/*if (i < 7) { 
 					inputFile += "noFactSpan";
@@ -830,8 +829,7 @@ public class CrowdTruthRelEx extends CrowdTruth {
 				
 				System.err.println("Processing " + inputFile + "...");
 				
-				// CrowdTruthRelEx c = new CrowdTruthRelEx(inputFile + ".csv");
-				CrowdTruthRelEx c = new CrowdTruthRelEx(inputFile);
+				CrowdTruthRelEx c = new CrowdTruthRelEx(inputFile + ".csv");
 				c.buildConfusionMatrix();
 				c.buildSentenceClusters();
 				c.computeSentenceMeasures();
@@ -850,13 +848,13 @@ public class CrowdTruthRelEx extends CrowdTruth {
 				c.computeRelationRelationMeasures();
 				
 				 c.printSentenceMeasures(new File(inputFile + "-sents.csv"),true);
-				 // c.printRelDirFile(new File(inputFile + "-reldir.csv"), new File(out + "crowdtruth-neg_" + i + ".csv"));
-				 // c.printMajVote(new File(out + "majvote_" + i + ".csv"));
+				 c.printRelDirFile(new File(inputFile + "-reldir.csv"), new File(out + "crowdtruth-neg_" + i + ".csv"));
+				 c.printMajVote(new File(out + "majvote_" + i + ".csv"));
 			//	 c.printClarityFiles( new File(args[7]), new File(args[8]));
-				 // c.printRandom(new File(out + "random_" + i + ".csv"));
+				 c.printRandom(new File(out + "random_" + i + ".csv"));
 				
 				//c.computeClarityDelta(new File(inputFile + "-cosWorkers.csv"));
-			//}
+			}
 			
 			
 			

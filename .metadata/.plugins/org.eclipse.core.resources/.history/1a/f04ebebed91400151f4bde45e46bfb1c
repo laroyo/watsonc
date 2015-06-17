@@ -806,10 +806,9 @@ public class CrowdTruthRelEx extends CrowdTruth {
 	public static void main(String[] args) {
 		try {
 			
-			String inputFolder = args[0];
-			String inputFile = args[1];
-			
-			//int num = Integer.parseInt(args[2]);
+			String in = args[0];
+			String out = args[1];
+			int num = Integer.parseInt(args[2]);
 			
 			
 			
@@ -817,7 +816,7 @@ public class CrowdTruthRelEx extends CrowdTruth {
 			//	String inputFile = in + i + "/RelEx_batch_" + i + "_";
 			//  String inputFile = in + i + "/RelEx_" + i + "_";
 				
-			//	String inputFile = in + i + "/RelEx_" + i;
+				String inputFile = in + i + "/RelEx_" + i;
 				
 				/*if (i < 7) { 
 					inputFile += "noFactSpan";
@@ -830,8 +829,7 @@ public class CrowdTruthRelEx extends CrowdTruth {
 				
 				System.err.println("Processing " + inputFile + "...");
 				
-				// CrowdTruthRelEx c = new CrowdTruthRelEx(inputFile + ".csv");
-				CrowdTruthRelEx c = new CrowdTruthRelEx(inputFile);
+				CrowdTruthRelEx c = new CrowdTruthRelEx(inputFile + ".csv");
 				c.buildConfusionMatrix();
 				c.buildSentenceClusters();
 				c.computeSentenceMeasures();
