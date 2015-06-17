@@ -1,0 +1,865 @@
+/**
+ * 
+ */
+package edu.vu.crowds;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import net.sf.javaml.core.Dataset;
+import net.sf.javaml.core.DefaultDataset;
+import net.sf.javaml.core.Instance;
+import net.sf.javaml.distance.CosineDistance;
+import edu.vu.crowds.analysis.filters.PassAll;
+import edu.vu.crowds.analysis.filters.StdevMRCBelowMean;
+import edu.vu.crowds.analysis.filters.StdevMagBelowMean;
+import edu.vu.crowds.analysis.filters.StdevNormMagBelowMean;
+import edu.vu.crowds.analysis.filters.StdevNormRelMagBelowMean;
+import edu.vu.crowds.analysis.filters.StdevNormRelMagByAllBelowMean;
+import edu.vu.crowds.analysis.sentences.AggregateSentenceMeasure;
+import edu.vu.crowds.analysis.sentences.SentenceFilter;
+import edu.vu.crowds.analysis.sentences.SentenceMeasure;
+import edu.vu.crowds.analysis.sentences.aggregates.MeanMagnitude;
+import edu.vu.crowds.analysis.sentences.aggregates.MeanMaxRelationCosine;
+import edu.vu.crowds.analysis.sentences.aggregates.MeanNormalizedMagnitude;
+import edu.vu.crowds.analysis.sentences.aggregates.MeanNormalizedRelationMagnitude;
+import edu.vu.crowds.analysis.sentences.aggregates.MeanNormalizedRelationMagnitudeByAll;
+import edu.vu.crowds.analysis.sentences.aggregates.StdDevMagnitude;
+import edu.vu.crowds.analysis.sentences.aggregates.StdDevMaxRelationCosine;
+import edu.vu.crowds.analysis.sentences.aggregates.StdDevNormalizedMagnitude;
+import edu.vu.crowds.analysis.sentences.aggregates.StdDevNormalizedRelationMagnitude;
+import edu.vu.crowds.analysis.sentences.aggregates.StdDevNormalizedRelationMagnitudeByAll;
+import edu.vu.crowds.analysis.sentences.measures.Magnitude;
+import edu.vu.crowds.analysis.sentences.measures.MaxRelationCosine;
+import edu.vu.crowds.analysis.sentences.measures.NormalizedMagnitude;
+import edu.vu.crowds.analysis.sentences.measures.NormalizedRelationMagnitude;
+import edu.vu.crowds.analysis.sentences.measures.NormalizedRelationMagnitudeByAll;
+import edu.vu.crowds.analysis.sentences.measures.NumAnnotators;
+import edu.vu.crowds.analysis.workers.AnnotsPerSent;
+import edu.vu.crowds.analysis.workers.AvgWorkerAgreement;
+import edu.vu.crowds.analysis.workers.NumberOfSents;
+import edu.vu.crowds.analysis.workers.WorkerCosine;
+import edu.vu.crowds.analysis.workers.WorkerMeasure;
+
+/**
+ * Inputs annotation data from workers.  Takes sentence id, workerid, annotations, seed-type
+ * 
+ * Worker matrix computes for each pair of workers for the sentences they've mutually annotated, how often then agree
+ * 	
+ * @author welty
+ *
+ */
+public class CrowdTruthRelEx extends CrowdTruth {
+	/**
+	 * The split char
+	 */
+	final static String SPLIT_CHAR = ",";
+	
+	private CosineDistance cosineMeasure;
+	
+	// AMT
+	/*final static int B1 = 30;
+	final static int B2 = 31;
+	final static int E1 = 32;
+	final static int E2 = 33;
+	final static int SENTENCE = 34;
+	final static int TERM1 = 28;
+	final static int TERM2 = 29;
+	final static int REL = 38;
+	final static int TWREX = 35;
+	final static int SOURCE = 36;
+	final static int SENID = 27;
+	final static int WID = 15;
+	final static int NUMCOLS = 39;*/
+	
+	// CF
+	final static int B1 = 16;
+	final static int B2 = 17;
+	final static int E1 = 19;
+	final static int E2 = 20;
+	final static int SENTENCE = 23;
+	final static int TERM1 = 24;
+	final static int TERM2 = 25;
+	final static int REL = 13;
+	final static int TWREX = 21;
+	final static int SOURCE = 20;
+	final static int SENID = 22;
+	final static int WID = 7;
+	final static int NUMCOLS = 26;
+	final static int BASE_DEC = 18; 
+	
+	HashMap<String, Integer> mapSentidToRel = new HashMap<String, Integer>();
+	
+	HashMap<String, Dataset> deltaMap = new HashMap<String, Dataset>(); 
+	HashMap<String, ArrayList<Double> > clarity = new HashMap<String, ArrayList<Double> > (); 
+
+
+	CrowdTruthRelEx() {}
+	
+	CrowdTruthRelEx(String filename) throws IOException {
+		measures = new SentenceMeasure[] {
+				new Magnitude(),
+				new NormalizedMagnitude(),
+				new NormalizedRelationMagnitude(),
+				new NormalizedRelationMagnitudeByAll(),
+				new MaxRelationCosine(),
+				new NumAnnotators(),
+		};
+		aggregates = new AggregateSentenceMeasure[] {
+				new MeanMagnitude(), 
+				new StdDevMagnitude(),
+				new MeanNormalizedMagnitude(),
+				new StdDevNormalizedMagnitude(),
+				new MeanNormalizedRelationMagnitude(),
+				new StdDevNormalizedRelationMagnitude(),
+				new MeanNormalizedRelationMagnitudeByAll(),
+				new StdDevNormalizedRelationMagnitudeByAll(),
+				new MeanMaxRelationCosine(),
+				new StdDevMaxRelationCosine(),
+		};
+		filters = new SentenceFilter[] {
+				new PassAll(),
+				new StdevMagBelowMean(),
+				new StdevNormMagBelowMean(),
+				new StdevNormRelMagBelowMean(),
+				new StdevNormRelMagByAllBelowMean(),
+				new StdevMRCBelowMean(),
+				//			new BelowMean()
+		};
+		workMeasures = new WorkerMeasure[] {
+				new NumberOfSents(),
+				new WorkerCosine(),
+				new AvgWorkerAgreement(),
+				new AnnotsPerSent(),
+		};
+
+		mapSentidToRel.put("associated", 1);
+		mapSentidToRel.put("treat", 2);
+		mapSentidToRel.put("other", 3);
+		mapSentidToRel.put("cause", 4);
+		mapSentidToRel.put("prevent", 5);
+		mapSentidToRel.put("symptom", 6);
+		mapSentidToRel.put("side", 7);
+		mapSentidToRel.put("manifestation", 8);
+		mapSentidToRel.put("location", 9);
+		mapSentidToRel.put("contraindicates", 10);
+		mapSentidToRel.put("is", 11);
+		mapSentidToRel.put("part", 12);
+		mapSentidToRel.put("diagnose", 13);
+		mapSentidToRel.put("none", 0);
+		
+		init(new File(filename));
+	}
+	
+	public void init(File f) throws IOException {
+		super.init(f);
+	}
+	
+	protected String correctSentId(String sentid, String relation) {
+		if (sentid.contains("FS") == false) sentid += "-FS1";
+		
+		for (String rel : mapSentidToRel.keySet()) {
+			if (relation.contains(rel) == true) {
+				int relid = mapSentidToRel.get(rel);
+				sentid += "-" + relid;
+			}
+		}
+		
+		return sentid;
+	}
+	
+	protected void printWorkerMeasures(File f) throws FileNotFoundException {
+		PrintStream out;
+		if (f == null) out = System.out;
+		else out = new PrintStream(f);
+		
+		out.print("Worker ID");
+		List<SentenceFilter> filterList = getMeasuresByIndex(filterIndex);
+		/*for (int i=0; i<filters.length; i++) {
+			out.print("," + filterList.get(i).label());
+			for (int j=1; j<workMeasures.length; j++) {
+				out.print(",");
+			}
+		}
+		out.println();*/
+		List<WorkerMeasure> measureList = getMeasuresByIndex(workerMeasureIndex);
+		//for (int i=0; i<filters.length; i++) {
+			for (int j=0; j<workMeasures.length; j++) {
+				out.print("," + measureList.get(j).label());
+			}
+		//}
+		out.println(",Filtered");
+		
+		for (String workid : workerMeasures.keySet()) {
+			out.print(workid);
+			//for (int i=0; i<filters.length; i++) {
+				int i = filters.length - 1;
+				for (int j=0; j<workMeasures.length; j++) {
+					Map<Integer,Instance> w = workerMeasures.get(workid);
+					int index = filterIndex.get(filterList.get(i));
+					Instance in = w.get(index);
+					index = workerMeasureIndex.get(measureList.get(j));
+					Double val = in.get(index);	
+					out.print(",");
+					if (!val.isNaN()) out.print(val);
+				}
+			//}
+			out.println( (this.isFilteredWorker(workid) ? ",1" : ",0") );
+		}
+		out.println();
+	}
+	
+	protected void printRandom(File f) throws FileNotFoundException {
+		PrintStream out;
+		if (f == null) out = System.out;
+		else out = new PrintStream(f);
+		
+		String sep = "\t";
+		
+		printTrainHeader(out, sep);
+		
+		for (String sentid : sentSumVectors.keySet()) {
+			Instance meas = sentMeasures.get(sentid);
+			
+			Instance sumVector = sentSumVectors.get(sentid);
+			MaxRelationCosine relCos = (MaxRelationCosine) measures[4];
+			
+			for (int rel = 0; rel<sumVector.keySet().size(); rel++) {
+				String relation = "";
+				for (String label : vectorIndex.keySet()) {
+					if (vectorIndex.get(label) == rel) relation = label;
+				}
+				
+				if (relation.contains("associated") == false &&
+						relation.contains("other") == false &&
+						relation.contains("none") == false &&
+						relation.contains("is a") == false &&
+						relation.contains("is_a") == false &&
+						relation.contains("part_of") == false &&
+						relation.contains("part of") == false &&
+						relation.contains("prevent") == false) {
+					
+					Random rand = new Random();
+					int randomNum = rand.nextInt(meas.get(5).intValue()) + 1;
+					
+					if (randomNum <= sumVector.get(rel)) {
+						printTrainLine(1.0, out, sep, relation, sentid, rel);
+					}
+					else {
+						printTrainLine(-1.0, out, sep, relation, sentid, rel);
+					}
+				}
+			}
+		}
+	}
+	
+	@Override	
+	protected void printSentenceMeasures(File f, boolean printVectors) throws FileNotFoundException {
+		PrintStream out;
+		if (f == null) out = System.out;
+		else out = new PrintStream(f);
+		
+		String sep = ",";
+		if (f.getName().endsWith(".tsv")) sep="\t";
+	
+		int[] origCols = {B1, B2, E1, E2, TWREX, BASE_DEC, SENTENCE, TERM1, TERM2};
+		String[] origLabels = {"b1","b2","e1","e2","rel","baseline_dec", "sent","arg1","arg2"};
+		
+		out.print("Sent id");
+		if (printVectors) {
+			for (int i=0; i<vectorIndex.size();i++) {
+				for (String label : vectorIndex.keySet()) {
+					if (vectorIndex.get(label) == i) out.print(sep+label);
+				}
+			}
+		}
+		out.print(sep+"MaxRelCos" + sep + "NumAnnots");
+		for (int i=0;i<origCols.length;i++) out.print(sep+origLabels[i]);
+//		for (int i=0; i<measureIndex.size();i++) out.print(sep+measures[i].label());
+//		for (int i=0; i<filterIndex.size();i++) out.print(sep+filters[i].label());
+		out.println();
+		
+		for (String sentid : sentSumVectors.keySet()) {
+			Instance meas = sentMeasures.get(sentid);
+			
+			out.print(sentid+sep);
+			if (printVectors) {
+				Instance sumVector = sentSumVectors.get(sentid);
+				//Instance negSumVector = sumVector.copy().add(meas.get(5)).minus(sumVector.multiply(2));
+				
+				MaxRelationCosine relCos = (MaxRelationCosine) measures[4];
+				for (int rel = 0; rel<sumVector.keySet().size(); rel++) {
+					//out.print(sumVector.get(rel)+sep);
+					 out.print(relCos.relationCosine(sumVector, rel)+sep);
+					// out.print(negSumVector.value(rel)+sep);
+				}
+			}
+			
+			out.print(meas.get(4)+sep+meas.get(5));
+			
+			ArrayList<String> sentInput = sentsMap.get(sentid);
+			for (int i=0;i<origCols.length;i++) {
+				String content = sentInput.get(origCols[i]);
+				try {
+					Integer.decode(content);
+					out.print(sep + content);
+				} catch (NumberFormatException e) {
+					out.print(sep + "\"" + content.replaceAll("\"", "") + "\""); // quote strings in case they contain commas
+				}
+			}
+			out.println();
+//			out.println(JavaMlUtils.instanceString(sentMeasures.get(sentid))+sep+
+//					JavaMlUtils.instanceString(sentFilters.get(sentid)));
+		}
+	
+//		out.println();
+//		for (int i=0; i<aggIndex.size();i++) out.print(sep+aggregates[i].label());
+//		out.println();
+//		for (int i=0; i<aggIndex.size();i++) out.print(sep+aggMeasures.get(i));
+//		out.println();
+	}
+	
+	String pickRandomRel(Instance sumVector) {
+		String relId = "";
+		
+		int numAnn = 0;
+		for (int i = 0; i < sumVector.keySet().size(); i++) {
+			numAnn += sumVector.get(i);
+		}
+		
+		Random rand = new Random();
+		int randomNum = rand.nextInt(numAnn) + 1;
+
+		int checkNumAnn = 0;
+		for (int i = 0; i < sumVector.keySet().size(); i++) {
+			String relation = "";
+			for (String label : vectorIndex.keySet()) {
+				if (vectorIndex.get(label) == i) relation = label;
+			}
+			
+			if (randomNum > checkNumAnn && randomNum <= checkNumAnn + sumVector.get(i)) {
+				relId = relation;
+			}
+			checkNumAnn += sumVector.get(i);
+		}
+		
+		return relId;
+	}
+	
+	protected void printClarityFiles(File fClar, File fClarNone) throws FileNotFoundException {
+		PrintStream outClar;
+		if (fClar == null) outClar = System.out;
+		else outClar = new PrintStream(fClar);
+		
+		PrintStream outClarNone;
+		if (fClarNone == null) outClarNone = System.out;
+		else outClarNone = new PrintStream(fClarNone);
+		
+		String sep = ",";
+		
+		int[] origCols = {B1, B2, E1, E2, TWREX, SENTENCE, TERM1, TERM2};
+		String[] origLabels = {"b1","b2","e1","e2","TWrex","sentence","term1","term2"};
+		
+		outClar.print("Sent_id");
+		outClarNone.print("Sent_id");
+		
+		for (int i=0; i<vectorIndex.size();i++) {
+			for (String label : vectorIndex.keySet()) {
+				if (vectorIndex.get(label) == i) {
+					outClar.print(sep+label);
+					outClarNone.print(sep+label);
+				}
+			}
+		}
+		
+		outClar.print(sep + "MaxRelCos" + sep + "NumAnnots");
+		outClarNone.print(sep + "MaxRelCos" + sep + "NumAnnots");
+		
+		//outClar.print(sep+"RelScore" + sep + "relation");
+		// outClarNone.print(sep+"RelScore" + sep + "relation");
+		
+		for (int i=0;i<origCols.length;i++) {
+			outClar.print(sep+origLabels[i]);
+			outClarNone.print(sep+origLabels[i]);
+		}
+		
+		outClar.println();
+		outClarNone.println();
+		
+		int nonePlusOtherRels = 0;
+		
+		for (String sentid : sentSumVectors.keySet()) {
+			Instance meas = sentMeasures.get(sentid);
+			
+			Instance sumVector = sentSumVectors.get(sentid);
+			MaxRelationCosine relCos = (MaxRelationCosine) measures[4];
+			
+			boolean noneFound = false;
+			boolean othersFound = false;
+			
+			// check clarity score
+			if (meas.get(4) >= .6) {
+				for (int rel = 0; rel<sumVector.keySet().size(); rel++) {
+					String relation = "";
+					for (String label : vectorIndex.keySet()) {
+						if (vectorIndex.get(label) == rel) relation = label;
+					}
+					if (relCos.relationCosine(sumVector, rel) >= .6) {
+						if (relation.compareTo("none") != 0) othersFound = true;
+						else noneFound = true;
+					}
+				}
+				if (othersFound) {
+					outClar.print(sentid+sep);
+					for (int rel = 0; rel<sumVector.keySet().size(); rel++) {
+						outClar.print(relCos.relationCosine(sumVector, rel)+sep);
+					}
+					outClar.print(meas.get(4)+sep+meas.get(5));
+					ArrayList<String> sentInput = sentsMap.get(sentid);
+					for (int i=0;i<origCols.length;i++) {
+						String content = sentInput.get(origCols[i]);
+						try {
+							Integer.decode(content);
+							outClar.print(sep + content);
+						} catch (NumberFormatException e) {
+							outClar.print(sep + "\"" + content.replaceAll("\"", "") + "\""); // quote strings in case they contain commas
+						}
+					}
+					outClar.println();
+				}
+				if (noneFound) {
+					outClarNone.print(sentid+sep);
+					for (int rel = 0; rel<sumVector.keySet().size(); rel++) {
+						outClarNone.print(relCos.relationCosine(sumVector, rel)+sep);
+					}
+					outClarNone.print(meas.get(4)+sep+meas.get(5));
+					ArrayList<String> sentInput = sentsMap.get(sentid);
+					for (int i=0;i<origCols.length;i++) {
+						String content = sentInput.get(origCols[i]);
+						try {
+							Integer.decode(content);
+							outClarNone.print(sep + content);
+						} catch (NumberFormatException e) {
+							outClarNone.print(sep + "\"" + content.replaceAll("\"", "") + "\""); // quote strings in case they contain commas
+						}
+					}
+					outClarNone.println();
+				}
+			}
+			
+			if (noneFound && othersFound) {
+				nonePlusOtherRels++;
+			}
+		}
+		
+		System.err.println(nonePlusOtherRels + " sentences have >.6 clarity for NONE and at least another rel");
+	}
+	
+	protected void printTrainHeader(PrintStream out, String sep) {
+		String[] origLabels = {"label", "relation", "term1", "b1", "e1", "term2", "b2", "e2", "sentence"};
+		
+		out.print("Sent_id");
+		for (int i=0;i<origLabels.length;i++) {
+			out.print(sep+origLabels[i]);
+		}
+		out.println();
+	}
+	
+	protected void printTrainLine(Double label, PrintStream out, String sep, String relation, String sentid, int toprels) {
+		int[] origCols = {TERM1, B1, E1, TERM2, B2, E2, SENTENCE};
+		
+		out.print(correctSentId(sentid, relation) + sep + label + sep + relation);
+		
+		ArrayList<String> sentInput = sentsMap.get(sentid);
+		for (int i=0;i<origCols.length;i++) {
+			String content = sentInput.get(origCols[i]);
+			try {
+				Integer.decode(content);
+				out.print(sep + content);
+			} catch (NumberFormatException e) {
+				out.print(sep + "\"" + content.replaceAll("\"", "") + "\""); 
+			}
+		}
+		out.println();
+	}
+	
+	protected void printMajVote(File f) throws FileNotFoundException {
+		PrintStream out;
+		if (f == null) out = System.out;
+		else out = new PrintStream(f);
+		
+		String sep = "\t";
+		
+		printTrainHeader(out, sep);
+		
+		for (String sentid : sentSumVectors.keySet()) {
+			Instance meas = sentMeasures.get(sentid);
+			
+			Instance sumVector = sentSumVectors.get(sentid);
+			MaxRelationCosine relCos = (MaxRelationCosine) measures[4];
+			
+			for (int rel = 0; rel<sumVector.keySet().size(); rel++) {
+				String relation = "";
+				for (String label : vectorIndex.keySet()) {
+					if (vectorIndex.get(label) == rel) relation = label;
+				}
+				
+				if (relation.contains("associated") == false &&
+						relation.contains("other") == false &&
+						relation.contains("none") == false &&
+						relation.contains("is a") == false &&
+						relation.contains("is_a") == false &&
+						relation.contains("part_of") == false &&
+						relation.contains("part of") == false &&
+						relation.contains("prevent") == false) {
+
+					double ratio = sumVector.get(rel) / meas.get(5);
+					
+					if (sentid.contains("902065")) {
+						System.out.println(sentid + ": " + relation + " -> " + ratio + "; "
+								+ sumVector.get(rel) + ", " + meas.get(5));
+					}
+					
+					if (ratio >= .5) {
+						printTrainLine(1.0, out, sep, relation, sentid, rel);
+					}
+					else {
+						printTrainLine(-1.0, out, sep, relation, sentid, rel);
+					}
+				}
+			}
+		}
+		
+	}
+	
+	protected void printRelDirFile(File f, File f4) throws FileNotFoundException {
+		PrintStream out;
+		if (f == null) out = System.out;
+		else out = new PrintStream(f);
+		
+		PrintStream out4;
+		if (f4 == null) out4 = System.out;
+		else out4 = new PrintStream(f4);
+		
+		String sep = ",";
+		if (f.getName().endsWith(".tsv")) sep="\t";
+	
+		int[] origCols = {B1, B2, E1, E2, TWREX, SENTENCE, TERM1, TERM2};
+		String[] origLabels = {"b1","b2","e1","e2","TWrex","sentence","term1","term2"};
+		
+		out.print("Sent_id");
+		out.print(sep+"RelEx_RelCos" + sep + "relation");
+		for (int i=0;i<origCols.length;i++) {
+			out.print(sep+origLabels[i]);
+		}
+		out.println();
+		
+		printTrainHeader(out4, "\t");
+		
+		for (String sentid : sentSumVectors.keySet()) {
+			Instance meas = sentMeasures.get(sentid);
+			
+			Instance sumVector = sentSumVectors.get(sentid);
+			MaxRelationCosine relCos = (MaxRelationCosine) measures[4];
+			
+			int toprels = 0;
+			for (int rel = 0; rel<sumVector.keySet().size(); rel++) {
+				
+				String relation = "";
+				for (String label : vectorIndex.keySet()) {
+					if (vectorIndex.get(label) == rel) relation = label;
+				}
+				
+				if (relation.contains("associated") == false &&
+					relation.contains("other") == false &&
+					relation.contains("none") == false &&
+					relation.contains("is a") == false &&
+					relation.contains("is_a") == false &&
+					relation.contains("part_of") == false &&
+					relation.contains("part of") == false &&
+					relation.contains("prevent") == false) {
+					
+					if (relCos.relationCosine(sumVector, rel) >= .3) {
+					toprels++;
+						
+						out.print(correctSentId(sentid, relation)+sep+relCos.relationCosine(sumVector, rel)+sep+relation);
+						
+						ArrayList<String> sentInput = sentsMap.get(sentid);
+						for (int i=0;i<origCols.length;i++) {
+							String content = sentInput.get(origCols[i]);
+							try {
+								Integer.decode(content);
+								out.print(sep + content);
+							} catch (NumberFormatException e) {
+								out.print(sep + "\"" + content.replaceAll("\"", "") + "\""); 
+							}
+						}
+						out.println();
+					}
+				}
+				
+				if (relCos.relationCosine(sumVector, rel) < .3) {
+						//double negCos = 1 - relCos.relationCosine(sumVector, rel);
+						/*out4.print(correctSentId(sentid, relation)+sep+relCos.relationCosine(sumVector, rel)+sep+relation);
+						ArrayList<String> sentInput = sentsMap.get(sentid);
+						for (int i=0;i<origCols.length;i++) {
+							String content = sentInput.get(origCols[i]);
+							try {
+								Integer.decode(content);
+								out4.print(sep + content);
+							} catch (NumberFormatException e) {
+								out4.print(sep + "\"" + content.replaceAll("\"", "") + "\"");
+							}
+						}
+						out4.println();*/
+					
+						printTrainLine(relCos.relationCosine(sumVector, rel), out4, "\t", relation, sentid, rel);
+					}
+			}
+			
+			
+//			out.println(JavaMlUtils.instanceString(sentMeasures.get(sentid))+sep+
+//					JavaMlUtils.instanceString(sentFilters.get(sentid)));
+		}
+	}
+
+	@Override
+	protected Set<String> getAnnots(ArrayList<String> lineArray) {
+		String choices = lineArray.get(REL).replace("\"", "");
+		String annots[] = choices.split("\\]\\s*\\[");
+		for (int i=0; i<annots.length; i++) {
+			annots[i]=annots[i].replaceAll("\\]|\\[", "").toLowerCase();
+			
+			/*if (!vectorIndex.containsKey(annots[i])) {
+				vectorIndex.put(annots[i],vectorIndex.size());
+			}*/
+			
+			/*if (annots[i].contains("prevents"))
+				annots[i] = "treats";
+			if (annots[i].contains("manifestation"))
+				annots[i] = "causes";
+			if (annots[i].contains("symptom"))
+				annots[i] = "causes";
+			if (annots[i].contains("effect"))
+				annots[i] = "causes";*/
+				
+			
+			if (!vectorIndex.containsKey(annots[i])) {
+				vectorIndex.put(annots[i],vectorIndex.size());
+			}
+		}
+		
+		String worker = lineArray.get(WID);
+		String senid = lineArray.get(SENID);
+		
+		//System.out.println(getSentId(lineArray) + ": " + (Arrays.asList(annots)).toString());
+		return new HashSet<String>(Arrays.asList(annots));
+	}
+
+	@Override
+	protected String getWorkId(ArrayList<String> lineArray) {
+		return lineArray.get(WID);
+	}
+
+	@Override
+	protected String getSentId(ArrayList<String> lineArray) {
+		return lineArray.get(SENID);
+	}
+	
+	@Override
+	protected Integer getNumCols() { return NUMCOLS; }
+	
+	// Headroom experiment to try: merge useless relations (too common, too infrequent) into other
+		// 	merging similar relations
+		protected void filterSentencesFromRelations() {
+			for (Entry<String, Map<String, Set<String>>> workSentEnt : workerSentAnnot.entrySet()) {
+				for (Entry<String, Set<String>> sentEnt : workSentEnt.getValue().entrySet()) {
+					/*if (sentEnt.getValue().remove("contraindicates"))
+						sentEnt.getValue().add("other");
+					if (sentEnt.getValue().remove("part_of"))
+						sentEnt.getValue().add("is_a");
+					if (sentEnt.getValue().remove("associated_with"))
+						sentEnt.getValue().add("other");*/
+					if (sentEnt.getValue().remove("prevents"))
+						sentEnt.getValue().add("treats");
+					if (sentEnt.getValue().remove("manifestation"))
+						sentEnt.getValue().add("causes");
+					if (sentEnt.getValue().remove("symptom"))
+						sentEnt.getValue().add("causes");
+					if (sentEnt.getValue().remove("side_effect"))
+						sentEnt.getValue().add("causes");
+				}
+			}
+		}
+
+	@Override
+	protected boolean isFilteredWorker(String workid) {
+		List<SentenceFilter> filterList = getMeasuresByIndex(filterIndex);
+		List<WorkerMeasure> measureList = getMeasuresByIndex(workerMeasureIndex);
+		int findex = filterIndex.get(filterList.get(5)); // the MRC<STDEV sentence filter
+		Map<Integer,Instance> w = workerMeasures.get(workid);
+		Instance measures = w.get(findex);
+		Double numSents = measures.get(workerMeasureIndex.get(measureList.get(0)));
+		if (numSents < 2) return true; 
+		Double cos = measures.get(workerMeasureIndex.get(measureList.get(1)));
+		Double agree = measures.get(workerMeasureIndex.get(measureList.get(2)));
+		Double annots = measures.get(workerMeasureIndex.get(measureList.get(3)));
+		Double comb = (1.515*cos + 1.351*(1-agree) + 1.4*annots/3.75);
+//		System.out.println(comb);
+		return  comb > 2.4;
+	}
+	
+	protected void computeClarityDelta(File f) throws FileNotFoundException {
+		
+		for (String workid : workerSentAnnot.keySet()) {
+			if (isFilteredWorker(workid) == false) {
+				for (String sentid : workerSentAnnot.get(workid).keySet()) {
+					Set<String> annots = workerSentAnnot.get(workid).get(sentid);
+					//System.out.println(workid + ": " +
+					//		sentid + " - " + annots.toString());
+					
+					if (!deltaMap.keySet().contains(sentid)) {
+						//initializeDeltaMap(sentid);
+						deltaMap.put(sentid, new DefaultDataset());
+						clarity.put(sentid, new ArrayList<Double>());
+					}
+					
+					
+					Instance sumVecOld = JavaMlUtils.sumVector(deltaMap.get(sentid), vectorIndex.size());
+					
+					// add new annotations
+					deltaMap.get(sentid).add(sentenceVector(annots));
+					
+					// System.out.println(workid + ": " +
+					//			sentid + " - " + annots.toString() + " -> " +
+					//		    deltaMap.get(sentid).toString());
+					
+					
+					Instance sumVec = JavaMlUtils.sumVector(deltaMap.get(sentid), vectorIndex.size());
+					MaxRelationCosine relCos = (MaxRelationCosine) measures[4];
+					
+					/*Double maxCos = 0.0;
+					for (int rel = 0; rel < sumVec.keySet().size(); rel++) {
+					//	System.out.println(sentid + ": " + annots.toString() + " -> " +
+					//			rel + ", " + relCos.relationCosine(sumVec, rel));
+						
+						maxCos = Math.max(maxCos, relCos.relationCosine(sumVec, rel));
+					}
+					
+					clarity.get(sentid).add(maxCos);*/
+					
+					//clarity.get(sentid).add(relCos.relationCosine(sumVec, vectorIndex.get("causes")));
+					
+					//try {
+					
+					cosineMeasure = new CosineDistance();
+					clarity.get(sentid).add(cosineMeasure.measure(sumVec, sumVecOld));
+					
+					/*}
+					catch (java.lang.NullPointerException e) {
+						clarity.get(sentid).add(1.0);
+					}*/
+
+					/*System.out.println(sentid + ": " + annots.toString() + " -> " +
+							 relCos.relationCosine(sumVec, vectorIndex.get("causes")) + ", vec pos:" +
+							 vectorIndex.get("causes") +
+							 " (worker " + clarity.get(sentid).size() + ")");*/
+				}
+			}
+		}
+		
+		PrintStream out;
+		if (f == null) out = System.out;
+		else out = new PrintStream(f);
+		
+		String sep = ",";
+		
+		out.print("Sent_id" + sep + "workers");
+		for (int i=1; i<=20; i++) {
+			out.print(sep + "worker" + i);
+		}
+		out.println();
+		
+		for (String sentid : clarity.keySet()) {
+			out.print(sentid + sep + clarity.get(sentid).size());
+			for (Double cl : clarity.get(sentid)) {
+				out.print(sep + cl);
+			}
+			out.println();
+		}
+	}
+
+	/**
+	 * input-file workers-file sentence-file
+	 */
+	public static void main(String[] args) {
+		try {
+			
+			String in = args[0];
+			String out = args[1];
+			int num = Integer.parseInt(args[2]);
+			
+			
+			
+			for (int i = 1; i <= num; i++) {
+			//	String inputFile = in + i + "/RelEx_batch_" + i + "_";
+			//  String inputFile = in + i + "/RelEx_" + i + "_";
+				
+				String inputFile = in + i + "/RelEx_" + i;
+				
+				/*if (i < 7) { 
+					inputFile += "noFactSpan";
+				}
+				else {
+					inputFile += "withFactSpan";
+				}*/
+				
+				//inputFile += "_cause";
+				
+				System.err.println("Processing " + inputFile + "...");
+				
+				CrowdTruthRelEx c = new CrowdTruthRelEx(inputFile + ".csv");
+				c.buildConfusionMatrix();
+				c.buildSentenceClusters();
+				c.computeSentenceMeasures();
+				c.computeAggregateSentenceMeasures();
+				c.computeSentenceFilters();
+				c.computeWorkerMeasures();
+				c.printWorkerMeasures(new File(inputFile + "-workers.csv"));
+//				c.printSentenceMeasures(new File(args[2]),true);
+				c.filterWorkers();
+				c.filterSentencesFromRelations();
+				c.buildConfusionMatrix();
+				c.buildSentenceClusters();
+				c.computeSentenceMeasures();
+				c.computeAggregateSentenceMeasures();
+				c.computeRelationMeasures();
+				c.computeRelationRelationMeasures();
+				
+				 c.printSentenceMeasures(new File(inputFile + "-sents.csv"),true);
+				 c.printRelDirFile(new File(inputFile + "-reldir.csv"), new File(out + "crowdtruth-neg_" + i + ".csv"));
+				 c.printMajVote(new File(out + "majvote_" + i + ".csv"));
+			//	 c.printClarityFiles( new File(args[7]), new File(args[8]));
+				 c.printRandom(new File(out + "random_" + i + ".csv"));
+				
+				//c.computeClarityDelta(new File(inputFile + "-cosWorkers.csv"));
+			}
+			
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
